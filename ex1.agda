@@ -16,6 +16,28 @@ ex-plus-0 = P-Succ (P-Succ P-Zero)
 ex-times-0 : S (S Z) times S (S Z) is S (S (S (S Z)))
 ex-times-0 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ P-Zero))) (P-Succ (P-Succ P-Zero))
 
+ex-1-1 : S (S Z) times S (S Z) is S (S (S (S Z)))
+-- step1
+-- ex-1-1 = T-Succ (T-Succ {!!} (P-Succ (P-Succ P-Zero))) (P-Succ (P-Succ P-Zero)) -- Goal: 0 times S (S Z) is 0
+-- step2
+-- ex-1-1 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ {!!}))) (P-Succ (P-Succ P-Zero)) -- Goal: 0 plus Z is 0
+-- step3
+-- ex-1-1 = T-Succ (T-Succ T-Zero (P-Succ {!!})) (P-Succ (P-Succ P-Zero)) -- Goal: 1 plus Z is 1
+-- step4
+-- ex-1-1 = T-Succ (T-Succ T-Zero {!!}) (P-Succ (P-Succ P-Zero)) -- Goal: S (S Z) plus Z is 2
+-- step5
+-- ex-1-1 = T-Succ {!!} (P-Succ (P-Succ P-Zero)) -- Goal: 1 times S (S Z) is 2
+-- step6
+-- ex-1-1 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ P-Zero))) (P-Succ (P-Succ {!!})) -- Goal: 0 plus S (S Z) is 2
+-- step7
+-- ex-1-1 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ P-Zero))) (P-Succ {!!}) -- Goal: 1 plus S (S Z) is 3
+-- step8
+-- ex-1-1 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ P-Zero))) {!!} -- Goal: S (S Z) plus S (S Z) is S (S (S (S Z)))
+-- step9
+-- ex-1-1 = {!!} -- Goal: S (S Z) times S (S Z) is S (S (S (S Z)))
+-- C-cC-a
+ex-1-1 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ P-Zero))) (P-Succ (P-Succ P-Zero))
+
 ex-1-2-1 : S (S (S Z)) plus S Z is S (S (S (S Z)))
 ex-1-2-1 = P-Succ (P-Succ (P-Succ P-Zero))
 
