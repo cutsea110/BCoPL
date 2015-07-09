@@ -96,7 +96,7 @@ data _is-less-than2_ : ℕ → ℕ → Set where
 
 data _is-less-than3_ : ℕ → ℕ → Set where
   L-Succ : ∀ {n} → n is-less-than3 S n
-  L-SuccR : ∀ {n₁ n₂} → n₁ is-less-than3 S n₂
+  L-SuccR : ∀ {n₁ n₂} → n₁ is-less-than3 n₂ → n₁ is-less-than3 S n₂
 
 data Exp : Set where
   Nat : ℕ → Exp
