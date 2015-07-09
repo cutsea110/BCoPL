@@ -103,8 +103,8 @@ data Exp : Set where
   _⊕_ : Exp → Exp → Exp
   _⊛_ : Exp → Exp → Exp
 
-infixr 5 _⊛_
-infixr 4 _⊕_
+infixl 5 _⊛_
+infixl 4 _⊕_
 
 -- EvalNatExp
 infix 3 _⇓_
@@ -120,8 +120,8 @@ ex-1-8-2 : Nat (S (S Z)) ⊕ Nat Z ⇓ S (S Z)
 ex-1-8-2 = E-Plus E-Const E-Const (P-Succ (P-Succ P-Zero))
 
 ex-1-8-3 : Nat (S Z) ⊕ Nat (S Z) ⊕ Nat (S Z) ⇓ S (S (S Z))
-ex-1-8-3 = E-Plus E-Const (E-Plus E-Const E-Const (P-Succ P-Zero))
-             (P-Succ P-Zero)
+ex-1-8-3 = E-Plus (E-Plus E-Const E-Const (P-Succ P-Zero)) E-Const
+             (P-Succ (P-Succ P-Zero))
 
 ex-1-8-4 : Nat (S (S (S Z))) ⊕ Nat (S (S Z)) ⊛ Nat (S Z) ⇓ S (S (S (S (S Z))))
 ex-1-8-4 = E-Plus E-Const
