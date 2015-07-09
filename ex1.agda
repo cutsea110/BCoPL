@@ -137,3 +137,85 @@ ex-1-8-5 = E-Times (E-Plus E-Const E-Const (P-Succ (P-Succ P-Zero))) E-Const
 ex-1-8-6 : Nat Z ⊛ (Nat (S (S Z)) ⊕ Nat (S (S Z))) ⇓ Z
 ex-1-8-6 = E-Times E-Const (E-Plus E-Const E-Const (P-Succ (P-Succ P-Zero)))
              T-Zero
+
+--- ReduceNatExp
+infixr 3 _⟶_
+data _⟶_ : Exp → Exp → Set where
+  R-Plus : ∀ {n₁ n₂ n₃} → n₁ plus n₂ is n₃ → Nat n₁ ⊕ Nat n₂ ⟶ Nat n₃
+  R-Times : ∀ {n₁ n₂ n₃} → n₁ times n₂ is n₃ → Nat n₁ ⊛ Nat n₂ ⟶ Nat n₃
+  R-PlusL : ∀ {e₁ e₁′ e₂} → e₁ ⟶ e₁′ → e₁ ⊕ e₂ ⟶ e₁′ ⊕ e₂
+  R-PlusR : ∀ {e₁ e₂ e₂′} → e₂ ⟶ e₂′ → e₁ ⊕ e₂ ⟶ e₁ ⊕ e₂′
+  R-TimesL : ∀ {e₁ e₁′ e₂} → e₁ ⟶ e₁′ → e₁ ⊛ e₂ ⟶ e₁′ ⊛ e₂
+  R-TimesR : ∀ {e₁ e₂ e₂′} → e₂ ⟶ e₂′ → e₁ ⊛ e₂ ⟶ e₁ ⊛ e₂′
+
+infixr 3 _-*->_
+data _-*->_ : Exp → Exp → Set where
+  MR-Zero : ∀ {e} → e -*-> e
+  MR-One : ∀ {e e′} → e ⟶ e′ → e -*-> e′
+  MR-Multi : ∀ {e e′ e″} → e -*-> e′ → e′ -*-> e″ → e -*-> e″
+
+infixr 3 _-d->_
+data _-d->_ : Exp → Exp → Set where
+  DR-Plus : ∀ {n₁ n₂ n₃} → n₁ plus n₂ is n₃ → Nat n₁ ⊕ Nat n₂ -d-> Nat n₃
+  DR-Times : ∀ {n₁ n₂ n₃} → n₁ times n₂ is n₃ → Nat n₁ ⊛ Nat n₂ -d-> Nat n₃
+  DR-PlusL : ∀ {e₁ e₁′ e₂} → e₁ -d-> e₁′ → e₁ ⊕ e₂ -d-> e₁′ ⊕ e₂
+  DR-PlusR : ∀ {n₁ e₂ e₂′} → e₂ -d-> e₂′ → Nat n₁ ⊕ e₂ -d-> Nat n₁ ⊕ e₂′
+  DR-TimesL : ∀ {e₁ e₁′ e₂} → e₁ -d-> e₁′ → e₁ ⊛ e₂ -d-> e₁′ ⊛ e₂
+  DR-TimesR : ∀ {n₁ e₂ e₂′} → e₂ -d-> e₂′ → Nat n₁ ⊛ e₂ -d-> Nat n₁ ⊛ e₂′
+
+ex-1-9-1 : Nat Z ⊕ Nat (S (S Z)) -*-> Nat (S (S Z))
+ex-1-9-1 = MR-One (R-Plus P-Zero)
+
+ex-1-9-2 : Nat (S Z) ⊛ Nat (S Z) ⊕ Nat (S Z) ⊛ Nat (S Z) -d-> Nat (S Z) ⊕ Nat (S Z) ⊛ Nat (S Z)
+ex-1-9-2 = DR-PlusL (DR-Times (T-Succ T-Zero (P-Succ P-Zero)))
+
+ex-1-9-3 : Nat (S Z) ⊛ Nat (S Z) ⊕ Nat (S Z) ⊛ Nat (S Z) ⟶ Nat (S Z) ⊛ Nat (S Z) ⊕ Nat (S Z)
+ex-1-9-3 = R-PlusR (R-Times (T-Succ T-Zero (P-Succ P-Zero)))
+
+sub-ex-1-9-4-1 : Nat (S Z) ⊛ Nat (S Z) -*-> Nat (S Z)
+sub-ex-1-9-4-1 = MR-One (R-Times (T-Succ T-Zero (P-Succ P-Zero)))
+
+sub-ex-1-9-4-2 : Nat (S Z) ⊕ Nat (S Z) -*-> Nat (S (S Z))
+sub-ex-1-9-4-2 = MR-One (R-Plus (P-Succ P-Zero))
+
+ex-1-9-4 : (Nat (S Z) ⊛ Nat (S Z)) ⊕ (Nat (S Z) ⊛ Nat (S Z)) -*-> Nat (S (S Z))
+ex-1-9-4 = MR-Multi (MR-One (R-PlusL (R-Times (T-Succ T-Zero (P-Succ P-Zero)))))
+                    (MR-Multi (MR-One (R-PlusR (R-Times (T-Succ T-Zero (P-Succ P-Zero)))))
+                              (MR-One (R-Plus (P-Succ P-Zero))))
+{--
+S(Z) * S(Z) + S(Z) * S(Z) -*-> S(S(Z)) by MR-Multi {
+  S(Z) * S(Z) + S(Z) * S(Z) -*-> S(Z) + S(Z) * S(Z) by MR-One {
+    S(Z) * S(Z) + S(Z) * S(Z) ---> S(Z) + S(Z) * S(Z) by R-PlusL {
+      S(Z) * S(Z) ---> S(Z) by R-Times {
+        S(Z) times S(Z) is S(Z) by T-Succ {
+          Z times S(Z) is Z by T-Zero {};
+          S(Z) plus Z is S(Z) by P-Succ {
+            Z plus Z is Z by P-Zero {}
+          }
+        }
+      }
+    }
+  };
+  S(Z) + S(Z) * S(Z) -*-> S(S(Z)) by MR-Multi {
+    S(Z) + S(Z) * S(Z) -*-> S(Z) + S(Z) by MR-One {
+      S(Z) + S(Z) * S(Z) ---> S(Z) + S(Z) by R-PlusR {
+        S(Z) * S(Z) ---> S(Z) by R-Times {
+          S(Z) times S(Z) is S(Z) by T-Succ {
+            Z times S(Z) is Z by T-Zero {};
+            S(Z) plus Z is S(Z) by P-Succ {
+              Z plus Z is Z by P-Zero {}
+            }
+          }
+        }
+      }
+    };
+    S(Z) + S(Z) -*-> S(S(Z)) by MR-One {
+      S(Z) + S(Z) ---> S(S(Z)) by R-Plus {
+        S(Z) plus S(Z) is S(S(Z)) by P-Succ {
+          Z plus S(Z) is S(Z) by P-Zero {}
+        }
+      }
+    }
+  }
+}
+--}
