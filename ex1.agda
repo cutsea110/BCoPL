@@ -2,6 +2,7 @@ module ex1 where
 
 open import Data.Nat renaming (ℕ to ℕ; zero to Z; suc to S)
 
+-- Nat
 data _plus_is_ : ℕ → ℕ → ℕ → Set where
   P-Zero : ∀ {n} → Z plus n is n
   P-Succ : ∀ {n₁ n₂ n₃} → n₁ plus n₂ is n₃ → S n₁ plus n₂ is S n₃
@@ -74,3 +75,65 @@ ex-1-3-2 (T-Succ t p) = cong S (plus+times≡n₂+2+n₁[n₂+2] t p)
                              steps-plus p + steps-times t ≡ n₂ + 2 + n₁ * (n₂ + 2)
     plus+times≡n₂+2+n₁[n₂+2] {n₁} {n₂} {n₃} {n₄} t p rewrite
       ex-1-3-1 p | ex-1-3-2 t | S[a+Sb]≡a+2+b n₂ (n₁ * (n₂ + 2)) = refl
+
+ex-1-4-1 : S (S (S Z)) plus S Z is S (S (S (S Z)))
+ex-1-4-1 = P-Succ (P-Succ (P-Succ P-Zero))
+
+ex-1-4-2 : S Z plus S (S (S Z)) is S (S (S (S Z)))
+ex-1-4-2 = P-Succ P-Zero
+
+ex-1-4-3 : S (S (S Z)) times Z is Z
+ex-1-4-3 = T-Succ (T-Succ (T-Succ T-Zero P-Zero) P-Zero) P-Zero
+
+
+data _is-less-than1_ : ℕ → ℕ → Set where
+  L-Succ : ∀ {n} → n is-less-than1 S n
+  L-Trans : ∀ {n₁ n₂ n₃} → n₁ is-less-than1 n₂ → n₂ is-less-than1 n₃ → n₁ is-less-than1 n₃
+
+data _is-less-than2_ : ℕ → ℕ → Set where
+  L-Zero : ∀ {n} → Z is-less-than2 S n
+  L-SuccSucc : ∀ {n₁ n₂} → n₁ is-less-than2 n₂ → S n₁ is-less-than2 S n₂
+
+data _is-less-than3_ : ℕ → ℕ → Set where
+  L-Succ : ∀ {n} → n is-less-than3 S n
+  L-SuccR : ∀ {n₁ n₂} → n₁ is-less-than3 S n₂
+
+data Exp : Set where
+  Nat : ℕ → Exp
+  _⊕_ : Exp → Exp → Exp
+  _⊛_ : Exp → Exp → Exp
+
+infixr 5 _⊛_
+infixr 4 _⊕_
+
+-- EvalNatExp
+infix 3 _⇓_
+data _⇓_ : Exp → ℕ → Set where
+  E-Const : ∀ {n} → Nat n ⇓ n
+  E-Plus : ∀ {e₁ n₁ e₂ n₂ n} → e₁ ⇓ n₁ → e₂ ⇓ n₂ → n₁ plus n₂ is n → e₁ ⊕ e₂ ⇓ n
+  E-Times : ∀ {e₁ n₁ e₂ n₂ n} → e₁ ⇓ n₁ → e₂ ⇓ n₂ → n₁ times n₂ is n → e₁ ⊛ e₂ ⇓ n
+
+ex-1-8-1 : Nat Z ⊕ Nat (S (S Z)) ⇓ S (S Z)
+ex-1-8-1 = E-Plus E-Const E-Const P-Zero
+
+ex-1-8-2 : Nat (S (S Z)) ⊕ Nat Z ⇓ S (S Z)
+ex-1-8-2 = E-Plus E-Const E-Const (P-Succ (P-Succ P-Zero))
+
+ex-1-8-3 : Nat (S Z) ⊕ Nat (S Z) ⊕ Nat (S Z) ⇓ S (S (S Z))
+ex-1-8-3 = E-Plus E-Const (E-Plus E-Const E-Const (P-Succ P-Zero))
+             (P-Succ P-Zero)
+
+ex-1-8-4 : Nat (S (S (S Z))) ⊕ Nat (S (S Z)) ⊛ Nat (S Z) ⇓ S (S (S (S (S Z))))
+ex-1-8-4 = E-Plus E-Const
+             (E-Times E-Const E-Const
+              (T-Succ (T-Succ T-Zero (P-Succ P-Zero)) (P-Succ P-Zero)))
+             (P-Succ (P-Succ (P-Succ P-Zero)))
+
+ex-1-8-5 : (Nat (S (S Z)) ⊕ Nat (S (S Z))) ⊛ Nat Z ⇓ Z
+ex-1-8-5 = E-Times (E-Plus E-Const E-Const (P-Succ (P-Succ P-Zero))) E-Const
+             (T-Succ (T-Succ (T-Succ (T-Succ T-Zero P-Zero) P-Zero) P-Zero)
+              P-Zero)
+
+ex-1-8-6 : Nat Z ⊛ (Nat (S (S Z)) ⊕ Nat (S (S Z))) ⇓ Z
+ex-1-8-6 = E-Times E-Const (E-Plus E-Const E-Const (P-Succ (P-Succ P-Zero)))
+             T-Zero
