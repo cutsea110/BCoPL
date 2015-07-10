@@ -1,5 +1,6 @@
 module ex1 where
 
+open import BCoPL.Show
 open import BCoPL.Nat
 
 ex-plus-0 : S (S Z) plus S (S (S Z)) is S (S (S (S (S Z))))
