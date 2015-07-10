@@ -79,6 +79,9 @@ ex-1-4-3 = T-Succ (T-Succ (T-Succ T-Zero P-Zero) P-Zero) P-Zero
 open import BCoPL.CompareNat1 renaming (_is-less-than_ to _is-less-than1_)
 open import BCoPL.CompareNat2 renaming (_is-less-than_ to _is-less-than2_)
 open import BCoPL.CompareNat3 renaming (_is-less-than_ to _is-less-than3_)
+open import BCoPL.Show.CompareNat1 renaming (showDerivationLessThan to showDerivationLessThan1)
+open import BCoPL.Show.CompareNat2 renaming (showDerivationLessThan to showDerivationLessThan2)
+open import BCoPL.Show.CompareNat3 renaming (showDerivationLessThan to showDerivationLessThan3)
 
 open import BCoPL.EvalNatExp
 
