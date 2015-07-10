@@ -5,9 +5,9 @@ open import BCoPL.Nat
 
 showDerivationPlus : ∀ {n₁ n₂ n₃} → n₁ plus n₂ is n₃ → String
 showDerivationTimes : ∀ {n₁ n₂ n₃} → n₁ times n₂ is n₃ → String
+showℕ : ℕ → String
 
 private
-  showℕ : ℕ → String
   showℕ Z = "Z"
   showℕ (S n) = "S(" ++ showℕ n ++ ")"
 

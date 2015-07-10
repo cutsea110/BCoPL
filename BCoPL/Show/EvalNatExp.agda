@@ -3,16 +3,12 @@ module BCoPL.Show.EvalNatExp where
 open import Data.String
 open import BCoPL.Nat
 open import BCoPL.EvalNatExp
-open import BCoPL.Show.Nat
+open import BCoPL.Show.Nat public
 
 showDerivation⇓ : ∀ {e n} → e ⇓ n → String
+showExp : Exp → String
 
 private
-  showℕ : ℕ → String
-  showℕ Z = "Z"
-  showℕ (S n) = "S(" ++ showℕ n ++ ")"
-
-  showExp : Exp → String
   showExp (Nat n) = showℕ n
   showExp (e₁ ⊕ e₂) = showExp e₁ ++ " + " ++ showExp e₂
   showExp (e₁ ⊛ e₂) = showExp e₁ ++ " * " ++ showExp e₂
