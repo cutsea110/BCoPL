@@ -76,18 +76,9 @@ ex-1-4-2 = P-Succ P-Zero
 ex-1-4-3 : S (S (S Z)) times Z is Z
 ex-1-4-3 = T-Succ (T-Succ (T-Succ T-Zero P-Zero) P-Zero) P-Zero
 
-
-data _is-less-than1_ : ℕ → ℕ → Set where
-  L-Succ : ∀ {n} → n is-less-than1 S n
-  L-Trans : ∀ {n₁ n₂ n₃} → n₁ is-less-than1 n₂ → n₂ is-less-than1 n₃ → n₁ is-less-than1 n₃
-
-data _is-less-than2_ : ℕ → ℕ → Set where
-  L-Zero : ∀ {n} → Z is-less-than2 S n
-  L-SuccSucc : ∀ {n₁ n₂} → n₁ is-less-than2 n₂ → S n₁ is-less-than2 S n₂
-
-data _is-less-than3_ : ℕ → ℕ → Set where
-  L-Succ : ∀ {n} → n is-less-than3 S n
-  L-SuccR : ∀ {n₁ n₂} → n₁ is-less-than3 n₂ → n₁ is-less-than3 S n₂
+open import BCoPL.CompareNat1 renaming (_is-less-than_ to _is-less-than1_)
+open import BCoPL.CompareNat2 renaming (_is-less-than_ to _is-less-than2_)
+open import BCoPL.CompareNat3 renaming (_is-less-than_ to _is-less-than3_)
 
 data Exp : Set where
   Nat : ℕ → Exp
