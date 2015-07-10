@@ -10,7 +10,6 @@ data Exp : Set where
 infixl 5 _⊛_
 infixl 4 _⊕_
 
--- EvalNatExp
 infix 3 _⇓_
 data _⇓_ : Exp → ℕ → Set where
   E-Const : ∀ {n} → Nat n ⇓ n
