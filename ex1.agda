@@ -10,26 +10,25 @@ ex-times-0 : S (S Z) times S (S Z) is S (S (S (S Z)))
 ex-times-0 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ P-Zero))) (P-Succ (P-Succ P-Zero))
 
 ex-1-1 : S (S Z) times S (S Z) is S (S (S (S Z)))
--- step1
--- ex-1-1 = T-Succ (T-Succ {!!} (P-Succ (P-Succ P-Zero))) (P-Succ (P-Succ P-Zero)) -- Goal: 0 times S (S Z) is 0
--- step2
--- ex-1-1 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ {!!}))) (P-Succ (P-Succ P-Zero)) -- Goal: 0 plus Z is 0
--- step3
--- ex-1-1 = T-Succ (T-Succ T-Zero (P-Succ {!!})) (P-Succ (P-Succ P-Zero)) -- Goal: 1 plus Z is 1
--- step4
--- ex-1-1 = T-Succ (T-Succ T-Zero {!!}) (P-Succ (P-Succ P-Zero)) -- Goal: S (S Z) plus Z is 2
--- step5
--- ex-1-1 = T-Succ {!!} (P-Succ (P-Succ P-Zero)) -- Goal: 1 times S (S Z) is 2
--- step6
--- ex-1-1 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ P-Zero))) (P-Succ (P-Succ {!!})) -- Goal: 0 plus S (S Z) is 2
--- step7
--- ex-1-1 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ P-Zero))) (P-Succ {!!}) -- Goal: 1 plus S (S Z) is 3
--- step8
--- ex-1-1 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ P-Zero))) {!!} -- Goal: S (S Z) plus S (S Z) is S (S (S (S Z)))
--- step9
--- ex-1-1 = {!!} -- Goal: S (S Z) times S (S Z) is S (S (S (S Z)))
--- C-cC-a
 ex-1-1 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ P-Zero))) (P-Succ (P-Succ P-Zero))
+{--
+-- C-cC-n (showDerivationTimes ex-1-1)
+S(S(Z)) times S(S(Z)) is S(S(S(S(Z)))) by T-Succ {   -- step 9
+  S(Z) times S(S(Z)) is S(S(Z)) by T-Succ {          -- step 5
+    Z times S(S(Z)) is Z by T-Zero {};               -- step 1
+    S(S(Z)) plus Z is S(S(Z)) by P-Succ {            -- step 4
+      S(Z) plus Z is S(Z) by P-Succ {                -- step 3
+        Z plus Z is Z by P-Zero {};                  -- step 2
+      };
+    };
+  };
+  S(S(Z)) plus S(S(Z)) is S(S(S(S(Z)))) by P-Succ {  -- step 8
+    S(Z) plus S(S(Z)) is S(S(S(Z))) by P-Succ {      -- step 7
+      Z plus S(S(Z)) is S(S(Z)) by P-Zero {};        -- step 6
+    };
+  };
+};
+--}
 
 ex-1-2-1 : S (S (S Z)) plus S Z is S (S (S (S Z)))
 ex-1-2-1 = P-Succ (P-Succ (P-Succ P-Zero))
