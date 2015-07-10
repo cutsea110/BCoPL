@@ -113,6 +113,7 @@ ex-1-8-6 = E-Times E-Const (E-Plus E-Const E-Const (P-Succ (P-Succ P-Zero)))
 
 --- ReduceNatExp
 open import BCoPL.ReduceNatExp
+open import BCoPL.Show.ReduceNatExp
 
 ex-1-9-1 : Nat Z ⊕ Nat (S (S Z)) -*-> Nat (S (S Z))
 ex-1-9-1 = MR-One (R-Plus P-Zero)
