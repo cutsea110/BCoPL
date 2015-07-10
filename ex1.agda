@@ -84,6 +84,7 @@ open import BCoPL.Show.CompareNat2 renaming (showDerivationLessThan to showDeriv
 open import BCoPL.Show.CompareNat3 renaming (showDerivationLessThan to showDerivationLessThan3)
 
 open import BCoPL.EvalNatExp
+open import BCoPL.Show.EvalNatExp
 
 ex-1-8-1 : Nat Z ⊕ Nat (S (S Z)) ⇓ S (S Z)
 ex-1-8-1 = E-Plus E-Const E-Const P-Zero
