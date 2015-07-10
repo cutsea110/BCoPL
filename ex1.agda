@@ -80,20 +80,7 @@ open import BCoPL.CompareNat1 renaming (_is-less-than_ to _is-less-than1_)
 open import BCoPL.CompareNat2 renaming (_is-less-than_ to _is-less-than2_)
 open import BCoPL.CompareNat3 renaming (_is-less-than_ to _is-less-than3_)
 
-data Exp : Set where
-  Nat : ℕ → Exp
-  _⊕_ : Exp → Exp → Exp
-  _⊛_ : Exp → Exp → Exp
-
-infixl 5 _⊛_
-infixl 4 _⊕_
-
--- EvalNatExp
-infix 3 _⇓_
-data _⇓_ : Exp → ℕ → Set where
-  E-Const : ∀ {n} → Nat n ⇓ n
-  E-Plus : ∀ {e₁ n₁ e₂ n₂ n} → e₁ ⇓ n₁ → e₂ ⇓ n₂ → n₁ plus n₂ is n → e₁ ⊕ e₂ ⇓ n
-  E-Times : ∀ {e₁ n₁ e₂ n₂ n} → e₁ ⇓ n₁ → e₂ ⇓ n₂ → n₁ times n₂ is n → e₁ ⊛ e₂ ⇓ n
+open import BCoPL.EvalNatExp
 
 ex-1-8-1 : Nat Z ⊕ Nat (S (S Z)) ⇓ S (S Z)
 ex-1-8-1 = E-Plus E-Const E-Const P-Zero
