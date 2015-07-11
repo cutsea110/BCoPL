@@ -1,7 +1,6 @@
 module BCoPL.Show.ReduceNatExp where
 
 open import Data.String
-open import BCoPL.Nat
 open import BCoPL.ReduceNatExp
 open import BCoPL.Show.EvalNatExp public
 
