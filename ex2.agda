@@ -1,9 +1,10 @@
 module ex2 where
 
+open import Data.Product using (∃; _,_)
+open import Relation.Binary.PropositionalEquality as PropEq
+
 open import BCoPL.Nat
 open import BCoPL.Show.Nat
-open import Relation.Binary.PropositionalEquality as PropEq
-open import Data.Product using (∃; _,_)
 
 -- theorem 2.1 (1)
 left-identity-plus : ∀ {n} → Z plus n is n
@@ -28,3 +29,12 @@ closure-plus {S n₁} {S n₂} = S n₁ + S n₂ , P-Succ help
     help : ∀ {n₁ n₂} → n₁ plus S n₂ is (n₁ + S n₂)
     help {Z} = λ {n₃} → P-Zero
     help {S n₃} = P-Succ help
+
+-- theorem 2.4
+commutativity-plus : ∀ {n₁ n₂ n₃} → n₁ plus n₂ is n₃ → n₂ plus n₁ is n₃
+commutativity-plus {Z} P-Zero = right-identity-plus
+commutativity-plus {S n₁} (P-Succ p) = help (commutativity-plus p)
+  where
+    help : ∀ {n₁ n₂ n₃} → n₁ plus n₂ is n₃ → n₁ plus S n₂ is S n₃
+    help P-Zero = P-Zero
+    help (P-Succ p) = P-Succ (help p)
