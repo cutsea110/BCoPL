@@ -376,17 +376,35 @@ S(Z) * S(Z) + S(Z) * S(Z) -*-> S(S(Z)) by MR-Multi {
 }
 --}
 
-infixr 3 _-d+>_
-data _-d+>_ : Exp → Exp → Set where
-  DR-Plus : ∀ {n₁ n₂ n₃} → n₁ plus n₂ is n₃ → Nat n₁ ⊕ Nat n₂ -d+> Nat n₃
-  DR-Times : ∀ {n₁ n₂ n₃} → n₁ times n₂ is n₃ → Nat n₁ ⊛ Nat n₂ -d+> Nat n₃
-  DR-PlusL : ∀ {e₁ e₂ e₂′} → e₂ -d+> e₂′ → e₁ ⊕ e₂ -d+> e₁ ⊕ e₂′
-  DR-PlusR : ∀ {e₁ e₁′ n₂} → e₁ -d+> e₁′ → e₁ ⊕ Nat n₂ -d+> e₁′ ⊕ Nat n₂
-  DR-TimesL : ∀ {e₁ e₂ e₂′} → e₂ -d+> e₂′ → e₁ ⊛ e₂ -d+> e₁ ⊛ e₂′
-  DR-TimesR : ∀ {e₁ e₁′ n₂} → e₁ -d+> e₁′ → e₁ ⊛ Nat n₂ -d+> e₁′ ⊛ Nat n₂
+open import BCoPL.ReduceNatExpR renaming (_-d->_ to _-d+>_)
+open import BCoPL.Show.ReduceNatExpR renaming (showDerivation-d-> to showDerivation-d+>)
 
 ex-1-10-1 : Nat (S Z) ⊛ Nat (S Z) ⊕ Nat (S Z) ⊛ Nat (S Z) -d+> Nat (S Z) ⊛ Nat (S Z) ⊕ Nat (S Z)
 ex-1-10-1 = DR-PlusL (DR-Times (T-Succ T-Zero (P-Succ P-Zero)))
+{-
+S(Z) * S(Z) + S(Z) * S(Z) -d-> S(Z) * S(Z) + S(Z) by DR-PlusL {
+  S(Z) * S(Z) -d-> S(Z) by DR-Times {
+    S(Z) times S(Z) is S(Z) by T-Succ {
+      Z times S(Z) is Z by T-Zero {};
+      S(Z) plus Z is S(Z) by P-Succ {
+        Z plus Z is Z by P-Zero {};
+      };
+    };
+  };
+};
+-}
 
 ex-1-10-2 : Nat (S Z) ⊛ Nat (S Z) ⊕ Nat (S Z) -d+> Nat (S Z) ⊕ Nat (S Z)
 ex-1-10-2 = DR-PlusR (DR-Times (T-Succ T-Zero (P-Succ P-Zero)))
+{-
+S(Z) * S(Z) + S(Z) -d-> S(Z) + S(Z) by DR-PlusR {
+  S(Z) * S(Z) -d-> S(Z) by DR-Times {
+    S(Z) times S(Z) is S(Z) by T-Succ {
+      Z times S(Z) is Z by T-Zero {};
+      S(Z) plus Z is S(Z) by P-Succ {
+        Z plus Z is Z by P-Zero {};
+      };
+    };
+  };
+};
+-}
