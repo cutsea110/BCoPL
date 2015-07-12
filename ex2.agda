@@ -38,3 +38,39 @@ commutativity-plus {S n₁} (P-Succ p) = help (commutativity-plus p)
     help : ∀ {n₁ n₂ n₃} → n₁ plus n₂ is n₃ → n₁ plus S n₂ is S n₃
     help P-Zero = P-Zero
     help (P-Succ p) = P-Succ (help p)
+
+-- theorem 2.5
+associativity-plus : ∀ {n₁ n₂ n₃ n₄ n₅} → n₁ plus n₂ is n₄ → n₄ plus n₃ is n₅ →
+                     ∃ λ n₆ → n₂ plus n₃ is n₆ → n₁ plus n₆ is n₅
+associativity-plus {Z} {Z} {Z} {Z} {Z} P-Zero P-Zero = Z , (λ x → x)
+associativity-plus {Z} {Z} {Z} {Z} {S n₅} P-Zero ()
+associativity-plus {Z} {Z} {Z} {S n₄} {Z} () l₂
+associativity-plus {Z} {Z} {Z} {S n₄} {S n₅} () l₂
+associativity-plus {Z} {Z} {S n₃} {Z} {Z} P-Zero ()
+associativity-plus {Z} {Z} {S n₃} {Z} {S .n₃} P-Zero P-Zero = S n₃ , (λ x → x)
+associativity-plus {Z} {Z} {S n₃} {S n₄} {Z} () l₂
+associativity-plus {Z} {Z} {S n₃} {S n₄} {S n₅} () l₂
+associativity-plus {Z} {S n₂} {Z} {Z} {Z} () l₂
+associativity-plus {Z} {S n₂} {Z} {Z} {S n₅} () l₂
+associativity-plus {Z} {S n₂} {Z} {S .n₂} {Z} P-Zero ()
+associativity-plus {Z} {S n₂} {Z} {S .n₂} {S n₅} P-Zero (P-Succ l₂) = S n₅ , (λ x → P-Zero)
+associativity-plus {Z} {S n₂} {S n₃} {Z} {Z} () l₂
+associativity-plus {Z} {S n₂} {S n₃} {Z} {S n₅} () l₂
+associativity-plus {Z} {S n₂} {S n₃} {S .n₂} {Z} P-Zero ()
+associativity-plus {Z} {S n₂} {S n₃} {S .n₂} {S n₅} P-Zero (P-Succ l₂) = S n₅ , (λ x → P-Zero)
+associativity-plus {S n₁} {Z} {Z} {Z} {Z} () l₂
+associativity-plus {S n₁} {Z} {Z} {Z} {S n₅} () l₂
+associativity-plus {S n₁} {Z} {Z} {S n₄} {Z} (P-Succ l₁) ()
+associativity-plus {S n₁} {Z} {Z} {S n₄} {S n₅} (P-Succ l₁) (P-Succ l₂) = S n₅ , (λ ())
+associativity-plus {S n₁} {Z} {S n₃} {Z} {Z} () l₂
+associativity-plus {S n₁} {Z} {S n₃} {Z} {S n₅} () l₂
+associativity-plus {S n₁} {Z} {S n₃} {S n₄} {Z} (P-Succ l₁) ()
+associativity-plus {S n₁} {Z} {S n₃} {S n₄} {S n₅} (P-Succ l₁) (P-Succ l₂) = Z , (λ ())
+associativity-plus {S n₁} {S n₂} {Z} {Z} {Z} () l₂
+associativity-plus {S n₁} {S n₂} {Z} {Z} {S n₅} () l₂
+associativity-plus {S n₁} {S n₂} {Z} {S n₄} {Z} (P-Succ l₁) ()
+associativity-plus {S n₁} {S n₂} {Z} {S n₄} {S n₅} (P-Succ l₁) (P-Succ l₂) = Z , (λ ())
+associativity-plus {S n₁} {S n₂} {S n₃} {Z} {Z} () l₂
+associativity-plus {S n₁} {S n₂} {S n₃} {Z} {S n₅} () l₂
+associativity-plus {S n₁} {S n₂} {S n₃} {S n₄} {Z} (P-Succ l₁) ()
+associativity-plus {S n₁} {S n₂} {S n₃} {S n₄} {S n₅} (P-Succ l₁) (P-Succ l₂) = Z , (λ ())
