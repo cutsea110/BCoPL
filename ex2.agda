@@ -72,8 +72,8 @@ closure-times {S n₁} {S n₂} = S n₁ * S n₂ , help
     help {n₁} {n₂} = T-Succ help₂ (P-Succ help₃)
       where
         help₂ : ∀ {n₁ n₂} → n₁ times S n₂ is (n₁ * S n₂)
-        help₂ {Z} = λ {n₃} → T-Zero
-        help₂ {S n₅} = help
+        help₂ {Z} {n₂} = T-Zero
+        help₂ {S n₁} = help
         help₃ : ∀ {n₁ n₂} → n₁ plus n₂ is (n₁ + n₂)
         help₃ {Z} = P-Zero
-        help₃ {S n₅} = P-Succ help₃
+        help₃ {S n₁} = P-Succ help₃
