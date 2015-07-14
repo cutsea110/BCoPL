@@ -48,3 +48,9 @@ associativity-plus {Z} {S n₂} {n₅ = n₅} p₁ p₂ = n₅ , (λ x → P-Zer
 associativity-plus {S n₁} {Z} {Z} {n₅ = n₅} p₁ p₂ = S n₅ , (λ ())
 associativity-plus {S n₁} {Z} {S n₃} p₁ p₂ = Z , (λ ())
 associativity-plus {S n₁} {S n₂} p₁ p₂ = Z , (λ ())
+
+-- theorem 2.6
+uniqueness-times : ∀ {n₁ n₂ n₃ n₄} → n₁ times n₂ is n₃ → n₁ times n₂ is n₄ → n₃ ≡ n₄
+uniqueness-times T-Zero T-Zero = refl
+uniqueness-times (T-Succ t₁ p₁) (T-Succ t₂ p₂)
+  rewrite uniqueness-times t₁ t₂ | uniqueness-plus p₁ p₂ = refl
