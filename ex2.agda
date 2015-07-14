@@ -78,3 +78,7 @@ closure-times {S n₁} {S n₂} = S n₁ * S n₂ , help
         help₃ : ∀ {n₁ n₂} → n₁ plus n₂ is (n₁ + n₂)
         help₃ {Z} = P-Zero
         help₃ {S n₁} = P-Succ help₃
+
+-- theorem 2.9
+commutativity-times : ∀ {n₁ n₂ n₃} → n₁ times n₂ is n₃ → n₂ times n₁ is n₃
+commutativity-times = ?
