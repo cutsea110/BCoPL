@@ -54,3 +54,26 @@ uniqueness-times : ∀ {n₁ n₂ n₃ n₄} → n₁ times n₂ is n₃ → n�
 uniqueness-times T-Zero T-Zero = refl
 uniqueness-times (T-Succ t₁ p₁) (T-Succ t₂ p₂)
   rewrite uniqueness-times t₁ t₂ | uniqueness-plus p₁ p₂ = refl
+
+-- theorem 2.8 (1)
+left-zero-times : ∀ {n} → Z times n is Z
+left-zero-times = {!!}
+-- theorem 2.8 (2)
+right-zero-times : ∀ {n} → n times Z is Z
+right-zero-times = {!!}
+
+-- theorem 2.7
+closure-times : ∀ {n₁ n₂} → ∃ λ n₃ → n₁ times n₂ is n₃
+closure-times {Z} = Z , T-Zero
+closure-times {S n₁} {Z} = Z , right-zero-times
+closure-times {S n₁} {S n₂} = S n₁ * S n₂ , help
+  where
+    help : ∀ {n₁ n₂} → S n₁ times S n₂ is S (n₂ + n₁ * S n₂)
+    help {n₁} {n₂} = T-Succ help₂ (P-Succ help₃)
+      where
+        help₂ : ∀ {n₁ n₂} → n₁ times S n₂ is (n₁ * S n₂)
+        help₂ {Z} = λ {n₃} → T-Zero
+        help₂ {S n₅} = help
+        help₃ : ∀ {n₁ n₂} → n₁ plus n₂ is (n₁ + n₂)
+        help₃ {Z} = P-Zero
+        help₃ {S n₅} = P-Succ help₃
