@@ -57,10 +57,11 @@ uniqueness-times (T-Succ t₁ p₁) (T-Succ t₂ p₂)
 
 -- theorem 2.8 (1)
 left-zero-times : ∀ {n} → Z times n is Z
-left-zero-times = {!!}
+left-zero-times = T-Zero
 -- theorem 2.8 (2)
 right-zero-times : ∀ {n} → n times Z is Z
-right-zero-times = {!!}
+right-zero-times {Z} = T-Zero
+right-zero-times {S n} = T-Succ right-zero-times P-Zero
 
 -- theorem 2.7
 closure-times : ∀ {n₁ n₂} → ∃ λ n₃ → n₁ times n₂ is n₃
