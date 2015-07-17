@@ -81,4 +81,9 @@ closure-times {S n₁} {S n₂} = S n₁ * S n₂ , help
 
 -- theorem 2.9
 commutativity-times : ∀ {n₁ n₂ n₃} → n₁ times n₂ is n₃ → n₂ times n₁ is n₃
-commutativity-times = ?
+commutativity-times T-Zero = right-zero-times
+commutativity-times (T-Succ t p) = help (commutativity-times t) p
+  where
+    help : ∀ {n₁ n₂ n₃ n₄} → n₁ times n₂ is n₄ → n₁ plus n₄ is n₃ → n₁ times S n₂ is n₃
+    help {Z} T-Zero P-Zero = T-Zero
+    help {S n₁} (T-Succ t₁ p₁) (P-Succ p₂) = {!!}
