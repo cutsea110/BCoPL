@@ -86,3 +86,8 @@ commutativity-times (T-Succ t p) = help (commutativity-times t) p
     help : ∀ {n₁ n₂ n₃ n₄} → n₁ times n₂ is n₄ → n₁ plus n₄ is n₃ → n₁ times S n₂ is n₃
     help {Z} T-Zero P-Zero = T-Zero
     help {S n₁} (T-Succ t₁ p₁) (P-Succ p₂) = {!!}
+
+-- theorem 2.10
+associativity-times : ∀ {n₁ n₂ n₃ n₄ n₅} → n₁ times n₂ is n₄ → n₄ times n₃ is n₅ →
+                      ∃ λ n₆ → n₂ times n₃ is n₆ → n₁ times n₆ is n₅
+associativity-times t₁ t₂ = {!!}
