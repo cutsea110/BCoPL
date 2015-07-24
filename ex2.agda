@@ -79,13 +79,20 @@ closure-times {S n₁} {S n₂} = S n₁ * S n₂ , help
         help₃ {S n₁} = P-Succ help₃
 
 -- theorem 2.9
+swap-plus : ∀ {n₁ n₂ n₃ n₄ n₅} → n₂ plus n₃ is n₄ → n₁ plus n₄ is n₅ →
+            ∃ λ n₆ → n₁ plus n₃ is n₆ → n₂ plus n₆ is n₅
+swap-plus {n₅ = n₅} P-Zero p₂ = n₅ , const P-Zero
+swap-plus {n₃ = n₃} (P-Succ p₁) P-Zero = n₃ , const (P-Succ p₁)
+swap-plus (P-Succ p₁) (P-Succ p₂) = Z , (λ ())
+
 commutativity-times : ∀ {n₁ n₂ n₃} → n₁ times n₂ is n₃ → n₂ times n₁ is n₃
 commutativity-times T-Zero = right-zero-times
 commutativity-times (T-Succ t p) = help (commutativity-times t) p
   where
-    help : ∀ {n₁ n₂ n₃ n₄} → n₁ times n₂ is n₄ → n₁ plus n₄ is n₃ → n₁ times S n₂ is n₃
+    help : ∀ {n₁ n₂ n₃ n₄} → n₁ times n₂ is n₃ → n₁ plus n₃ is n₄ → n₁ times S n₂ is n₄
     help {Z} T-Zero P-Zero = T-Zero
-    help {S n₁} (T-Succ t₁ p₁) (P-Succ p₂) = {!!}
+    help {S n₁} {n₂} (T-Succ {n₃ = n₆} t₁ p₁) (P-Succ p₂) with swap-plus p₁ p₂
+    ... | n₁+n₆ , prf = T-Succ (help t₁ {!!}) (P-Succ (prf {!!}))
 
 -- theorem 2.10
 associativity-times : ∀ {n₁ n₂ n₃ n₄ n₅} → n₁ times n₂ is n₄ → n₄ times n₃ is n₅ →
