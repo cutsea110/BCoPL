@@ -1,6 +1,6 @@
 module ex2 where
 
-open import Data.Product using (∃; _,_)
+open import Data.Product using (∃; _,_; _×_)
 open import Function using (const; id)
 open import Relation.Binary.PropositionalEquality as PropEq
 
@@ -16,9 +16,9 @@ right-identity-plus {Z} = P-Zero
 right-identity-plus {S n} = P-Succ right-identity-plus
 
 -- theorem 2.2
-uniqueness-plus : ∀ {n₁ n₂ n₃ n₄} → n₁ plus n₂ is n₃ → n₁ plus n₂ is n₄ → n₃ ≡ n₄
-uniqueness-plus P-Zero P-Zero = refl
-uniqueness-plus (P-Succ p) (P-Succ q) = cong S (uniqueness-plus p q)
+uniqueness-plus : ∀ {n₁ n₂ n₃ n₄} → (n₁ plus n₂ is n₃) × (n₁ plus n₂ is n₄) → n₃ ≡ n₄
+uniqueness-plus (P-Zero , P-Zero) = refl
+uniqueness-plus (P-Succ proj₁ , P-Succ proj₂) = cong S (uniqueness-plus (proj₁ , proj₂))
 
 -- theorem 2.3
 closure-plus : ∀ {n₁ n₂} → ∃ λ n₃ → n₁ plus n₂ is n₃
@@ -41,18 +41,34 @@ commutativity-plus {S n₁} (P-Succ p) = help (commutativity-plus p)
     help (P-Succ p) = P-Succ (help p)
 
 -- theorem 2.5
-associativity-plus : ∀ {n₁ n₂ n₃ n₄ n₅} → n₁ plus n₂ is n₄ → n₄ plus n₃ is n₅ →
-                     ∃ λ n₆ → n₂ plus n₃ is n₆ → n₁ plus n₆ is n₅
-associativity-plus {Z} {n₅ = n₅} p₁ p₂ = n₅ , const P-Zero
-associativity-plus {S n₁} {Z} {Z} {n₅ = n₅} p₁ p₂ = S n₅ , (λ ())
-associativity-plus {S n₁} {Z} {S n₃} p₁ p₂ = Z , (λ ())
-associativity-plus {S n₁} {S n₂} p₁ p₂ = Z , (λ ())
+x+0+y=x+y : ∀ {n₁ n₂ n₃ n₄} → n₁ plus Z is n₂ → n₂ plus n₃ is n₄ → n₁ plus n₃ is n₄
+x+0+y=x+y P-Zero q = q
+x+0+y=x+y (P-Succ p) (P-Succ q) = P-Succ (x+0+y=x+y p q)
+
+x+y+0=x+y : ∀ {n₁ n₂ n₃ n₄} → n₁ plus n₂ is n₃ → n₃ plus Z is n₄ → n₁ plus n₂ is n₄
+x+y+0=x+y p P-Zero = p
+x+y+0=x+y P-Zero (P-Succ q) = commutativity-plus (P-Succ q)
+x+y+0=x+y (P-Succ p) (P-Succ q) = P-Succ (x+y+0=x+y p q)
+
+associativity-plus : ∀ {n₁ n₂ n₃ n₄ n₅} → (n₁ plus n₂ is n₄) × (n₄ plus n₃ is n₅) →
+                     ∃ λ n₆ → (n₂ plus n₃ is n₆) × (n₁ plus n₆ is n₅)
+associativity-plus {Z} {Z} {n₃ = n₃} (P-Zero , P-Zero) = n₃ , P-Zero , P-Zero
+associativity-plus {Z} {S n₂} {n₅ = n₅} (P-Zero , proj₂) = n₅ , proj₂ , P-Zero
+associativity-plus {S n₁} {Z} {n₃} (P-Succ proj₁ , P-Succ proj₂)
+  = n₃ , P-Zero , P-Succ (x+0+y=x+y proj₁ proj₂)
+associativity-plus {S n₁} {S n₂} {Z} (P-Succ proj₁ , P-Succ proj₂)
+  = (S n₂) , right-identity-plus , P-Succ (x+y+0=x+y proj₁ proj₂)
+associativity-plus {S n₁} {S n₂} {S n₃} (P-Succ proj₁ , P-Succ proj₂) with associativity-plus (proj₁ , proj₂)
+associativity-plus {S n₁} {S n₂} {S n₃} (P-Succ proj₁ , P-Succ proj₂) | Z , proj₃ , proj₄
+  = Z , proj₃ , P-Succ proj₄
+associativity-plus {S n₁} {S n₂} {S n₃} (P-Succ proj₁ , P-Succ proj₂) | S proj₃ , proj₄ , proj₅
+  = S proj₃ , proj₄ , P-Succ proj₅
 
 -- theorem 2.6
-uniqueness-times : ∀ {n₁ n₂ n₃ n₄} → n₁ times n₂ is n₃ → n₁ times n₂ is n₄ → n₃ ≡ n₄
-uniqueness-times T-Zero T-Zero = refl
-uniqueness-times (T-Succ t₁ p₁) (T-Succ t₂ p₂)
-  rewrite uniqueness-times t₁ t₂ | uniqueness-plus p₁ p₂ = refl
+uniqueness-times : ∀ {n₁ n₂ n₃ n₄} → (n₁ times n₂ is n₃) × (n₁ times n₂ is n₄) → n₃ ≡ n₄
+uniqueness-times (T-Zero , T-Zero) = refl
+uniqueness-times (T-Succ t₁ p₁ , T-Succ t₂ p₂)
+  rewrite uniqueness-times (t₁ , t₂) | uniqueness-plus (p₁ , p₂) = refl
 
 -- theorem 2.8 (1)
 left-zero-times : ∀ {n} → Z times n is Z
@@ -79,22 +95,19 @@ closure-times {S n₁} {S n₂} = S n₁ * S n₂ , help
         help₃ {S n₁} = P-Succ help₃
 
 -- theorem 2.9
-swap-plus : ∀ {n₁ n₂ n₃ n₄ n₅} → n₂ plus n₃ is n₄ → n₁ plus n₄ is n₅ →
-            ∃ λ n₆ → n₁ plus n₃ is n₆ → n₂ plus n₆ is n₅
-swap-plus {n₅ = n₅} P-Zero p₂ = n₅ , const P-Zero
-swap-plus {n₃ = n₃} (P-Succ p₁) P-Zero = n₃ , const (P-Succ p₁)
-swap-plus (P-Succ p₁) (P-Succ p₂) = Z , (λ ())
+swap-plus : ∀ {n₁ n₂ n₃ n₄ n₅} → (n₂ plus n₃ is n₄) × (n₁ plus n₄ is n₅) →
+            ∃ λ n₆ → (n₁ plus n₃ is n₆) × (n₂ plus n₆ is n₅)
+swap-plus {n₃ = n₃} (proj₁ , P-Zero) = n₃ , P-Zero , proj₁
+swap-plus (proj₁ , P-Succ proj₂) with swap-plus (proj₁ , proj₂)
+swap-plus (proj₁ , P-Succ proj₂) | Z , P-Zero , proj₄
+  = (S Z) , (P-Succ P-Zero) , commutativity-plus (P-Succ (commutativity-plus proj₄))
+swap-plus (proj₁ , P-Succ proj₂) | S proj₃ , proj₄ , proj₅
+  = S (S proj₃) , P-Succ proj₄ , commutativity-plus (P-Succ (commutativity-plus proj₅))
 
 commutativity-times : ∀ {n₁ n₂ n₃} → n₁ times n₂ is n₃ → n₂ times n₁ is n₃
-commutativity-times T-Zero = right-zero-times
-commutativity-times (T-Succ t p) = help (commutativity-times t) p
-  where
-    help : ∀ {n₁ n₂ n₃ n₄} → n₁ times n₂ is n₃ → n₁ plus n₃ is n₄ → n₁ times S n₂ is n₄
-    help {Z} T-Zero P-Zero = T-Zero
-    help {S n₁} {n₂} (T-Succ {n₃ = n₆} t₁ p₁) (P-Succ p₂) with swap-plus p₁ p₂
-    ... | n₁+n₆ , prf = T-Succ (help t₁ {!!}) (P-Succ (prf {!!}))
+commutativity-times = {!!}
 
 -- theorem 2.10
-associativity-times : ∀ {n₁ n₂ n₃ n₄ n₅} → n₁ times n₂ is n₄ → n₄ times n₃ is n₅ →
-                      ∃ λ n₆ → n₂ times n₃ is n₆ → n₁ times n₆ is n₅
-associativity-times t₁ t₂ = {!!}
+associativity-times : ∀ {n₁ n₂ n₃ n₄ n₅} → (n₁ times n₂ is n₄) × (n₄ times n₃ is n₅) →
+                      ∃ λ n₆ → (n₂ times n₃ is n₆) × (n₁ times n₆ is n₅)
+associativity-times = {!!}
