@@ -73,13 +73,26 @@ swap-plus (proj₁ , P-Succ proj₂) with swap-plus (proj₁ , proj₂)
 ... | S proj₃ , proj₄ , proj₅
   = S (S proj₃) , P-Succ proj₄ , commutativity-plus (P-Succ (commutativity-plus proj₅))
 
+left-identity-times : (n : ℕ) → S Z times n is n
+left-identity-times Z = T-Succ T-Zero P-Zero
+left-identity-times (S n) with left-identity-times n
+... | T-Succ T-Zero n+0=n with right-identity-plus n
+... | prf = T-Succ T-Zero (P-Succ n+0=n)
+
+right-identity-times : (n : ℕ) → n times S Z is n
+right-identity-times Z = T-Zero
+right-identity-times (S n) with right-identity-times n
+... | prf = T-Succ prf (P-Succ P-Zero)
+
 commutativity-times : ∀ {n₁ n₂ n₃} → n₁ times n₂ is n₃ → n₂ times n₁ is n₃
 commutativity-times {n₂ = n₂} T-Zero = right-zero-times n₂
 commutativity-times (T-Succ t p) = help (commutativity-times t) p
   where
     help : ∀ {n₁ n₂ n₃ n₄} → n₂ times n₁ is n₄ → n₂ plus n₄ is n₃ → n₂ times S n₁ is n₃
     help T-Zero P-Zero = T-Zero
-    help (T-Succ t₁ p₁) p₂ = {!!}
+    help (T-Succ t₁ p₁) (P-Succ p₂) with swap-plus (p₁ , p₂)
+    help (T-Succ t₁ p₁) (P-Succ p₂) | proj₁ , proj₂ , proj₃
+      = T-Succ (commutativity-times (T-Succ (commutativity-times t₁) proj₂)) (P-Succ proj₃)
 
 -- theorem 2.10
 associativity-times : ∀ {n₁ n₂ n₃ n₄ n₅} → (n₁ times n₂ is n₄) × (n₄ times n₃ is n₅) →
