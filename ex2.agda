@@ -95,6 +95,38 @@ commutativity-times (T-Succ t p) = help (commutativity-times t) p
       = T-Succ (commutativity-times (T-Succ (commutativity-times t₁) proj₂)) (P-Succ proj₃)
 
 -- theorem 2.10
+n+Sm=Sn+m : ∀ {n₁ n₂ n₃} → n₁ plus S n₂ is n₃ → S n₁ plus n₂ is n₃
+n+Sm=Sn+m P-Zero = P-Succ P-Zero
+n+Sm=Sn+m (P-Succ p) = P-Succ (n+Sm=Sn+m p)
+Sn+m=n+Sm : ∀ {n₁ n₂ n₃} → S n₁ plus n₂ is n₃ → n₁ plus S n₂ is n₃
+Sn+m=n+Sm (P-Succ p) = commutativity-plus (P-Succ (commutativity-plus p))
+
+associativity-plus-rev : ∀ {n₁ n₂ n₃ n₄ n₅} → (n₂ plus n₃ is n₄) × (n₁ plus n₄ is n₅) →
+                     ∃ λ n₆ → (n₁ plus n₂ is n₆) × (n₆ plus n₃ is n₅)
+associativity-plus-rev (P-Zero , P-Zero) = Z , P-Zero , P-Zero
+associativity-plus-rev {S n₁} (P-Zero , P-Succ p) = (S n₁) , P-Succ (right-identity-plus n₁) , P-Succ p
+associativity-plus-rev {Z} {S n₂} (P-Succ p₁ , P-Zero) = (S n₂) , (P-Zero , (P-Succ p₁))
+associativity-plus-rev {S n₁} {S n₂} {n₃} (P-Succ p₁ , P-Succ p₂) with n+Sm=Sn+m p₂
+... | prf₁ with associativity-plus-rev (p₁ , prf₁)
+... | proj₁ , proj₂ , proj₃ = (S proj₁) , (commutativity-plus (P-Succ (commutativity-plus proj₂)) , P-Succ proj₃)
+
+distributivity-right : ∀ {n₁ n₂ n₃ n₄ n₅} → (n₁ plus n₂ is n₄) × (n₄ times n₃ is n₅) →
+                     ∃ λ n₆ → ∃ λ n₇ → (n₁ times n₃ is n₆) × (n₂ times n₃ is n₇) × (n₆ plus n₇ is n₅)
+distributivity-right {n₅ = n₅} (P-Zero , proj₂) = Z , n₅ , T-Zero , proj₂ , P-Zero
+distributivity-right {S n₁} {n₂} {n₃} (P-Succ p₁ , T-Succ t₂ p₂) with distributivity-right (p₁ , t₂)
+... | proj₁ , proj₂ , proj₃ , proj₄ , proj₅ with associativity-plus-rev (proj₅ , p₂)
+... | proj₆ , proj₇ , proj₈ = proj₆ , (proj₂ , T-Succ proj₃ proj₇ , proj₄ , proj₈)
+
+
 associativity-times : ∀ {n₁ n₂ n₃ n₄ n₅} → (n₁ times n₂ is n₄) × (n₄ times n₃ is n₅) →
                       ∃ λ n₆ → (n₂ times n₃ is n₆) × (n₁ times n₆ is n₅)
-associativity-times = {!!}
+associativity-times {n₂ = n₂} {n₃ = n₃} (T-Zero , T-Zero) with closure-times n₂ n₃
+... | proj₁ , proj₂ = proj₁ , proj₂ , T-Zero
+associativity-times (T-Succ t₁ P-Zero , T-Zero) = Z , (T-Zero , T-Succ t₁ P-Zero)
+associativity-times {S n₁} (T-Succ t₁ p₁ , t₂) with distributivity-right (p₁ , t₂)
+... | proj₁ , proj₂ , proj₃ , proj₄ , proj₅ with associativity-times (t₁ , proj₄)
+... | proj₆ , proj₇ , proj₈ with uniqueness-times (proj₃ , proj₇)
+associativity-times {S n₁} (T-Succ t₁ p₁ , t₂)
+    | proj₁ , proj₂ , proj₃ , proj₄ , proj₅
+    | .proj₁ , proj₇ , proj₈
+    | refl = proj₁ , proj₃ , T-Succ proj₈ proj₅
