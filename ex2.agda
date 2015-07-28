@@ -155,6 +155,7 @@ Z-smallest3 (S n) = L-SuccR (Z-smallest3 n)
 S-keeps-order1 : ∀ {n₁ n₂} → S n₁ is-less-than1 S n₂ → n₁ is-less-than1 n₂
 S-keeps-order1 p = {!!}
 
+
 -- theorem 2.12 (2)
 S-keeps-order2 : ∀ {n₁ n₂} → S n₁ is-less-than2 S n₂ → n₁ is-less-than2 n₂
 S-keeps-order2 (L-SuccSucc p) = p
@@ -165,3 +166,21 @@ S-keeps-order3 {n₂ = Z} (L-SuccR ())
 S-keeps-order3 {Z} {S n₂} p = Z-smallest3 n₂
 S-keeps-order3 {S n₁} {S .(S n₁)} L-Succ = L-Succ
 S-keeps-order3 {S n₁} {S n₂} (L-SuccR p) = L-SuccR (S-keeps-order3 p)
+
+-- theorem 2.13 (1)
+transitivity-less-than1 : ∀ {n₁ n₂ n₃} → n₁ is-less-than1 n₂ → n₂ is-less-than1 n₃ → n₁ is-less-than1 n₃
+transitivity-less-than1 p₁ p₂ = L-Trans p₁ p₂
+
+-- theorem 2.13 (2)
+transitivity-less-than2 : ∀ {n₁ n₂ n₃} → n₁ is-less-than2 n₂ → n₂ is-less-than2 n₃ → n₁ is-less-than2 n₃
+transitivity-less-than2 L-Zero (L-SuccSucc p₂) = L-Zero
+transitivity-less-than2 (L-SuccSucc p₁) (L-SuccSucc p₂)
+  = L-SuccSucc (transitivity-less-than2 p₁ p₂)
+
+-- theorem 2.13 (3)
+transitivity-less-than3 : ∀ {n₁ n₂ n₃} → n₁ is-less-than3 n₂ → n₂ is-less-than3 n₃ → n₁ is-less-than3 n₃
+transitivity-less-than3 L-Succ L-Succ = L-SuccR L-Succ
+transitivity-less-than3 {n₁} {S .n₁} L-Succ (L-SuccR p₂) = L-SuccR (transitivity-less-than3 L-Succ p₂)
+transitivity-less-than3 {n₂ = S n₂} (L-SuccR p₁) L-Succ = L-SuccR (L-SuccR p₁)
+transitivity-less-than3 {n₂ = S n₂} (L-SuccR p₁) (L-SuccR p₂)
+  = L-SuccR (transitivity-less-than3 (L-SuccR p₁) p₂)
