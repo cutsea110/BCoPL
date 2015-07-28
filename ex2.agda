@@ -130,3 +130,23 @@ associativity-times {S n₁} (T-Succ t₁ p₁ , t₂)
     | proj₁ , proj₂ , proj₃ , proj₄ , proj₅
     | .proj₁ , proj₇ , proj₈
     | refl = proj₁ , proj₃ , T-Succ proj₈ proj₅
+
+-- theorem 2.11 (1)
+open import BCoPL.CompareNat1 renaming (_is-less-than_ to _is-less-than1_)
+
+Z-smallest1 : (n : ℕ) → Z is-less-than1 S n
+Z-smallest1 Z = L-Succ
+Z-smallest1 (S n) = L-Trans (Z-smallest1 n) L-Succ
+
+-- theorem 2.11 (2)
+open import BCoPL.CompareNat2 renaming (_is-less-than_ to _is-less-than2_)
+
+Z-smallest2 : (n : ℕ) → Z is-less-than2 S n
+Z-smallest2 n = L-Zero
+
+-- theorem 2.11 (3)
+open import BCoPL.CompareNat3 renaming (_is-less-than_ to _is-less-than3_)
+
+Z-smallest3 : (n : ℕ) → Z is-less-than3 S n
+Z-smallest3 Z = L-Succ
+Z-smallest3 (S n) = L-SuccR (Z-smallest3 n)
