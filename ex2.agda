@@ -150,3 +150,18 @@ open import BCoPL.CompareNat3 renaming (_is-less-than_ to _is-less-than3_)
 Z-smallest3 : (n : ℕ) → Z is-less-than3 S n
 Z-smallest3 Z = L-Succ
 Z-smallest3 (S n) = L-SuccR (Z-smallest3 n)
+
+-- theorem 2.12 (1)
+S-keeps-order1 : ∀ {n₁ n₂} → S n₁ is-less-than1 S n₂ → n₁ is-less-than1 n₂
+S-keeps-order1 p = {!!}
+
+-- theorem 2.12 (2)
+S-keeps-order2 : ∀ {n₁ n₂} → S n₁ is-less-than2 S n₂ → n₁ is-less-than2 n₂
+S-keeps-order2 (L-SuccSucc p) = p
+
+-- theorem 2.12 (3)
+S-keeps-order3 : ∀ {n₁ n₂} → S n₁ is-less-than3 S n₂ → n₁ is-less-than3 n₂
+S-keeps-order3 {n₂ = Z} (L-SuccR ())
+S-keeps-order3 {Z} {S n₂} p = Z-smallest3 n₂
+S-keeps-order3 {S n₁} {S .(S n₁)} L-Succ = L-Succ
+S-keeps-order3 {S n₁} {S n₂} (L-SuccR p) = L-SuccR (S-keeps-order3 p)
