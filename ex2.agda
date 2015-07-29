@@ -346,15 +346,11 @@ reduce-same-exp {._ ⊕ ._} {Nat n₁} {e₃ ⊛ e₄} (R-Plus x , ())
 reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊕ e₄} {Nat n₂} (x₁ , x₂) = {!!}
 reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊕ e₄} {e₅ ⊕ e₆} (x₁ , x₂) = {!!}
 reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊕ e₄} {e₅ ⊛ e₆} (x₁ , ())
-reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊛ e₄} {Nat n₂} (() , x₂)
-reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊛ e₄} {e₅ ⊕ e₆} (() , x₂)
-reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊛ e₄} {e₅ ⊛ e₆} (() , x₂)
+reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊛ e₄} (() , x₂)
 reduce-same-exp {e₁ ⊛ e₂} {Nat n₁} {Nat n₂} (x₁ , x₂) = {!!}
 reduce-same-exp {e₁ ⊛ e₂} {Nat n₁} {e₃ ⊕ e₄} (x₁ , ())
 reduce-same-exp {e₁ ⊛ e₂} {Nat n₁} {e₃ ⊛ e₄} (x₁ , x₂) = {!!}
-reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊕ e₄} {Nat n₂} (() , x₂)
-reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊕ e₄} {e₅ ⊕ e₆} (() , x₂)
-reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊕ e₄} {e₅ ⊛ e₆} (() , x₂)
+reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊕ e₄} (() , x₂)
 reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊛ e₄} {Nat n₂} (x₁ , x₂) = {!!}
 reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊛ e₄} {e₅ ⊕ e₆} (x₁ , ())
 reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊛ e₄} {e₅ ⊛ e₆} (x₁ , x₂) = {!!}
