@@ -152,8 +152,26 @@ Z-smallest3 Z = L-Succ
 Z-smallest3 (S n) = L-SuccR (Z-smallest3 n)
 
 -- theorem 2.12 (1)
+n₁<n₂→Sn₁<Sn₂ : ∀ {n₁ n₂} → n₁ is-less-than1 n₂ → S n₁ is-less-than1 S n₂
+n₁<n₂→Sn₁<Sn₂ L-Succ = L-Succ
+n₁<n₂→Sn₁<Sn₂ (L-Trans p p₁) = L-Trans (n₁<n₂→Sn₁<Sn₂ p) (n₁<n₂→Sn₁<Sn₂ p₁)
+
+n₁<n₂→n₂<n₃→Sn₁<n₃ : ∀ {n₁ n₂ n₃} → n₁ is-less-than1 n₂ → n₂ is-less-than1 n₃ → S n₁ is-less-than1 n₃
+n₁<n₂→n₂<n₃→Sn₁<n₃ L-Succ p₂ = p₂
+n₁<n₂→n₂<n₃→Sn₁<n₃ (L-Trans p₁ p₂) p₃ with n₁<n₂→Sn₁<Sn₂ p₁ | n₁<n₂→n₂<n₃→Sn₁<n₃ p₂ p₃
+... | prf₁ | prf₂ = L-Trans prf₁ prf₂
+
+n₁<n₂→n₂<Sn₃→n₁<n₃ : ∀ {n₁ n₂ n₃} → n₁ is-less-than1 n₂ → n₂ is-less-than1 S n₃ → n₁ is-less-than1 n₃
+n₁<n₂→n₂<Sn₃→n₁<n₃ L-Succ L-Succ = L-Succ
+n₁<n₂→n₂<Sn₃→n₁<n₃ L-Succ (L-Trans p₂ p₃) = L-Trans L-Succ (n₁<n₂→n₂<Sn₃→n₁<n₃ p₂ p₃)
+n₁<n₂→n₂<Sn₃→n₁<n₃ (L-Trans p₁ p₂) p₃ = L-Trans p₁ (n₁<n₂→n₂<Sn₃→n₁<n₃ p₂ p₃)
+
 S-keeps-order1 : ∀ {n₁ n₂} → S n₁ is-less-than1 S n₂ → n₁ is-less-than1 n₂
-S-keeps-order1 p = {!!}
+S-keeps-order1 L-Succ = L-Succ
+S-keeps-order1 (L-Trans p₁ p₂) with n₁<n₂→n₂<n₃→Sn₁<n₃ p₁ p₂
+S-keeps-order1 (L-Trans p₁ p₂) | L-Succ = L-Trans L-Succ L-Succ
+S-keeps-order1 (L-Trans p₁ p₂) | L-Trans prf₁ prf₂ with n₁<n₂→n₂<Sn₃→n₁<n₃ prf₁ prf₂
+... | prf = L-Trans L-Succ (L-Trans L-Succ prf)
 
 -- theorem 2.12 (2)
 S-keeps-order2 : ∀ {n₁ n₂} → S n₁ is-less-than2 S n₂ → n₁ is-less-than2 n₂
