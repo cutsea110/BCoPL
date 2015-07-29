@@ -186,7 +186,14 @@ transitivity-less-than3 {n₂ = S n₂} (L-SuccR p₁) (L-SuccR p₂)
 
 -- theorem 2.14
 equality-comparenat-1→2 : ∀ {n₁ n₂} → n₁ is-less-than1 n₂ → n₁ is-less-than2 n₂
-equality-comparenat-1→2 p = {!!}
+equality-comparenat-1→2 {Z} {S .0} L-Succ = L-Zero
+equality-comparenat-1→2 {S n₁} {S .(S n₁)} L-Succ = L-SuccSucc (equality-comparenat-1→2 L-Succ)
+equality-comparenat-1→2 (L-Trans p₁ p₂) with equality-comparenat-1→2 p₁ | equality-comparenat-1→2 p₂
+... | prf₁ | prf₂ = help prf₁ prf₂
+  where
+    help : ∀ {n₁ n₂ n₃} → n₁ is-less-than2 n₃ → n₃ is-less-than2 n₂ → n₁ is-less-than2 n₂
+    help L-Zero (L-SuccSucc p₃) = L-Zero
+    help (L-SuccSucc p₃) (L-SuccSucc p₄) = L-SuccSucc (help p₃ p₄)
 
 equality-comparenat-2→1 : ∀ {n₁ n₂} → n₁ is-less-than2 n₂ → n₁ is-less-than1 n₂
 equality-comparenat-2→1 {n₂ = S n₂} L-Zero = Z-smallest1 n₂
