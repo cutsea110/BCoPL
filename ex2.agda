@@ -304,3 +304,35 @@ associativity-⊛ : ∀ {e₁ e₂ e₃ n} → (e₁ ⊛ e₂) ⊛ e₃ ⇓ n �
 associativity-⊛ (E-Times (E-Times s₁ s₂ t₁) s₃ t₂) with associativity-times (t₁ , t₂)
 associativity-⊛ (E-Times (E-Times s₁ s₂ t₁) s₃ t₂) | proj₁ , proj₂ , proj₃
   = E-Times s₁ (E-Times s₂ s₃ proj₂) proj₃
+
+-- theorem 2.21
+open import BCoPL.ReduceNatExp
+open import Data.Unit using (⊤; tt)
+open import Data.Empty using (⊥; ⊥-elim)
+open import Relation.Nullary.Core using (¬_)
+
+notPeano : (e : Exp) → Set
+notPeano (Nat n) = ⊥
+notPeano (e₁ ⊕ e₂) = ⊤
+notPeano (e₁ ⊛ e₂) = ⊤
+
+reduceability-⟶ : (e : Exp) → notPeano e → ∃ λ e′ → e ⟶ e′
+reduceability-⟶ (Nat n) ()
+reduceability-⟶ (Nat n₁ ⊕ Nat n₂) tt = Nat (n₁ + n₂) , R-Plus (eval-plus n₁ n₂)
+reduceability-⟶ (Nat n₁ ⊕ (e₂ ⊕ e₃)) tt with reduceability-⟶ (e₂ ⊕ e₃) tt
+... | proj₁ , proj₂ = (Nat n₁ ⊕ proj₁) , R-PlusR proj₂
+reduceability-⟶ (Nat n₁ ⊕ (e₂ ⊛ e₃)) tt with reduceability-⟶ (e₂ ⊛ e₃) tt
+... | proj₁ , proj₂ = (Nat n₁ ⊕ proj₁) , R-PlusR proj₂
+reduceability-⟶ ((e₁ ⊕ e₂) ⊕ e₃) tt with reduceability-⟶ (e₁ ⊕ e₂) tt
+... | proj₁ , proj₂ = (proj₁ ⊕ e₃) , R-PlusL proj₂
+reduceability-⟶ ((e₁ ⊛ e₂) ⊕ e₃) tt with reduceability-⟶ (e₁ ⊛ e₂) tt
+... | proj₁ , proj₂ = (proj₁ ⊕ e₃) , R-PlusL proj₂
+reduceability-⟶ (Nat n₁ ⊛ Nat n₂) tt = (Nat (n₁ * n₂)) , (R-Times (eval-times n₁ n₂))
+reduceability-⟶ (Nat n₁ ⊛ (e₂ ⊕ e₃)) tt with reduceability-⟶ (e₂ ⊕ e₃) tt
+... | proj₁ , proj₂ = Nat n₁ ⊛ proj₁ , R-TimesR proj₂
+reduceability-⟶ (Nat n₁ ⊛ (e₂ ⊛ e₃)) tt with reduceability-⟶ (e₂ ⊛ e₃) tt
+... | proj₁ , proj₂ = Nat n₁ ⊛ proj₁ , R-TimesR proj₂
+reduceability-⟶ ((e₁ ⊕ e₂) ⊛ e₃) tt with reduceability-⟶ (e₁ ⊕ e₂) tt
+... | proj₁ , proj₂ = proj₁ ⊛ e₃ , R-TimesL proj₂
+reduceability-⟶ ((e₁ ⊛ e₂) ⊛ e₃) tt with reduceability-⟶ (e₁ ⊛ e₂) tt
+... | proj₁ , proj₂ = proj₁ ⊛ e₃ , R-TimesL proj₂
