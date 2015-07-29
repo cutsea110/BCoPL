@@ -155,7 +155,6 @@ Z-smallest3 (S n) = L-SuccR (Z-smallest3 n)
 S-keeps-order1 : ∀ {n₁ n₂} → S n₁ is-less-than1 S n₂ → n₁ is-less-than1 n₂
 S-keeps-order1 p = {!!}
 
-
 -- theorem 2.12 (2)
 S-keeps-order2 : ∀ {n₁ n₂} → S n₁ is-less-than2 S n₂ → n₁ is-less-than2 n₂
 S-keeps-order2 (L-SuccSucc p) = p
@@ -184,3 +183,28 @@ transitivity-less-than3 {n₁} {S .n₁} L-Succ (L-SuccR p₂) = L-SuccR (transi
 transitivity-less-than3 {n₂ = S n₂} (L-SuccR p₁) L-Succ = L-SuccR (L-SuccR p₁)
 transitivity-less-than3 {n₂ = S n₂} (L-SuccR p₁) (L-SuccR p₂)
   = L-SuccR (transitivity-less-than3 (L-SuccR p₁) p₂)
+
+-- theorem 2.14
+equality-comparenat-1→2 : ∀ {n₁ n₂} → n₁ is-less-than1 n₂ → n₁ is-less-than2 n₂
+equality-comparenat-1→2 p = {!!}
+
+equality-comparenat-2→1 : ∀ {n₁ n₂} → n₁ is-less-than2 n₂ → n₁ is-less-than1 n₂
+equality-comparenat-2→1 {n₂ = S n₂} L-Zero = Z-smallest1 n₂
+equality-comparenat-2→1 (L-SuccSucc p) with equality-comparenat-2→1 p
+... | prf = help prf
+  where
+    help : ∀ {n₁ n₂} → n₁ is-less-than1 n₂ → S n₁ is-less-than1 S n₂
+    help L-Succ = L-Succ
+    help (L-Trans p₁ p₂) = L-Trans (help p₁) (help p₂)
+
+equality-comparenat-2→3 : ∀ {n₁ n₂} → n₁ is-less-than2 n₂ → n₁ is-less-than3 n₂
+equality-comparenat-2→3 p = {!!}
+
+equality-comparenat-3→2 : ∀ {n₁ n₂} → n₁ is-less-than3 n₂ → n₁ is-less-than2 n₂
+equality-comparenat-3→2 p = {!!}
+
+equality-comparenat-3→1 : ∀ {n₁ n₂} → n₁ is-less-than3 n₂ → n₁ is-less-than1 n₂
+equality-comparenat-3→1 p = {!!}
+
+equality-comparenat-1→3 : ∀ {n₁ n₂} → n₁ is-less-than1 n₂ → n₁ is-less-than3 n₂
+equality-comparenat-1→3 p = {!!}
