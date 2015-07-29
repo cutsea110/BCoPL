@@ -298,3 +298,9 @@ associativity-⊕ (E-Plus (E-Plus s₁ s₂ p₁) s₃ p₂) | proj₁ , proj₂
 commutativity-⊛ : ∀ {e₁ e₂ n} → e₁ ⊛ e₂ ⇓ n → e₂ ⊛ e₁ ⇓ n
 commutativity-⊛ (E-Times s₁ s₂ t) with commutativity-times t
 ... | prf = E-Times s₂ s₁ prf
+
+-- theorem 2.20
+associativity-⊛ : ∀ {e₁ e₂ e₃ n} → (e₁ ⊛ e₂) ⊛ e₃ ⇓ n → e₁ ⊛ (e₂ ⊛ e₃) ⇓ n
+associativity-⊛ (E-Times (E-Times s₁ s₂ t₁) s₃ t₂) with associativity-times (t₁ , t₂)
+associativity-⊛ (E-Times (E-Times s₁ s₂ t₁) s₃ t₂) | proj₁ , proj₂ , proj₃
+  = E-Times s₁ (E-Times s₂ s₃ proj₂) proj₃
