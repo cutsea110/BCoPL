@@ -229,4 +229,12 @@ equality-comparenat-3→1 (L-SuccR p) with equality-comparenat-3→1 p
 ... | prf = L-Trans prf L-Succ
 
 equality-comparenat-1→3 : ∀ {n₁ n₂} → n₁ is-less-than1 n₂ → n₁ is-less-than3 n₂
-equality-comparenat-1→3 p = {!!}
+equality-comparenat-1→3 L-Succ = L-Succ
+equality-comparenat-1→3 (L-Trans p₁ p₂) with equality-comparenat-1→3 p₁ | equality-comparenat-1→3 p₂
+... | prf₁ | prf₂ = help prf₁ prf₂
+  where
+    help : ∀ {n₁ n₂ n₃} → n₁ is-less-than3 n₃ → n₃ is-less-than3 n₂ → n₁ is-less-than3 n₂
+    help L-Succ L-Succ = L-SuccR L-Succ
+    help L-Succ (L-SuccR p₃) = L-SuccR (help L-Succ p₃)
+    help (L-SuccR p₃) L-Succ = L-SuccR (L-SuccR p₃)
+    help (L-SuccR p₃) (L-SuccR p₄) = L-SuccR (help (L-SuccR p₃) p₄)
