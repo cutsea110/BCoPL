@@ -256,3 +256,21 @@ equality-comparenat-1→3 (L-Trans p₁ p₂) with equality-comparenat-1→3 p�
     help L-Succ (L-SuccR p₃) = L-SuccR (help L-Succ p₃)
     help (L-SuccR p₃) L-Succ = L-SuccR (L-SuccR p₃)
     help (L-SuccR p₃) (L-SuccR p₄) = L-SuccR (help (L-SuccR p₃) p₄)
+
+-- theorem 2.15
+open import BCoPL.EvalNatExp
+
+eval-plus : ∀ n₁ n₂ → n₁ plus n₂ is (n₁ + n₂)
+eval-plus Z n₂ = P-Zero
+eval-plus (S n₁) n₂ = P-Succ (eval-plus n₁ n₂)
+
+eval-times : ∀ n₁ n₂ → n₁ times n₂ is (n₁ * n₂)
+eval-times Z n₂ = T-Zero
+eval-times (S n₁) n₂ = T-Succ (eval-times n₁ n₂) (eval-plus n₂ (n₁ * n₂))
+
+totality-⇓ : (e : Exp) → ∃ λ n → e ⇓ n
+totality-⇓ (Nat n) = n , E-Const
+totality-⇓ (e₁ ⊕ e₂) with totality-⇓ e₁ | totality-⇓ e₂
+totality-⇓ (e₁ ⊕ e₂) | v₁ , prf₁ | v₂ , prf₂ = v₁ + v₂ , E-Plus prf₁ prf₂ (eval-plus v₁ v₂)
+totality-⇓ (e₁ ⊛ e₂) with totality-⇓ e₁ | totality-⇓ e₂
+totality-⇓ (e₁ ⊛ e₂) | v₁ , prf₁ | v₂ , prf₂ = (v₁ * v₂) , E-Times prf₁ prf₂ (eval-times v₁ v₂)
