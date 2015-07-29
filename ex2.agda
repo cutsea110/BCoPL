@@ -288,6 +288,12 @@ commutativity-⊕ : ∀ {e₁ e₂ n} → e₁ ⊕ e₂ ⇓ n → e₂ ⊕ e₁ 
 commutativity-⊕ (E-Plus s₁ s₂ p) with commutativity-plus p
 ... | prf = E-Plus s₂ s₁ prf
 
+-- theorem 2.18
+associativity-⊕ : ∀ {e₁ e₂ e₃ n} → (e₁ ⊕ e₂) ⊕ e₃ ⇓ n → e₁ ⊕ (e₂ ⊕ e₃) ⇓ n
+associativity-⊕ (E-Plus (E-Plus s₁ s₂ p₁) s₃ p₂) with associativity-plus (p₁ , p₂)
+associativity-⊕ (E-Plus (E-Plus s₁ s₂ p₁) s₃ p₂) | proj₁ , proj₂ , proj₃
+  = E-Plus s₁ (E-Plus s₂ s₃ proj₂) proj₃
+
 -- theorem 2.19
 commutativity-⊛ : ∀ {e₁ e₂ n} → e₁ ⊛ e₂ ⇓ n → e₂ ⊛ e₁ ⇓ n
 commutativity-⊛ (E-Times s₁ s₂ t) with commutativity-times t
