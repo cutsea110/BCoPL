@@ -274,3 +274,11 @@ totality-⇓ (e₁ ⊕ e₂) with totality-⇓ e₁ | totality-⇓ e₂
 totality-⇓ (e₁ ⊕ e₂) | v₁ , prf₁ | v₂ , prf₂ = v₁ + v₂ , E-Plus prf₁ prf₂ (eval-plus v₁ v₂)
 totality-⇓ (e₁ ⊛ e₂) with totality-⇓ e₁ | totality-⇓ e₂
 totality-⇓ (e₁ ⊛ e₂) | v₁ , prf₁ | v₂ , prf₂ = (v₁ * v₂) , E-Times prf₁ prf₂ (eval-times v₁ v₂)
+
+-- theorem 2.16
+uniqueness-⇓ : ∀ {n₁ n₂ e} → e ⇓ n₁ × e ⇓ n₂ → n₁ ≡ n₂
+uniqueness-⇓ (E-Const , E-Const) = refl
+uniqueness-⇓ (E-Plus s₁ s₂ p₁ , E-Plus s₃ s₄ p₂)
+  rewrite uniqueness-⇓ (s₁ , s₃) | uniqueness-⇓ (s₂ , s₄) | uniqueness-plus (p₁ , p₂) = refl
+uniqueness-⇓ (E-Times s₁ s₂ t₁ , E-Times s₃ s₄ t₂)
+  rewrite uniqueness-⇓ (s₁ , s₃) | uniqueness-⇓ (s₂ , s₄) | uniqueness-times (t₁ , t₂) = refl
