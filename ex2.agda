@@ -214,7 +214,14 @@ equality-comparenat-2→3 (L-SuccSucc p) with equality-comparenat-2→3 p
     help (L-SuccR p₁) = L-SuccR (help p₁)
 
 equality-comparenat-3→2 : ∀ {n₁ n₂} → n₁ is-less-than3 n₂ → n₁ is-less-than2 n₂
-equality-comparenat-3→2 p = {!!}
+equality-comparenat-3→2 {Z} {S .0} L-Succ = L-Zero
+equality-comparenat-3→2 {S n₁} {S .(S n₁)} L-Succ = L-SuccSucc (equality-comparenat-3→2 L-Succ)
+equality-comparenat-3→2 (L-SuccR p) with equality-comparenat-3→2 p
+... | prf = help prf
+  where
+    help : ∀ {n₁ n₂} → n₁ is-less-than2 n₂ → n₁ is-less-than2 S n₂
+    help L-Zero = L-Zero
+    help (L-SuccSucc p₁) = L-SuccSucc (help p₁)
 
 equality-comparenat-3→1 : ∀ {n₁ n₂} → n₁ is-less-than3 n₂ → n₁ is-less-than1 n₂
 equality-comparenat-3→1 p = {!!}
