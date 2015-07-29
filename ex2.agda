@@ -282,3 +282,8 @@ uniqueness-⇓ (E-Plus s₁ s₂ p₁ , E-Plus s₃ s₄ p₂)
   rewrite uniqueness-⇓ (s₁ , s₃) | uniqueness-⇓ (s₂ , s₄) | uniqueness-plus (p₁ , p₂) = refl
 uniqueness-⇓ (E-Times s₁ s₂ t₁ , E-Times s₃ s₄ t₂)
   rewrite uniqueness-⇓ (s₁ , s₃) | uniqueness-⇓ (s₂ , s₄) | uniqueness-times (t₁ , t₂) = refl
+
+-- theorem 2.17
+commutativity-⊕ : ∀ {e₁ e₂ n} → e₁ ⊕ e₂ ⇓ n → e₂ ⊕ e₁ ⇓ n
+commutativity-⊕ (E-Plus s₁ s₂ p) with commutativity-plus p
+... | prf = E-Plus s₂ s₁ prf
