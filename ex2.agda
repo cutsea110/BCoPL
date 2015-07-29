@@ -287,3 +287,8 @@ uniqueness-⇓ (E-Times s₁ s₂ t₁ , E-Times s₃ s₄ t₂)
 commutativity-⊕ : ∀ {e₁ e₂ n} → e₁ ⊕ e₂ ⇓ n → e₂ ⊕ e₁ ⇓ n
 commutativity-⊕ (E-Plus s₁ s₂ p) with commutativity-plus p
 ... | prf = E-Plus s₂ s₁ prf
+
+-- theorem 2.19
+commutativity-⊛ : ∀ {e₁ e₂ n} → e₁ ⊛ e₂ ⇓ n → e₂ ⊛ e₁ ⇓ n
+commutativity-⊛ (E-Times s₁ s₂ t) with commutativity-times t
+... | prf = E-Times s₂ s₁ prf
