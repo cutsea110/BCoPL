@@ -198,7 +198,13 @@ equality-comparenat-2→1 (L-SuccSucc p) with equality-comparenat-2→1 p
     help (L-Trans p₁ p₂) = L-Trans (help p₁) (help p₂)
 
 equality-comparenat-2→3 : ∀ {n₁ n₂} → n₁ is-less-than2 n₂ → n₁ is-less-than3 n₂
-equality-comparenat-2→3 p = {!!}
+equality-comparenat-2→3 {n₂ = S n₂} L-Zero = Z-smallest3 n₂
+equality-comparenat-2→3 (L-SuccSucc p) with equality-comparenat-2→3 p
+... | prf = help prf
+  where
+    help : ∀ {n₁ n₂} → n₁ is-less-than3 n₂ → S n₁ is-less-than3 S n₂
+    help L-Succ = L-Succ
+    help (L-SuccR p₁) = L-SuccR (help p₁)
 
 equality-comparenat-3→2 : ∀ {n₁ n₂} → n₁ is-less-than3 n₂ → n₁ is-less-than2 n₂
 equality-comparenat-3→2 p = {!!}
