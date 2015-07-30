@@ -393,3 +393,17 @@ uniqueness--d-> (DR-TimesL () , DR-TimesR x₂)
 uniqueness--d-> (DR-TimesR () , DR-Times x₂)
 uniqueness--d-> (DR-TimesR x₁ , DR-TimesL ())
 uniqueness--d-> (DR-TimesR x₁ , DR-TimesR x₂) rewrite uniqueness--d-> (x₁ , x₂) = refl
+
+-- theorem 2.24
+-d->→⟶ : ∀ {e e′} → e -d-> e′ → e ⟶ e′
+-d->→⟶ (DR-Plus x) = R-Plus x
+-d->→⟶ (DR-Times x) = R-Times x
+-d->→⟶ (DR-PlusL p) with -d->→⟶ p
+... | prf = R-PlusL prf
+-d->→⟶ (DR-PlusR p) with -d->→⟶ p
+... | prf = R-PlusR prf
+-d->→⟶ (DR-TimesL p) with -d->→⟶ p
+... | prf = R-TimesL prf
+-d->→⟶ (DR-TimesR p) with -d->→⟶ p
+... | prf = R-TimesR prf
+
