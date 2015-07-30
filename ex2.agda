@@ -346,7 +346,14 @@ reduce-same-exp {._ ⊕ ._} {Nat n₁} {._ ⊕ e₄} (R-Plus x₁ , R-PlusR ())
 reduce-same-exp {._ ⊕ ._} {Nat n₁} {e₃ ⊛ e₄} (R-Plus x₁ , ())
 reduce-same-exp {._ ⊕ ._} {e₃ ⊕ ._} {Nat n₂} (R-PlusL () , R-Plus x₂)
 reduce-same-exp {._ ⊕ ._} {._ ⊕ e₄} {Nat n₂} (R-PlusR () , R-Plus x₂)
-reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊕ e₄} {e₅ ⊕ e₆} (x₁ , x₂) = {!!}
+reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊕ .e₂} {e₅ ⊕ .e₂} (R-PlusL x₁ , R-PlusL x₂) with reduce-same-exp (x₁ , x₂)
+... | proj₁ , proj₂ , proj₃ = (proj₁ ⊕ e₂) , R-PlusL proj₂ , R-PlusL proj₃
+reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊕ .e₂} {.e₁ ⊕ e₆} (R-PlusL x₁ , R-PlusR x₂)
+  = (e₃ ⊕ e₆) , R-PlusR x₂ , R-PlusL x₁
+reduce-same-exp {e₁ ⊕ e₂} {.e₁ ⊕ e₄} {e₅ ⊕ .e₂} (R-PlusR x₁ , R-PlusL x₂)
+  = (e₅ ⊕ e₄) , R-PlusL x₂ , R-PlusR x₁
+reduce-same-exp {e₁ ⊕ e₂} {.e₁ ⊕ e₄} {.e₁ ⊕ e₆} (R-PlusR x₁ , R-PlusR x₂) with reduce-same-exp (x₁ , x₂)
+... | proj₁ , proj₂ , proj₃ = (e₁ ⊕ proj₁) , R-PlusR proj₂ , R-PlusR proj₃
 reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊕ e₄} {e₅ ⊛ e₆} (x₁ , ())
 reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊛ e₄} (() , x₂)
 reduce-same-exp {._ ⊛ ._} {Nat n₁} {Nat n₂} (R-Times x₁ , R-Times x₂) = {!!}
@@ -357,5 +364,12 @@ reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊕ e₄} (() , x₂)
 reduce-same-exp {._ ⊛ ._} {e₃ ⊛ ._} {Nat n₂} (R-TimesL () , R-Times x₂)
 reduce-same-exp {._ ⊛ ._} {._ ⊛ e₄} {Nat n₂} (R-TimesR () , R-Times x₂)
 reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊛ e₄} {e₅ ⊕ e₆} (x₁ , ())
-reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊛ e₄} {e₅ ⊛ e₆} (x₁ , x₂) = {!!}
+reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊛ .e₂} {e₅ ⊛ .e₂} (R-TimesL x₁ , R-TimesL x₂) with reduce-same-exp (x₁ , x₂)
+... | proj₁ , proj₂ , proj₃ = proj₁ ⊛ e₂ , R-TimesL proj₂ , R-TimesL proj₃
+reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊛ .e₂} {.e₁ ⊛ e₆} (R-TimesL x₁ , R-TimesR x₂)
+  = (e₃ ⊛ e₆) , R-TimesR x₂ , R-TimesL x₁
+reduce-same-exp {e₁ ⊛ e₂} {.e₁ ⊛ e₄} {e₅ ⊛ .e₂} (R-TimesR x₁ , R-TimesL x₂)
+  = (e₅ ⊛ e₄) , R-TimesL x₂ , R-TimesR x₁
+reduce-same-exp {e₁ ⊛ e₂} {.e₁ ⊛ e₄} {.e₁ ⊛ e₆} (R-TimesR x₁ , R-TimesR x₂) with reduce-same-exp (x₁ , x₂)
+... | proj₁ , proj₂ , proj₃ = e₁ ⊛ proj₁ , R-TimesR proj₂ , R-TimesR proj₃
 
