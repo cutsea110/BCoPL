@@ -340,18 +340,22 @@ reduceability-⟶ ((e₁ ⊛ e₂) ⊛ e₃) tt with reduceability-⟶ (e₁ ⊛
 -- theorem 2.22
 reduce-same-exp : ∀ {e₁ e₂ e₃} → e₁ ⟶ e₂ × e₁ ⟶ e₃ → ∃ λ e₄ → e₂ ⟶ e₄ × e₃ ⟶ e₄
 reduce-same-exp {Nat n} (() , x₂)
-reduce-same-exp {e₁ ⊕ e₂} {Nat n₁} {Nat n₂} (x₁ , x₂) = {!!}
-reduce-same-exp {e₁ ⊕ e₂} {Nat n₁} {e₃ ⊕ e₄} (x₁ , x₂) = {!!}
-reduce-same-exp {._ ⊕ ._} {Nat n₁} {e₃ ⊛ e₄} (R-Plus x , ())
-reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊕ e₄} {Nat n₂} (x₁ , x₂) = {!!}
+reduce-same-exp {._ ⊕ ._} {Nat n₁} {Nat n₂} (R-Plus x₁ , R-Plus x₂) = {!!}
+reduce-same-exp {._ ⊕ ._} {Nat n₁} {e₃ ⊕ ._} (R-Plus x₁ , R-PlusL ())
+reduce-same-exp {._ ⊕ ._} {Nat n₁} {._ ⊕ e₄} (R-Plus x₁ , R-PlusR ())
+reduce-same-exp {._ ⊕ ._} {Nat n₁} {e₃ ⊛ e₄} (R-Plus x₁ , ())
+reduce-same-exp {._ ⊕ ._} {e₃ ⊕ ._} {Nat n₂} (R-PlusL () , R-Plus x₂)
+reduce-same-exp {._ ⊕ ._} {._ ⊕ e₄} {Nat n₂} (R-PlusR () , R-Plus x₂)
 reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊕ e₄} {e₅ ⊕ e₆} (x₁ , x₂) = {!!}
 reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊕ e₄} {e₅ ⊛ e₆} (x₁ , ())
 reduce-same-exp {e₁ ⊕ e₂} {e₃ ⊛ e₄} (() , x₂)
-reduce-same-exp {e₁ ⊛ e₂} {Nat n₁} {Nat n₂} (x₁ , x₂) = {!!}
+reduce-same-exp {._ ⊛ ._} {Nat n₁} {Nat n₂} (R-Times x₁ , R-Times x₂) = {!!}
 reduce-same-exp {e₁ ⊛ e₂} {Nat n₁} {e₃ ⊕ e₄} (x₁ , ())
-reduce-same-exp {e₁ ⊛ e₂} {Nat n₁} {e₃ ⊛ e₄} (x₁ , x₂) = {!!}
+reduce-same-exp {._ ⊛ ._} {Nat n₁} {e₃ ⊛ ._} (R-Times x₁ , R-TimesL ())
+reduce-same-exp {._ ⊛ ._} {Nat n₁} {._ ⊛ e₄} (R-Times x₁ , R-TimesR ())
 reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊕ e₄} (() , x₂)
-reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊛ e₄} {Nat n₂} (x₁ , x₂) = {!!}
+reduce-same-exp {._ ⊛ ._} {e₃ ⊛ ._} {Nat n₂} (R-TimesL () , R-Times x₂)
+reduce-same-exp {._ ⊛ ._} {._ ⊛ e₄} {Nat n₂} (R-TimesR () , R-Times x₂)
 reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊛ e₄} {e₅ ⊕ e₆} (x₁ , ())
 reduce-same-exp {e₁ ⊛ e₂} {e₃ ⊛ e₄} {e₅ ⊛ e₆} (x₁ , x₂) = {!!}
 
