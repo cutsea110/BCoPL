@@ -414,3 +414,91 @@ weak-normalization (e₁ ⊕ e₂) with weak-normalization e₁ | weak-normaliza
 ... | prf₁ | prf₂ = (e₁ ⊕ e₂) , MR-Zero
 weak-normalization (e₁ ⊛ e₂) with weak-normalization e₁ | weak-normalization e₂
 ... | prf₁ | prf₂ = e₁ ⊛ e₂ , MR-Zero
+
+-- theorem 2.27
+append-n⊕e : ∀ {n e e′} → e -*-> e′ → Nat n ⊕ e -*-> Nat n ⊕ e′
+append-n⊕e MR-Zero = MR-Zero
+append-n⊕e (MR-One x) = MR-One (R-PlusR x)
+append-n⊕e (MR-Multi x x₁) = MR-Multi (append-n⊕e x) (append-n⊕e x₁)
+
+append-e⊕n : ∀ {n e e′} → e -*-> e′ → e ⊕ Nat n -*-> e′ ⊕ Nat n
+append-e⊕n MR-Zero = MR-Zero
+append-e⊕n (MR-One x) = MR-One (R-PlusL x)
+append-e⊕n (MR-Multi x x₁) = MR-Multi (append-e⊕n x) (append-e⊕n x₁)
+
+left-reduction-⊕ : ∀ {e₁ e₁′ e₂} → e₁ -*-> e₁′ → e₁ ⊕ e₂ -*-> e₁′ ⊕ e₂
+left-reduction-⊕ MR-Zero = MR-Zero
+left-reduction-⊕ (MR-One x) = MR-One (R-PlusL x)
+left-reduction-⊕ (MR-Multi x x₁) = MR-Multi (left-reduction-⊕ x) (left-reduction-⊕ x₁)
+
+right-reduction-⊕ : ∀ {e₁ e₂ e₂′} → e₂ -*-> e₂′ → e₁ ⊕ e₂ -*-> e₁ ⊕ e₂′
+right-reduction-⊕ MR-Zero = MR-Zero
+right-reduction-⊕ (MR-One x) = MR-One (R-PlusR x)
+right-reduction-⊕ (MR-Multi p p₁) = MR-Multi (right-reduction-⊕ p) (right-reduction-⊕ p₁)
+
+merge-⊕ : ∀ {e₁ e₂ n₁ n₂} → e₁ -*-> Nat n₁ → e₂ -*-> Nat n₂ → e₁ ⊕ e₂ -*-> Nat n₁ ⊕ Nat n₂
+merge-⊕ p q = MR-Multi (left-reduction-⊕ p) (append-n⊕e q)
+
+append-n⊛e : ∀ {n e e′} → e -*-> e′ → Nat n ⊛ e -*-> Nat n ⊛ e′
+append-n⊛e MR-Zero = MR-Zero
+append-n⊛e (MR-One x) = MR-One (R-TimesR x)
+append-n⊛e (MR-Multi x x₁) = MR-Multi (append-n⊛e x) (append-n⊛e x₁)
+
+append-e⊛n : ∀ {n e e′} → e -*-> e′ → e ⊛ Nat n -*-> e′ ⊛ Nat n
+append-e⊛n MR-Zero = MR-Zero
+append-e⊛n (MR-One x) = MR-One (R-TimesL x)
+append-e⊛n (MR-Multi x x₁) = MR-Multi (append-e⊛n x) (append-e⊛n x₁)
+
+left-reduction-⊛ : ∀ {e₁ e₁′ e₂} → e₁ -*-> e₁′ → e₁ ⊛ e₂ -*-> e₁′ ⊛ e₂
+left-reduction-⊛ MR-Zero = MR-Zero
+left-reduction-⊛ (MR-One x) = MR-One (R-TimesL x)
+left-reduction-⊛ (MR-Multi p p₁) = MR-Multi (left-reduction-⊛ p) (left-reduction-⊛ p₁)
+
+right-reduction-⊛ : ∀ {e₁ e₂ e₂′} → e₂ -*-> e₂′ → e₁ ⊛ e₂ -*-> e₁ ⊛ e₂′
+right-reduction-⊛ MR-Zero = MR-Zero
+right-reduction-⊛ (MR-One x) = MR-One (R-TimesR x)
+right-reduction-⊛ (MR-Multi p p₁) = MR-Multi (right-reduction-⊛ p) (right-reduction-⊛ p₁)
+
+merge-⊛ : ∀ {e₁ e₂ n₁ n₂} → e₁ -*-> Nat n₁ → e₂ -*-> Nat n₂ → e₁ ⊛ e₂ -*-> Nat n₁ ⊛ Nat n₂
+merge-⊛ p q = MR-Multi (left-reduction-⊛ p) (append-n⊛e q)
+
+⇓→-*-> : ∀ {e n} → e ⇓ n → e -*-> Nat n
+⇓→-*-> E-Const = MR-Zero
+⇓→-*-> (E-Plus e₁ e₂ p) with ⇓→-*-> e₁ | ⇓→-*-> e₂
+... | MR-Zero | MR-Zero
+  = MR-One (R-Plus p)
+... | MR-Zero | MR-One x
+  = MR-Multi (MR-One (R-PlusR x)) (MR-One (R-Plus p))
+... | MR-Zero | MR-Multi prf₂ prf₃
+  = MR-Multi (append-n⊕e (MR-Multi prf₂ prf₃)) (MR-One (R-Plus p))
+... | MR-One x | MR-Zero
+  = MR-Multi (MR-One (R-PlusL x)) (MR-One (R-Plus p))
+... | MR-One x | MR-One x₁
+  = MR-Multi (MR-One (R-PlusL x)) (MR-Multi (MR-One (R-PlusR x₁)) (MR-One (R-Plus p)))
+... | MR-One x | MR-Multi prf₂ prf₃
+  = MR-Multi (merge-⊕ (MR-One x) (MR-Multi prf₂ prf₃)) (MR-One (R-Plus p))
+... | MR-Multi prf₁ prf₂ | MR-Zero
+  = MR-Multi (left-reduction-⊕ (MR-Multi prf₁ prf₂)) (MR-One (R-Plus p))
+... | MR-Multi prf₁ prf₂ | MR-One x
+  = MR-Multi (merge-⊕ (MR-Multi prf₁ prf₂) (MR-One x)) (MR-One (R-Plus p))
+... | MR-Multi prf₁ prf₂ | MR-Multi prf₃ prf₄
+  = MR-Multi (merge-⊕ (MR-Multi prf₁ prf₂) (MR-Multi prf₃ prf₄)) (MR-One (R-Plus p))
+⇓→-*-> (E-Times e₁ e₂ t) with ⇓→-*-> e₁ | ⇓→-*-> e₂
+... | MR-Zero | MR-Zero
+  = MR-One (R-Times t)
+... | MR-Zero | MR-One x
+  = MR-Multi (MR-One (R-TimesR x)) (MR-One (R-Times t))
+... | MR-Zero | MR-Multi prf₂ prf₃
+  = MR-Multi (append-n⊛e (MR-Multi prf₂ prf₃)) (MR-One (R-Times t))
+... | MR-One x | MR-Zero
+  = MR-Multi (MR-One (R-TimesL x)) (MR-One (R-Times t))
+... | MR-One x | MR-One x₁
+  = MR-Multi (MR-Multi (MR-One (R-TimesL x)) (MR-One (R-TimesR x₁))) (MR-One (R-Times t))
+... | MR-One x | MR-Multi prf₂ prf₃
+  = MR-Multi (merge-⊛ (MR-One x) (MR-Multi prf₂ prf₃)) (MR-One (R-Times t))
+... | MR-Multi prf₁ prf₂ | MR-Zero
+  = MR-Multi (left-reduction-⊛ (MR-Multi prf₁ prf₂)) (MR-One (R-Times t))
+... | MR-Multi prf₁ prf₂ | MR-One x
+  = MR-Multi (merge-⊛ (MR-Multi prf₁ prf₂) (MR-One x)) (MR-One (R-Times t))
+... | MR-Multi prf₁ prf₂ | MR-Multi prf₃ prf₄
+  = MR-Multi (merge-⊛ (MR-Multi prf₁ prf₂) (MR-Multi prf₃ prf₄)) (MR-One (R-Times t))
