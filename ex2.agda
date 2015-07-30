@@ -373,3 +373,23 @@ reduce-same-exp {e₁ ⊛ e₂} {.e₁ ⊛ e₄} {e₅ ⊛ .e₂} (R-TimesR x₁
 reduce-same-exp {e₁ ⊛ e₂} {.e₁ ⊛ e₄} {.e₁ ⊛ e₆} (R-TimesR x₁ , R-TimesR x₂) with reduce-same-exp (x₁ , x₂)
 ... | proj₁ , proj₂ , proj₃ = e₁ ⊛ proj₁ , R-TimesR proj₂ , R-TimesR proj₃
 
+-- theorem 2.23
+uniqueness--d-> : ∀ {e e′ e″} → e -d-> e′ × e -d-> e″ → e′ ≡ e″
+uniqueness--d-> (DR-Plus x₁ , DR-Plus x₂) rewrite uniqueness-plus (x₁ , x₂) = refl
+uniqueness--d-> (DR-Plus x₁ , DR-PlusL ())
+uniqueness--d-> (DR-Plus x₁ , DR-PlusR ())
+uniqueness--d-> (DR-Times x₁ , DR-Times x₂) rewrite uniqueness-times (x₁ , x₂) = refl
+uniqueness--d-> (DR-Times x₁ , DR-TimesL ())
+uniqueness--d-> (DR-Times x₁ , DR-TimesR ())
+uniqueness--d-> (DR-PlusL () , DR-Plus x₂)
+uniqueness--d-> (DR-PlusL x₁ , DR-PlusL x₂) rewrite uniqueness--d-> (x₁ , x₂) = refl
+uniqueness--d-> (DR-PlusL () , DR-PlusR x₂)
+uniqueness--d-> (DR-PlusR () , DR-Plus x₂)
+uniqueness--d-> (DR-PlusR x₁ , DR-PlusL ())
+uniqueness--d-> (DR-PlusR x₁ , DR-PlusR x₂) rewrite uniqueness--d-> (x₁ , x₂) = refl
+uniqueness--d-> (DR-TimesL () , DR-Times x₂)
+uniqueness--d-> (DR-TimesL x₁ , DR-TimesL x₂) rewrite uniqueness--d-> (x₁ , x₂) = refl
+uniqueness--d-> (DR-TimesL () , DR-TimesR x₂)
+uniqueness--d-> (DR-TimesR () , DR-Times x₂)
+uniqueness--d-> (DR-TimesR x₁ , DR-TimesL ())
+uniqueness--d-> (DR-TimesR x₁ , DR-TimesR x₂) rewrite uniqueness--d-> (x₁ , x₂) = refl
