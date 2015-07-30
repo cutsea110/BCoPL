@@ -407,3 +407,10 @@ uniqueness--d-> (DR-TimesR x₁ , DR-TimesR x₂) rewrite uniqueness--d-> (x₁ 
 -d->→⟶ (DR-TimesR p) with -d->→⟶ p
 ... | prf = R-TimesR prf
 
+-- theorem 2.25
+weak-normalization : (e : Exp) → ∃ λ n → e -*-> n
+weak-normalization (Nat n) = (Nat n) , MR-Zero
+weak-normalization (e₁ ⊕ e₂) with weak-normalization e₁ | weak-normalization e₂
+... | prf₁ | prf₂ = (e₁ ⊕ e₂) , MR-Zero
+weak-normalization (e₁ ⊛ e₂) with weak-normalization e₁ | weak-normalization e₂
+... | prf₁ | prf₂ = e₁ ⊛ e₂ , MR-Zero
