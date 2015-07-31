@@ -482,3 +482,32 @@ both-reduction-⊛ p q = MR-Multi (left-reduction-⊛ p) (right-reduction-⊛ q)
   = MR-Multi (both-reduction-⊛ (MR-Multi prf₁ prf₂) (MR-One x)) (MR-One (R-Times t))
 ... | MR-Multi prf₁ prf₂ | MR-Multi prf₃ prf₄
   = MR-Multi (both-reduction-⊛ (MR-Multi prf₁ prf₂) (MR-Multi prf₃ prf₄)) (MR-One (R-Times t))
+
+-- theorem 2.28
+n-*->e→e≡n : ∀ {e n} → Nat n -*-> e → e ≡ Nat n
+n-*->e→e≡n MR-Zero = refl
+n-*->e→e≡n (MR-One ())
+n-*->e→e≡n (MR-Multi p₁ p₂) rewrite n-*->e→e≡n p₁ | n-*->e→e≡n p₂ = refl
+
+left-⇓-⊕ : ∀ {e₁ e₂ n₁ n} → e₁ ⇓ n₁ → e₁ ⊕ e₂ ⇓ n → Nat n₁ ⊕ e₂ ⇓ n
+left-⇓-⊕ {e₁} {e₂} {n₁} {n} p (E-Plus q₁ q₂ x) rewrite uniqueness-⇓ (p , q₁) = E-Plus E-Const q₂ x
+
+right-⇓-⊕ : ∀ {e₁ e₂ n₂ n} → e₂ ⇓ n₂ → e₁ ⊕ e₂ ⇓ n → e₁ ⊕ Nat n₂ ⇓ n
+right-⇓-⊕ {e₁} {e₂} {n₂} {n} p (E-Plus q₁ q₂ x) rewrite uniqueness-⇓ (p , q₂) = E-Plus q₁ E-Const x
+
+left-⇓-⊛ : ∀ {e₁ e₂ n₁ n} → e₁ ⇓ n₁ → e₁ ⊛ e₂ ⇓ n → Nat n₁ ⊛ e₂ ⇓ n
+left-⇓-⊛ {e₁} {e₂} {n₁} {n} p (E-Times q₁ q₂ x) rewrite uniqueness-⇓ (p , q₁) = E-Times E-Const q₂ x
+
+right-⇓-⊛ : ∀ {e₁ e₂ n₂ n} → e₂ ⇓ n₂ → e₁ ⊛ e₂ ⇓ n → e₁ ⊛ Nat n₂ ⇓ n
+right-⇓-⊛ {e₁} {e₂} {n₂} {n} p (E-Times q₁ q₂ x) rewrite uniqueness-⇓ (p , q₂) = E-Times q₁ E-Const x
+
+-*->→⇓ : ∀ {e n} → e -*-> Nat n → e ⇓ n
+-*->→⇓ {Nat n} MR-Zero = E-Const
+-*->→⇓ {Nat n} (MR-One ())
+-*->→⇓ {Nat n} (MR-Multi p₁ p₂) with n-*->e→e≡n p₁
+... | refl with n-*->e→e≡n p₂
+... | refl = E-Const
+-*->→⇓ {._ ⊕ ._} (MR-One (R-Plus x)) = E-Plus E-Const E-Const x
+-*->→⇓ {e₁ ⊕ e₂} (MR-Multi p₁ p₂) = {!!}
+-*->→⇓ {._ ⊛ ._} (MR-One (R-Times x)) = E-Times E-Const E-Const x
+-*->→⇓ {e₁ ⊛ e₂} (MR-Multi p₁ p₂) = {!!}
