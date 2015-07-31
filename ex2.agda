@@ -501,7 +501,22 @@ left-⇓-⊛ {e₁} {e₂} {n₁} {n} p (E-Times q₁ q₂ x) rewrite uniqueness
 right-⇓-⊛ : ∀ {e₁ e₂ n₂ n} → e₂ ⇓ n₂ → e₁ ⊛ e₂ ⇓ n → e₁ ⊛ Nat n₂ ⇓ n
 right-⇓-⊛ {e₁} {e₂} {n₂} {n} p (E-Times q₁ q₂ x) rewrite uniqueness-⇓ (p , q₂) = E-Times q₁ E-Const x
 
+⇓-ability-⊕ : ∀ {e₁ e₂ n} → e₁ ⊕ e₂ ⇓ n → ∃ λ n₁ → ∃ λ n₂ → e₁ ⇓ n₁ × e₂ ⇓ n₂ × n₁ plus n₂ is n
+⇓-ability-⊕ {e₁} {e₂} {n} (E-Plus p₁ p₂ x) with totality-⇓ e₁ | totality-⇓ e₂
+... | n₁ , proj₂ | n₂ , proj₄ with uniqueness-⇓ (p₁ , proj₂) | uniqueness-⇓ (p₂ , proj₄)
+... | refl | refl = n₁ , n₂ , p₁ , p₂ , x
+
+⇓-ability-⊛ : ∀ {e₁ e₂ n} → e₁ ⊛ e₂ ⇓ n → ∃ λ n₁ → ∃ λ n₂ → e₁ ⇓ n₁ × e₂ ⇓ n₂ × n₁ times n₂ is n
+⇓-ability-⊛ {e₁} {e₂} {n} (E-Times p₁ p₂ x) with totality-⇓ e₁ | totality-⇓ e₂
+... | n₁ , proj₂ | n₂ , proj₄ with uniqueness-⇓ (p₁ , proj₂) | uniqueness-⇓ (p₂ , proj₄)
+... | refl | refl = n₁ , n₂ , p₁ , p₂ , x
+
 -*->→⇓ : ∀ {e n} → e -*-> Nat n → e ⇓ n
+-*->→⇓ MR-Zero = E-Const
+-*->→⇓ (MR-One (R-Plus x)) = E-Plus E-Const E-Const x
+-*->→⇓ (MR-One (R-Times x)) = E-Times E-Const E-Const x
+-*->→⇓ (MR-Multi p₁ p₂) = {!!}
+{--
 -*->→⇓ {Nat n} MR-Zero = E-Const
 -*->→⇓ {Nat n} (MR-One ())
 -*->→⇓ {Nat n} (MR-Multi p₁ p₂) with n-*->e→e≡n p₁
@@ -511,3 +526,4 @@ right-⇓-⊛ {e₁} {e₂} {n₂} {n} p (E-Times q₁ q₂ x) rewrite uniquenes
 -*->→⇓ {e₁ ⊕ e₂} (MR-Multi p₁ p₂) = {!!}
 -*->→⇓ {._ ⊛ ._} (MR-One (R-Times x)) = E-Times E-Const E-Const x
 -*->→⇓ {e₁ ⊛ e₂} (MR-Multi p₁ p₂) = {!!}
+--}
