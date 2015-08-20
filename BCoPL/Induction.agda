@@ -22,7 +22,7 @@ append : {P : ℕ → Set} {n : ℕ} → ((i : Fin n) → P (toℕ i)) → P n �
 append {P} {Z} s a fzero = a
 append {P} {Z} s a (fsuc ())
 append {P} {S k} s a fzero = s fzero
-append {P} {S k} s a (fsuc j) = append {λ n → P (S n)} {k} (λ i → s (fsuc i)) a j
+append {P} {S k} s a (fsuc j) = append {P ∘ S} {k} (s ∘ fsuc) a j
 
 cov-inductionℕ : {P : ℕ → Set} → ((k : ℕ) → ((j : Fin k) → P (toℕ j)) → P k) → ((n : ℕ) → P n)
 cov-inductionℕ {P} f n = lemma₁ n (lemma₀ (S n))
