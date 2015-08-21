@@ -37,3 +37,9 @@ cov-inductionℕ {P} f n = lemma₁ n (lemma₀ (S n))
 
     lemma₁ : (n : ℕ) → ((k : Fin (S n)) → P (toℕ k)) → P n
     lemma₁ n s = subst P (to-from n) (s (fromℕ n))
+
+-- principal 2.32
+a×b→ind : {P : ℕ → Set} → P Z × ((n : ℕ) → P n → P (S n)) → ((n : ℕ) → P n)
+a×b→ind = inductionℕ
+ind→a×b : {P : ℕ → Set} → ((n : ℕ) → P n) → P Z × ((n : ℕ) → P n → P (S n))
+ind→a×b {P} f = f Z , (λ n _ → f (S n)) -- proof automatically but why? Plz, stop and think a little.
