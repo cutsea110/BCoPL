@@ -415,6 +415,10 @@ weak-normalization (e₁ ⊕ e₂) with weak-normalization e₁ | weak-normaliza
 weak-normalization (e₁ ⊛ e₂) with weak-normalization e₁ | weak-normalization e₂
 ... | prf₁ | prf₂ = e₁ ⊛ e₂ , MR-Zero
 
+-- theorem 2.26
+-- size? p42?
+
+
 -- theorem 2.27
 left-reduction-⊕ : ∀ {e₁ e₁′ e₂} → e₁ -*-> e₁′ → e₁ ⊕ e₂ -*-> e₁′ ⊕ e₂
 left-reduction-⊕ MR-Zero = MR-Zero
@@ -529,7 +533,7 @@ right-⇓-⊛ {e₁} {e₂} {n₂} {n} p (E-Times q₁ q₂ x) rewrite uniquenes
 --}
 
 -- principal 2.29
-open import BCoPL.Induction using (inductionℕ)
+open import BCoPL.Induction using (inductionℕ; cov-inductionℕ)
 open import Data.Nat.Properties.Simple
 
 -- ex-2-2-0
@@ -576,3 +580,28 @@ x+y/2≡[x*2+y]/2 (S x) y rewrite x+y/2≡[x*2+y]/2 x y = S[n/2]≡SSn/2 (x * S 
       = cong (λ x → S (S x) /2) (n*2+n*Sn≡n+n*SSn n)
     help : (n : ℕ) → Σ n ≡ (n * S n) /2 → S (n + Σ n) ≡ S (S (n + n * S (S n))) /2
     help n prf rewrite prf = [Sn+[n*Sn]/2]≡[SSn+n*SSn]/2 n
+
+-- ex-2-31
+open import Data.Fin hiding (_+_)
+
+data StampSheet : ℕ → Set where
+  tip : StampSheet 1
+  cut : {j k n : ℕ} → (p : j + k ≡ n) → StampSheet (S j) → StampSheet (S k) → StampSheet (S (S n))
+
+count-of-cut : {n : ℕ} → StampSheet n → ℕ
+count-of-cut tip = Z
+count-of-cut (cut p sj sk) = 1 + count-of-cut sj + count-of-cut sk
+
+count-of-cut-stampsheetSn≡n : (n : ℕ) → (s : StampSheet (S n)) → count-of-cut s ≡ n
+count-of-cut-stampsheetSn≡n = cov-inductionℕ help
+  where
+    help₂ : {k : ℕ} →
+        ((j : Fin (S k)) (s : StampSheet (S (toℕ j))) → count-of-cut s ≡ toℕ j) →
+        ∀ x y → x + y ≡ k →
+        (sj : StampSheet (S x)) (sk : StampSheet (S y)) →
+        count-of-cut sj + count-of-cut sk ≡ k
+    help₂ prf x y p sj sk = {!!}
+    help : (k : ℕ) → ((j : Fin k) (s : StampSheet (S (toℕ j))) → count-of-cut s ≡ toℕ j) →
+       (s : StampSheet (S k)) → count-of-cut s ≡ k
+    help Z prf tip = refl
+    help (S k) prf (cut {x} {y} p sj sk) = cong S (help₂ prf x y p sj sk)
