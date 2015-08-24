@@ -8,8 +8,8 @@ open import Relation.Binary.PropositionalEquality
 
 open import BCoPL.Nat hiding (_<_)
 
--- principal 2.29
--- mathematical induction
+-- principal 2.32(2.29)
+-- Peano natural number induction (mathematical induction)
 inductionℕ : {P : ℕ → Set} → P Z × ((n : ℕ) → P n → P (S n)) → ((n : ℕ) → P n)
 inductionℕ (base , step) Z = base
 inductionℕ (base , step) (S n) = step n (inductionℕ (base , step) n)
