@@ -610,7 +610,10 @@ x+y/2≡[x*2+y]/2 (S x) y rewrite x+y/2≡[x*2+y]/2 x y = S[n/2]≡SSn/2 (x * S 
     help n prf rewrite prf = [Sn+[n*Sn]/2]≡[SSn+n*SSn]/2 n
 
 -- ex-2-31
-open import Data.Fin hiding (_+_)
+open import Data.Fin hiding (_+_; _≤_)
+open import Data.Fin.Properties using (inject≤-lemma; to-from; toℕ-injective)
+open import Data.Nat using (z≤n; s≤s)
+open import Data.Nat.Properties using (m≤m+n)
 
 data StampSheet : ℕ → Set where
   tip : StampSheet 1
@@ -620,6 +623,10 @@ count-of-cut : {n : ℕ} → StampSheet n → ℕ
 count-of-cut tip = Z
 count-of-cut (cut p sj sk) = 1 + count-of-cut sj + count-of-cut sk
 
+x+y≡k→x≤k : ∀ {x y k} → x + y ≡ k → x ≤ k
+x+y≡k→x≤k p with sym p
+x+y≡k→x≤k {x} {y} p | refl = m≤m+n x y
+
 count-of-cut-stampsheetSn≡n : (n : ℕ) → (s : StampSheet (S n)) → count-of-cut s ≡ n
 count-of-cut-stampsheetSn≡n = cov-inductionℕ help
   where
@@ -628,8 +635,12 @@ count-of-cut-stampsheetSn≡n = cov-inductionℕ help
         ∀ x y → x + y ≡ k →
         (sj : StampSheet (S x)) (sk : StampSheet (S y)) →
         count-of-cut sj + count-of-cut sk ≡ k
-    help₂ prf x y p sj sk = {!!}
+    help₂ prf x y p sj sk with (fromℕ x) | (x+y≡k→x≤k (cong S p))
+    ... | j′ | x≤k with inject≤ j′ x≤k | inject≤-lemma j′ x≤k
+    ... | j″ | lemmaⱼ = {!!}
     help : (k : ℕ) → ((j : Fin k) (s : StampSheet (S (toℕ j))) → count-of-cut s ≡ toℕ j) →
        (s : StampSheet (S k)) → count-of-cut s ≡ k
     help Z prf tip = refl
     help (S k) prf (cut {x} {y} p sj sk) = cong S (help₂ prf x y p sj sk)
+
+
