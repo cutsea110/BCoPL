@@ -7,6 +7,7 @@ open import BCoPL.Nat.Properties
 
 -- theorem 2.15
 open import BCoPL.EvalNatExp
+open import BCoPL.Induction using (induction-Exp)
 
 eval-plus : ∀ n₁ n₂ → n₁ plus n₂ is (n₁ + n₂)
 eval-plus Z n₂ = P-Zero
@@ -22,6 +23,16 @@ totality-⇓ (e₁ ⊕ e₂) with totality-⇓ e₁ | totality-⇓ e₂
 totality-⇓ (e₁ ⊕ e₂) | v₁ , prf₁ | v₂ , prf₂ = v₁ + v₂ , E-Plus prf₁ prf₂ (eval-plus v₁ v₂)
 totality-⇓ (e₁ ⊛ e₂) with totality-⇓ e₁ | totality-⇓ e₂
 totality-⇓ (e₁ ⊛ e₂) | v₁ , prf₁ | v₂ , prf₂ = (v₁ * v₂) , E-Times prf₁ prf₂ (eval-times v₁ v₂)
+
+totality-⇓-by-induction : (e : Exp) → ∃ λ n → e ⇓ n
+totality-⇓-by-induction = induction-Exp help-n help-plus help-times
+  where
+    help-n : (n : ℕ) → ∃ λ n₁ → ((Nat n) ⇓ n₁)
+    help-n n = n , E-Const
+    help-plus : (e₁ e₂ : Exp) → (∃ λ n₁ → e₁ ⇓ n₁) × (∃ λ n₂ → e₂ ⇓ n₂) → (∃ λ n → (e₁ ⊕ e₂) ⇓ n)
+    help-plus e₁ e₂ ((n₁ , p₁) , (n₂ , p₂)) = (n₁ + n₂) , E-Plus p₁ p₂ (eval-plus n₁ n₂)
+    help-times : (e₁ e₂ : Exp) → (∃ λ n₁ → e₁ ⇓ n₁) × (∃ λ n₂ → e₂ ⇓ n₂) → (∃ λ n → (e₁ ⊛ e₂) ⇓ n)
+    help-times e₁ e₂ ((n₁ , t₁) , (n₂ , t₂)) = (n₁ * n₂) , E-Times t₁ t₂ (eval-times n₁ n₂)
 
 -- theorem 2.16
 uniqueness-⇓ : ∀ {n₁ n₂ e} → e ⇓ n₁ × e ⇓ n₂ → n₁ ≡ n₂
