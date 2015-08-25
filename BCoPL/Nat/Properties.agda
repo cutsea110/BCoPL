@@ -26,3 +26,13 @@ uniqueness-plus = inductionℕ (base , step)
          ((n plus n₂ is n₃) × (n plus n₂ is n₄) → n₃ ≡ n₄) →
          (S n plus n₂ is n₃) × (S n plus n₂ is n₄) → n₃ ≡ n₄
     step n₁ prf (P-Succ p₁ , P-Succ p₂) = {!!}
+
+-- theorem 2.3
+closure-plus : (n₁ n₂ : ℕ) → ∃ λ n₃ → n₁ plus n₂ is n₃
+closure-plus = inductionℕ (base , step)
+  where
+    base : (n₂ : ℕ) → ∃ λ n → Z plus n₂ is n
+    base n = n , P-Zero
+    step : (n : ℕ) → ((n₂ : ℕ) → ∃ λ n₃ → n plus n₂ is n₃) →
+           (n₂ : ℕ) → ∃ λ n₃ → ((S n) plus n₂ is n₃)
+    step = {!!}
