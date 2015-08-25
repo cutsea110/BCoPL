@@ -43,3 +43,17 @@ a×b→ind : {P : ℕ → Set} → P Z × ((n : ℕ) → P n → P (S n)) → ((
 a×b→ind = inductionℕ
 ind→a×b : {P : ℕ → Set} → ((n : ℕ) → P n) → P Z × ((n : ℕ) → P n → P (S n))
 ind→a×b {P} f = f Z , (λ n _ → f (S n)) -- proof automatically but why? Plz, stop and think a little.
+
+-- principal 2.33
+open import BCoPL.EvalNatExp
+
+induction-Exp : {P : Exp → Set} →
+                ((n : ℕ) → P (Nat n)) →
+                ((e₁ e₂ : Exp) → P e₁ × P e₂ → P (e₁ ⊕ e₂)) →
+                ((e₁ e₂ : Exp) → P e₁ × P e₂ → P (e₁ ⊛ e₂)) →
+                ((e : Exp) → P e)
+induction-Exp nat plus times (Nat n) = nat n
+induction-Exp nat plus times (e₁ ⊕ e₂)
+  = plus e₁ e₂ ((induction-Exp nat plus times e₁) , induction-Exp nat plus times e₂)
+induction-Exp {P} nat plus times (e₁ ⊛ e₂)
+  = times e₁ e₂ ((induction-Exp nat plus times e₁) , (induction-Exp nat plus times e₂))
