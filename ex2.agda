@@ -117,8 +117,10 @@ closure-plus Z n₂ = n₂ , refl
 closure-plus (S n₁) n₂ = S (plus (n₁ , n₂)) , refl
 
 -- excercise 2.6
-open import Data.Nat renaming (pred to _-1)
 open import Data.Nat.Properties using (≤-steps)
+open import Relation.Binary
+open DecTotalOrder decTotalOrder using () renaming (trans to ≤-trans)
+
 open import BCoPL.Induction using (induction-Exp)
 
 _^_ : ℕ → ℕ → ℕ
@@ -147,10 +149,6 @@ height≥1 = induction-Exp help-nat help-plus help-times
     help-times : ∀ e₁ e₂ → (1 ≤ height e₁) × (1 ≤ height e₂) → 1 ≤ 1 + max (height e₁) (height e₂)
     help-times e₁ e₂ prf = m≤m+n (S Z) (max (height e₁) (height e₂))
 
-≤-trans : ∀ {a b c} → a ≤ b → b ≤ c → a ≤ c
-≤-trans z≤n b≤c = z≤n
-≤-trans (s≤s a≤b) (s≤s b≤c) = s≤s (≤-trans a≤b b≤c)
-
 a≤b→c≤d→a+c≤b+d : ∀ {a b c d} → a ≤ b → c ≤ d → a + c ≤ b + d
 a≤b→c≤d→a+c≤b+d {b = b} z≤n c≤d = ≤-steps b c≤d
 a≤b→c≤d→a+c≤b+d (s≤s a≤b) c≤d = s≤s (a≤b→c≤d→a+c≤b+d a≤b c≤d)
@@ -167,10 +165,16 @@ Sx≤x+1 (S x) = s≤s (Sx≤x+1 x)
 1≤2^n+0 n = a≤b→c≤d→a+c≤b+d (1≤2^n n) z≤n
 
 ex-2-6 : (e : Exp) → (size e) + 1 ≤ 2 ^ height e
-ex-2-6 = induction-Exp help-nat {!!} {!!}
+ex-2-6 = induction-Exp help-nat help-plus {!!}
   where
     help-nat₂ : ∀ n → size (Nat n) + 1 ≤ 2 ^ height (Nat n) →
               S (size (Nat n) + 1) ≤ 2 ^ height (Nat n) + (2 ^ height (Nat n) + 0)
     help-nat₂ n prf = ≤-trans (Sx≤x+1 (size (Nat n) + 1)) (a≤b→c≤d→a+c≤b+d prf (1≤2^n+0 n))
     help-nat : ∀ n → size (Nat n) + 1 ≤ 2 ^ height (Nat n)
     help-nat = inductionℕ ((s≤s (s≤s z≤n)) , help-nat₂)
+    help-plus : ∀ e₁ e₂ → (size e₁ + 1 ≤ 2 ^ height e₁) × (size e₂ + 1 ≤ 2 ^ height e₂) →
+            size e₁ + size e₂ + 1 ≤ 2 ^ (height e₁ ⊔ height e₂) + (2 ^ (height e₁ ⊔ height e₂) + 0)
+    help-plus e₁ e₂ (p₁ , p₂) = {!!} -- size e₁ + size e₂ + 1 ≤ size e₁ + 1 + size e₂ + 1
+                                    -- size e₁ + 1 + size e₂ + 1 ≤ 2 ^ height e₁ + 2 ^ height e₂
+                                    -- size e₁ + 1 + size e₂ + 1 ≤ 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂)
+                                    -- 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂) ≤ 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂) + 0
