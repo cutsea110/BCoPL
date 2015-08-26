@@ -108,3 +108,11 @@ height (Nat (S n)) = height (Nat n) + 1
 height (e₁ ⊕ e₂) = max (height e₁) (height e₂) + 1
 height (e₁ ⊛ e₂) = max (height e₁) (height e₂) + 1
 
+-- exercise 2.5
+uniqueness-plus : ∀ {n₁ n₂ n₃ n₄} → plus (n₁ , n₂) ≡ n₃ × plus (n₁ , n₂) ≡ n₄ → n₃ ≡ n₄
+uniqueness-plus (refl , refl) = refl
+
+closure-plus : (n₁ n₂ : ℕ) → ∃ λ n₃ → plus (n₁ , n₂) ≡ n₃
+closure-plus Z n₂ = n₂ , refl
+closure-plus (S n₁) n₂ = S (plus (n₁ , n₂)) , refl
+
