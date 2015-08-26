@@ -117,9 +117,10 @@ closure-plus Z n₂ = n₂ , refl
 closure-plus (S n₁) n₂ = S (plus (n₁ , n₂)) , refl
 
 -- excercise 2.6
-open import Data.Nat.Properties using (≤-steps)
+open import Data.Nat.Properties using (≤-steps; m≤m⊔n)
 open import Relation.Binary
 open DecTotalOrder decTotalOrder using () renaming (trans to ≤-trans)
+open ≤-Reasoning -- using _≡⟨_⟩_
 
 open import BCoPL.Induction using (induction-Exp)
 
@@ -164,17 +165,37 @@ Sx≤x+1 (S x) = s≤s (Sx≤x+1 x)
 1≤2^n+0 : ∀ n → 1 ≤ 2 ^ height (Nat n) + 0
 1≤2^n+0 n = a≤b→c≤d→a+c≤b+d (1≤2^n n) z≤n
 
+n≤n+m : ∀ n m → n ≤ n + m
+n≤n+m Z m = z≤n
+n≤n+m (S n) m = s≤s (n≤n+m n m)
+
 ex-2-6 : (e : Exp) → (size e) + 1 ≤ 2 ^ height e
-ex-2-6 = induction-Exp help-nat help-plus {!!}
+ex-2-6 = induction-Exp help-nat help help
   where
     help-nat₂ : ∀ n → size (Nat n) + 1 ≤ 2 ^ height (Nat n) →
               S (size (Nat n) + 1) ≤ 2 ^ height (Nat n) + (2 ^ height (Nat n) + 0)
     help-nat₂ n prf = ≤-trans (Sx≤x+1 (size (Nat n) + 1)) (a≤b→c≤d→a+c≤b+d prf (1≤2^n+0 n))
     help-nat : ∀ n → size (Nat n) + 1 ≤ 2 ^ height (Nat n)
     help-nat = inductionℕ ((s≤s (s≤s z≤n)) , help-nat₂)
-    help-plus : ∀ e₁ e₂ → (size e₁ + 1 ≤ 2 ^ height e₁) × (size e₂ + 1 ≤ 2 ^ height e₂) →
+    help : ∀ e₁ e₂ → (size e₁ + 1 ≤ 2 ^ height e₁) × (size e₂ + 1 ≤ 2 ^ height e₂) →
             size e₁ + size e₂ + 1 ≤ 2 ^ (height e₁ ⊔ height e₂) + (2 ^ (height e₁ ⊔ height e₂) + 0)
-    help-plus e₁ e₂ (p₁ , p₂) = {!!} -- size e₁ + size e₂ + 1 ≤ size e₁ + 1 + size e₂ + 1
-                                    -- size e₁ + 1 + size e₂ + 1 ≤ 2 ^ height e₁ + 2 ^ height e₂
-                                    -- size e₁ + 1 + size e₂ + 1 ≤ 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂)
-                                    -- 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂) ≤ 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂) + 0
+    help e₁ e₂ (p₁ , p₂) =
+      ≤-trans ([a+b]+c≤a+[b+c] (size e₁) (size e₂) 1)
+      (≤-trans (a+b≤a+1+b (size e₁) (size e₂ + 1))
+      (≤-trans (a≤b→c≤d→a+c≤b+d p₁ p₂)
+               (a≤b→c≤d→a+c≤b+d
+                 (2^x≤2^x⊔y (height e₁) (height e₂))
+                 (≤-trans (2^y≤2^x⊔y (height e₁) (height e₂)) (n≤n+m (S (S Z) ^ (height e₁ ⊔ height e₂)) 0)))))
+      where
+        [a+b]+c≤a+[b+c] : ∀ a b c → (a + b) + c ≤ a + (b + c)
+        [a+b]+c≤a+[b+c] = {!!}
+        a+b≤a+1+b : ∀ a b → a + b ≤ a + 1 + b
+        a+b≤a+1+b = {!!}
+        2^x≤2^x⊔y : ∀ x y → 2 ^ x ≤ 2 ^ (x ⊔ y)
+        2^x≤2^x⊔y = {!!}
+        2^y≤2^x⊔y : ∀ x y → 2 ^ y ≤ 2 ^ (x ⊔ y)
+        2^y≤2^x⊔y = {!!}
+-- size e₁ + size e₂ + 1 ≤ size e₁ + 1 + size e₂ + 1
+-- size e₁ + 1 + size e₂ + 1 ≤ 2 ^ height e₁ + 2 ^ height e₂
+-- size e₁ + 1 + size e₂ + 1 ≤ 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂)
+-- 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂) ≤ 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂) + 0
