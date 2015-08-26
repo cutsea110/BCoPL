@@ -98,15 +98,15 @@ open import BCoPL.EvalNatExp
 
 size : Exp → ℕ
 size (Nat Z) = 1
-size (Nat (S n)) = size (Nat n) + 1
+size (Nat (S n)) = 1 + size (Nat n)
 size (e₁ ⊕ e₂) = size e₁ + size e₂
 size (e₁ ⊛ e₂) = size e₁ + size e₂
 
 height : Exp → ℕ
 height (Nat Z) = 1
-height (Nat (S n)) = height (Nat n) + 1
-height (e₁ ⊕ e₂) = max (height e₁) (height e₂) + 1
-height (e₁ ⊛ e₂) = max (height e₁) (height e₂) + 1
+height (Nat (S n)) = 1 + height (Nat n)
+height (e₁ ⊕ e₂) = 1 + max (height e₁) (height e₂)
+height (e₁ ⊛ e₂) = 1 + max (height e₁) (height e₂)
 
 -- exercise 2.5
 uniqueness-plus : ∀ {n₁ n₂ n₃ n₄} → plus (n₁ , n₂) ≡ n₃ × plus (n₁ , n₂) ≡ n₄ → n₃ ≡ n₄
@@ -116,3 +116,61 @@ closure-plus : (n₁ n₂ : ℕ) → ∃ λ n₃ → plus (n₁ , n₂) ≡ n₃
 closure-plus Z n₂ = n₂ , refl
 closure-plus (S n₁) n₂ = S (plus (n₁ , n₂)) , refl
 
+-- excercise 2.6
+open import Data.Nat renaming (pred to _-1)
+open import Data.Nat.Properties using (≤-steps)
+open import BCoPL.Induction using (induction-Exp)
+
+_^_ : ℕ → ℕ → ℕ
+x ^ Z = 1
+x ^ S y = x * (x ^ y)
+
+size≥1 : ∀ e → 1 ≤ size e
+size≥1 = induction-Exp help-nat help-plus help-times
+  where
+    help-nat : ∀ n → 1 ≤ size (Nat n)
+    help-nat Z = s≤s z≤n
+    help-nat (S n) = s≤s z≤n
+    help-plus : ∀ e₁ e₂ → (1 ≤ size e₁) × (1 ≤ size e₂) → 1 ≤ size e₁ + size e₂
+    help-plus e₁ e₂ (1≤size₁ , 1≤size₂) = ≤-steps (size e₁) 1≤size₂
+    help-times : ∀ e₁ e₂ → (1 ≤ size e₁) × (1 ≤ size e₂) → 1 ≤ size e₁ + size e₂
+    help-times e₁ e₂ (1≤size₁ , 1≤size₂) = ≤-steps (size e₁) 1≤size₂
+
+height≥1 : ∀ e → 1 ≤ height e
+height≥1 = induction-Exp help-nat help-plus help-times
+  where
+    help-nat : ∀ n → 1 ≤ height (Nat n)
+    help-nat Z = s≤s z≤n
+    help-nat (S n) = m≤m+n (S Z) (height (Nat n))
+    help-plus : ∀ e₁ e₂ → (1 ≤ height e₁) × (1 ≤ height e₂) → 1 ≤ 1 + max (height e₁) (height e₂)
+    help-plus e₁ e₂ prf = m≤m+n (S Z) (max (height e₁) (height e₂))
+    help-times : ∀ e₁ e₂ → (1 ≤ height e₁) × (1 ≤ height e₂) → 1 ≤ 1 + max (height e₁) (height e₂)
+    help-times e₁ e₂ prf = m≤m+n (S Z) (max (height e₁) (height e₂))
+
+≤-trans : ∀ {a b c} → a ≤ b → b ≤ c → a ≤ c
+≤-trans z≤n b≤c = z≤n
+≤-trans (s≤s a≤b) (s≤s b≤c) = s≤s (≤-trans a≤b b≤c)
+
+a≤b→c≤d→a+c≤b+d : ∀ {a b c d} → a ≤ b → c ≤ d → a + c ≤ b + d
+a≤b→c≤d→a+c≤b+d {b = b} z≤n c≤d = ≤-steps b c≤d
+a≤b→c≤d→a+c≤b+d (s≤s a≤b) c≤d = s≤s (a≤b→c≤d→a+c≤b+d a≤b c≤d)
+
+Sx≤x+1 : ∀ x → S x ≤ x + 1
+Sx≤x+1 Z = s≤s z≤n
+Sx≤x+1 (S x) = s≤s (Sx≤x+1 x)
+
+1≤2^n : ∀ n → 1 ≤ 2 ^ height (Nat n)
+1≤2^n Z = s≤s z≤n
+1≤2^n (S n) = ≤-trans (1≤2^n n) (m≤m+n (S (S Z) ^ height (Nat n)) (S (S Z) ^ height (Nat n) + Z))
+
+1≤2^n+0 : ∀ n → 1 ≤ 2 ^ height (Nat n) + 0
+1≤2^n+0 n = a≤b→c≤d→a+c≤b+d (1≤2^n n) z≤n
+
+ex-2-6 : (e : Exp) → (size e) + 1 ≤ 2 ^ height e
+ex-2-6 = induction-Exp help-nat {!!} {!!}
+  where
+    help-nat₂ : ∀ n → size (Nat n) + 1 ≤ 2 ^ height (Nat n) →
+              S (size (Nat n) + 1) ≤ 2 ^ height (Nat n) + (2 ^ height (Nat n) + 0)
+    help-nat₂ n prf = ≤-trans (Sx≤x+1 (size (Nat n) + 1)) (a≤b→c≤d→a+c≤b+d prf (1≤2^n+0 n))
+    help-nat : ∀ n → size (Nat n) + 1 ≤ 2 ^ height (Nat n)
+    help-nat = inductionℕ ((s≤s (s≤s z≤n)) , help-nat₂)
