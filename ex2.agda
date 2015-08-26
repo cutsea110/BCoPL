@@ -86,3 +86,9 @@ count-of-cut-stampsheetSn≡n = cov-inductionℕ help
        (s : StampSheet (S k)) → count-of-cut s ≡ k
     help Z prf tip = refl
     help (S k) prf (cut {x} {y} p sj sk) = cong S (help₂ prf x y p sj sk)
+
+-- definition 2.34
+plus : ℕ × ℕ → ℕ
+plus (Z , y) = y
+plus (S x , y) = S (plus (x , y))
+
