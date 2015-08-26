@@ -92,3 +92,19 @@ plus : ℕ × ℕ → ℕ
 plus (Z , y) = y
 plus (S x , y) = S (plus (x , y))
 
+-- definition 2.35
+open import Data.Nat renaming (_⊔_ to max)
+open import BCoPL.EvalNatExp
+
+size : Exp → ℕ
+size (Nat Z) = 1
+size (Nat (S n)) = size (Nat n) + 1
+size (e₁ ⊕ e₂) = size e₁ + size e₂
+size (e₁ ⊛ e₂) = size e₁ + size e₂
+
+height : Exp → ℕ
+height (Nat Z) = 1
+height (Nat (S n)) = height (Nat n) + 1
+height (e₁ ⊕ e₂) = max (height e₁) (height e₂) + 1
+height (e₁ ⊛ e₂) = max (height e₁) (height e₂) + 1
+
