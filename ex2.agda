@@ -125,6 +125,8 @@ open import Relation.Binary.PreorderReasoning using (begin_; _∎; _≈⟨_⟩_;
 open import BCoPL.Induction using (induction-Exp)
 
 _^_ : ℕ → ℕ → ℕ
+Z ^ Z = 1
+Z ^ n = Z
 x ^ Z = 1
 x ^ S y = x * (x ^ y)
 
@@ -158,23 +160,33 @@ Sx≤x+1 : ∀ x → S x ≤ x + 1
 Sx≤x+1 Z = s≤s z≤n
 Sx≤x+1 (S x) = s≤s (Sx≤x+1 x)
 
-1≤2^n : ∀ n → 1 ≤ 2 ^ height (Nat n)
-1≤2^n Z = s≤s z≤n
-1≤2^n (S n) = ≤-trans (1≤2^n n) (m≤m+n (S (S Z) ^ height (Nat n)) (S (S Z) ^ height (Nat n) + Z))
+1≤2^heightN : ∀ n → 1 ≤ 2 ^ height (Nat n)
+1≤2^heightN Z = s≤s z≤n
+1≤2^heightN (S n) = ≤-trans (1≤2^heightN n) (m≤m+n (S (S Z) ^ height (Nat n)) (S (S Z) ^ height (Nat n) + Z))
 
-1≤2^n+0 : ∀ n → 1 ≤ 2 ^ height (Nat n) + 0
-1≤2^n+0 n = a≤b→c≤d→a+c≤b+d (1≤2^n n) z≤n
+1≤2^heightN+0 : ∀ n → 1 ≤ 2 ^ height (Nat n) + 0
+1≤2^heightN+0 n = a≤b→c≤d→a+c≤b+d (1≤2^heightN n) z≤n
 
 n≤n+m : ∀ n m → n ≤ n + m
 n≤n+m Z m = z≤n
 n≤n+m (S n) m = s≤s (n≤n+m n m)
+
+1≤2^n : ∀ n → 1 ≤ 2 ^ n
+1≤2^n Z = s≤s z≤n
+1≤2^n (S n) = a≤b→c≤d→a+c≤b+d (1≤2^n n) z≤n
+
+n≤m→2ⁿ≤2ᵐ : (n m : ℕ) → n ≤ m → 2 ^ n ≤ 2 ^ m
+n≤m→2ⁿ≤2ᵐ Z Z z≤n = s≤s z≤n
+n≤m→2ⁿ≤2ᵐ Z (S m) z≤n = a≤b→c≤d→a+c≤b+d (1≤2^n m) z≤n
+n≤m→2ⁿ≤2ᵐ (S n) Z ()
+n≤m→2ⁿ≤2ᵐ (S n) (S m) (s≤s p) = a≤b→c≤d→a+c≤b+d (n≤m→2ⁿ≤2ᵐ n m p) (a≤b→c≤d→a+c≤b+d (n≤m→2ⁿ≤2ᵐ n m p) z≤n)
 
 ex-2-6 : (e : Exp) → (size e) + 1 ≤ 2 ^ height e
 ex-2-6 = induction-Exp help-nat help help
   where
     help-nat₂ : ∀ n → size (Nat n) + 1 ≤ 2 ^ height (Nat n) →
               S (size (Nat n) + 1) ≤ 2 ^ height (Nat n) + (2 ^ height (Nat n) + 0)
-    help-nat₂ n prf = ≤-trans (Sx≤x+1 (size (Nat n) + 1)) (a≤b→c≤d→a+c≤b+d prf (1≤2^n+0 n))
+    help-nat₂ n prf = ≤-trans (Sx≤x+1 (size (Nat n) + 1)) (a≤b→c≤d→a+c≤b+d prf (1≤2^heightN+0 n))
     help-nat : ∀ n → size (Nat n) + 1 ≤ 2 ^ height (Nat n)
     help-nat = inductionℕ ((s≤s (s≤s z≤n)) , help-nat₂)
     help : ∀ e₁ e₂ → (size e₁ + 1 ≤ 2 ^ height e₁) × (size e₂ + 1 ≤ 2 ^ height e₂) →
