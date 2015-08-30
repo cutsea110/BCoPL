@@ -119,8 +119,8 @@ closure-plus (S n₁) n₂ = S (plus (n₁ , n₂)) , refl
 -- excercise 2.6
 open import Data.Nat.Properties using (≤-steps; m≤m⊔n)
 open import Relation.Binary
-open DecTotalOrder decTotalOrder using () renaming (trans to ≤-trans)
-open ≤-Reasoning -- using _≡⟨_⟩_
+open DecTotalOrder decTotalOrder using () renaming (trans to ≤-trans; refl to ≤-refl)
+open import Relation.Binary.PreorderReasoning using (begin_; _∎; _≈⟨_⟩_; _∼⟨_⟩_)
 
 open import BCoPL.Induction using (induction-Exp)
 
@@ -179,7 +179,7 @@ ex-2-6 = induction-Exp help-nat help help
     help-nat = inductionℕ ((s≤s (s≤s z≤n)) , help-nat₂)
     help : ∀ e₁ e₂ → (size e₁ + 1 ≤ 2 ^ height e₁) × (size e₂ + 1 ≤ 2 ^ height e₂) →
             size e₁ + size e₂ + 1 ≤ 2 ^ (height e₁ ⊔ height e₂) + (2 ^ (height e₁ ⊔ height e₂) + 0)
-    help e₁ e₂ (p₁ , p₂) =
+    help e₁ e₂ (p₁ , p₂) = 
       ≤-trans ([a+b]+c≤a+[b+c] (size e₁) (size e₂) 1)
       (≤-trans (a+b≤a+1+b (size e₁) (size e₂ + 1))
       (≤-trans (a≤b→c≤d→a+c≤b+d p₁ p₂)
@@ -188,9 +188,11 @@ ex-2-6 = induction-Exp help-nat help help
                  (≤-trans (2^y≤2^x⊔y (height e₁) (height e₂)) (n≤n+m (S (S Z) ^ (height e₁ ⊔ height e₂)) 0)))))
       where
         [a+b]+c≤a+[b+c] : ∀ a b c → (a + b) + c ≤ a + (b + c)
-        [a+b]+c≤a+[b+c] = {!!}
+        [a+b]+c≤a+[b+c] Z b c = ≤-refl
+        [a+b]+c≤a+[b+c] (S a) b c = s≤s ([a+b]+c≤a+[b+c] a b c)
         a+b≤a+1+b : ∀ a b → a + b ≤ a + 1 + b
-        a+b≤a+1+b = {!!}
+        a+b≤a+1+b Z b = ≤-steps (S Z) ≤-refl
+        a+b≤a+1+b (S a) b = s≤s (a+b≤a+1+b a b)
         2^x≤2^x⊔y : ∀ x y → 2 ^ x ≤ 2 ^ (x ⊔ y)
         2^x≤2^x⊔y = {!!}
         2^y≤2^x⊔y : ∀ x y → 2 ^ y ≤ 2 ^ (x ⊔ y)
