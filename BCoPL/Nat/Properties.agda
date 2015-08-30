@@ -31,18 +31,17 @@ uniqueness-plus : ∀ {n₁ n₂ n₃ n₄} → (n₁ plus n₂ is n₃) × (n�
 uniqueness-plus (P-Zero , P-Zero) = refl
 uniqueness-plus (P-Succ proj₁ , P-Succ proj₂) = cong S (uniqueness-plus (proj₁ , proj₂))
 
-{-
 -- theorem 2.2
-uniqueness-plus : ∀ {n₂ n₃ n₄} (n₁ : ℕ) → (n₁ plus n₂ is n₃) × (n₁ plus n₂ is n₄) → n₃ ≡ n₄
-uniqueness-plus = inductionℕ (base , step)
+open import BCoPL.Induction
+
+uniqueness-plus′ : (n₁ : ℕ) → ∀ {n₂ n₃ n₄} → (n₁ plus n₂ is n₃) × (n₁ plus n₂ is n₄) → n₃ ≡ n₄
+uniqueness-plus′ = inductionℕ ({!base!} , step)
   where
     base : ∀ {n₂ n₃ n₄} → (Z plus n₂ is n₃) × (Z plus n₂ is n₄) → n₃ ≡ n₄
     base (P-Zero , P-Zero) = refl
-    step : ∀ {n₂ n₃ n₄} → (n : ℕ) →
-         ((n plus n₂ is n₃) × (n plus n₂ is n₄) → n₃ ≡ n₄) →
-         (S n plus n₂ is n₃) × (S n plus n₂ is n₄) → n₃ ≡ n₄
-    step n₁ prf (P-Succ p₁ , P-Succ p₂) = {!!}
--}
+    step : ∀ n → (∀ {n₂ n₃ n₄} → n plus n₂ is n₃ × n plus n₂ is n₄ → n₃ ≡ n₄) →
+       ∀ {n₂ n₃ n₄} → S n plus n₂ is n₃ × S n plus n₂ is n₄ → n₃ ≡ n₄
+    step n p (P-Succ p₁ , P-Succ p₂) = cong S (p (p₁ , p₂))
 
 -- theorem 2.3
 closure-plus : (n₁ n₂ : ℕ) → ∃ λ n₃ → n₁ plus n₂ is n₃
