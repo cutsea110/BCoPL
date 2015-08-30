@@ -35,10 +35,10 @@ uniqueness-plus (P-Succ proj₁ , P-Succ proj₂) = cong S (uniqueness-plus (pro
 open import BCoPL.Induction
 
 uniqueness-plus′ : (n₁ : ℕ) → ∀ {n₂ n₃ n₄} → (n₁ plus n₂ is n₃) × (n₁ plus n₂ is n₄) → n₃ ≡ n₄
-uniqueness-plus′ = inductionℕ ({!base!} , step)
+uniqueness-plus′ = inductionℕ ((λ {n₂} {n₃} {n₄} x → base n₂ n₃ n₄ x) , step)
   where
-    base : ∀ {n₂ n₃ n₄} → (Z plus n₂ is n₃) × (Z plus n₂ is n₄) → n₃ ≡ n₄
-    base (P-Zero , P-Zero) = refl
+    base : ∀ n₂ n₃ n₄ → (Z plus n₂ is n₃) × (Z plus n₂ is n₄) → n₃ ≡ n₄
+    base n₂ .n₂ .n₂ (P-Zero , P-Zero) = refl
     step : ∀ n → (∀ {n₂ n₃ n₄} → n plus n₂ is n₃ × n plus n₂ is n₄ → n₃ ≡ n₄) →
        ∀ {n₂ n₃ n₄} → S n plus n₂ is n₃ × S n plus n₂ is n₄ → n₃ ≡ n₄
     step n p (P-Succ p₁ , P-Succ p₂) = cong S (p (p₁ , p₂))
