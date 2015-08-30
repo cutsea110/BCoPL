@@ -214,7 +214,3 @@ ex-2-6 = induction-Exp help-nat help help
         2^x≤2^x⊔y x y = n≤m→2ⁿ≤2ᵐ x (x ⊔ y) (m≤m⊔n x y)
         2^y≤2^x⊔y : ∀ x y → 2 ^ y ≤ 2 ^ (x ⊔ y)
         2^y≤2^x⊔y x y = n≤m→2ⁿ≤2ᵐ y (x ⊔ y) (m≤n⊔m y x)
--- size e₁ + size e₂ + 1 ≤ size e₁ + 1 + size e₂ + 1
--- size e₁ + 1 + size e₂ + 1 ≤ 2 ^ height e₁ + 2 ^ height e₂
--- size e₁ + 1 + size e₂ + 1 ≤ 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂)
--- 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂) ≤ 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂) + 0
