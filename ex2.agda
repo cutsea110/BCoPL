@@ -181,6 +181,11 @@ n≤m→2ⁿ≤2ᵐ Z (S m) z≤n = a≤b→c≤d→a+c≤b+d (1≤2^n m) z≤n
 n≤m→2ⁿ≤2ᵐ (S n) Z ()
 n≤m→2ⁿ≤2ᵐ (S n) (S m) (s≤s p) = a≤b→c≤d→a+c≤b+d (n≤m→2ⁿ≤2ᵐ n m p) (a≤b→c≤d→a+c≤b+d (n≤m→2ⁿ≤2ᵐ n m p) z≤n)
 
+m≤n⊔m : ∀ m n → m ≤ n ⊔ m
+m≤n⊔m Z n = z≤n
+m≤n⊔m (S m) Z = s≤s (m≤n⊔m m Z)
+m≤n⊔m (S m) (S n) = s≤s (m≤n⊔m m n)
+
 ex-2-6 : (e : Exp) → (size e) + 1 ≤ 2 ^ height e
 ex-2-6 = induction-Exp help-nat help help
   where
@@ -206,9 +211,9 @@ ex-2-6 = induction-Exp help-nat help help
         a+b≤a+1+b Z b = ≤-steps (S Z) ≤-refl
         a+b≤a+1+b (S a) b = s≤s (a+b≤a+1+b a b)
         2^x≤2^x⊔y : ∀ x y → 2 ^ x ≤ 2 ^ (x ⊔ y)
-        2^x≤2^x⊔y = {!!}
+        2^x≤2^x⊔y x y = n≤m→2ⁿ≤2ᵐ x (x ⊔ y) (m≤m⊔n x y)
         2^y≤2^x⊔y : ∀ x y → 2 ^ y ≤ 2 ^ (x ⊔ y)
-        2^y≤2^x⊔y = {!!}
+        2^y≤2^x⊔y x y = n≤m→2ⁿ≤2ᵐ y (x ⊔ y) (m≤n⊔m y x)
 -- size e₁ + size e₂ + 1 ≤ size e₁ + 1 + size e₂ + 1
 -- size e₁ + 1 + size e₂ + 1 ≤ 2 ^ height e₁ + 2 ^ height e₂
 -- size e₁ + 1 + size e₂ + 1 ≤ 2 ^ (height e₁ ⊔ height e₂) + 2 ^ (height e₁ ⊔ height e₂)
