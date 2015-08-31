@@ -57,3 +57,41 @@ induction-Exp nat plus times (e₁ ⊕ e₂)
   = plus e₁ e₂ ((induction-Exp nat plus times e₁) , induction-Exp nat plus times e₂)
 induction-Exp {P} nat plus times (e₁ ⊛ e₂)
   = times e₁ e₂ ((induction-Exp nat plus times e₁) , (induction-Exp nat plus times e₂))
+
+-- principal 2.37
+open import BCoPL.CompareNat1 renaming (_is-less-than_ to _is-less-than1_)
+
+induction-CompareNat1 : {P : ∀ n₁ n₂ → (D : n₁ is-less-than1 n₂) → Set} →
+                        (∀ {n} → P n (S n) (L-Succ {n})) × (∀ {n₁ n₂ n₃} →
+                                                            (D₁ : n₁ is-less-than1 n₂) →
+                                                            (D₂ : n₂ is-less-than1 n₃) →
+                                                            P n₁ n₂ D₁ × P n₂ n₃ D₂ →
+                                                            P n₁ n₃ (L-Trans {n₁} {n₂} {n₃} D₁ D₂)) →
+                        ∀ n₁ n₂ → (D : n₁ is-less-than1 n₂) → P n₁ n₂ D
+induction-CompareNat1 (p₁ , p₂) n₁ .(S n₁) (L-Succ .{n₁}) = p₁ {n₁}
+induction-CompareNat1 (p₁ , p₂) n₁ n₂ (L-Trans .{n₁} {n₃} .{n₂} d₁ d₂) = p₂ {n₁} {n₃} {n₂} d₁ d₂ ({!!} , {!!})
+
+-- principal 2.38
+induction-CompareNat1′ : {P : (n₁ n₂ : ℕ) → {D : n₁ is-less-than1 n₂} → Set} →
+                        (∀ n → P n (S n) {L-Succ}) × (∀ n₁ n₂ n₃ → ∀ {d₁ d₂} →
+                                                        P n₁ n₂ {d₁} × P n₂ n₃ {d₂} → P n₁ n₃ {L-Trans d₁ d₂}) →
+                        ∀ n₁ n₂ → ∀ {d} → P n₁ n₂ {d}
+induction-CompareNat1′ = {!!}
+
+-- principal 2.39
+open import BCoPL.CompareNat2 renaming (_is-less-than_ to _is-less-than2_)
+
+induction-CompareNat2′ : {P : (n₁ n₂ : ℕ) → {D : n₁ is-less-than2 n₂} → Set} →
+                        (∀ n → P Z (S n) {L-Zero}) × (∀ n₁ n₂ → ∀ {d₁} →
+                                                        P n₁ n₂ {d₁} → P (S n₁) (S n₂) {L-SuccSucc d₁}) →
+                        (∀ n₁ n₂ → ∀ {d} → P n₁ n₂ {d})
+induction-CompareNat2′ = {!!}
+
+-- principal 2.40
+open import BCoPL.CompareNat3 renaming (_is-less-than_ to _is-less-than3_)
+
+induction-CompareNat3′ : {P : (n₁ n₂ : ℕ) → {D : n₁ is-less-than3 n₂} → Set} →
+                        (∀ n → P n (S n) {L-Succ}) × (∀ n₁ n₂ → ∀ {d₁} →
+                                                        P n₁ n₂ {d₁} → P n₁ (S n₂) {L-SuccR d₁}) →
+                        (∀ n₁ n₂ → ∀ {d} → P n₁ n₂ {d})
+induction-CompareNat3′ = {!!}
