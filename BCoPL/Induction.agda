@@ -62,15 +62,15 @@ induction-Exp {P} nat plus times (e₁ ⊛ e₂)
 open import BCoPL.CompareNat1 renaming (_is-less-than_ to _is-less-than1_)
 
 induction-CompareNat1 : {P : ∀ n₁ n₂ → (D : n₁ is-less-than1 n₂) → Set} →
-                        (∀ {n} → P n (S n) (L-Succ {n})) × (∀ {n₁ n₂ n₃} →
+                        (∀ n → P n (S n) (L-Succ {n})) × (∀ n₁ n₂ n₃ →
                                                             (D₁ : n₁ is-less-than1 n₂) →
                                                             (D₂ : n₂ is-less-than1 n₃) →
                                                             P n₁ n₂ D₁ × P n₂ n₃ D₂ →
                                                             P n₁ n₃ (L-Trans {n₁} {n₂} {n₃} D₁ D₂)) →
                         ∀ n₁ n₂ → (D : n₁ is-less-than1 n₂) → P n₁ n₂ D
-induction-CompareNat1 (p₁ , p₂) n₁ .(S n₁) (L-Succ .{n₁}) = p₁ {n₁}
+induction-CompareNat1 (p₁ , p₂) n₁ .(S n₁) (L-Succ .{n₁}) = p₁ n₁
 induction-CompareNat1 (p₁ , p₂) n₁ n₂ (L-Trans .{n₁} {n₃} .{n₂} D₁ D₂)
-  = p₂ {n₁} {n₃} {n₂} D₁ D₂ (induction-CompareNat1 (p₁ , p₂) n₁ n₃ D₁ , induction-CompareNat1 (p₁ , p₂) n₃ n₂ D₂)
+  = p₂ n₁ n₃ n₂ D₁ D₂ (induction-CompareNat1 (p₁ , p₂) n₁ n₃ D₁ , induction-CompareNat1 (p₁ , p₂) n₃ n₂ D₂)
 
 -- principal 2.38
 induction-CompareNat1′ : {P : (n₁ n₂ : ℕ) → {D : n₁ is-less-than1 n₂} → Set} →
