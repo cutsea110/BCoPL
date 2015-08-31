@@ -84,6 +84,14 @@ induction-CompareNat1′ (p₁ , p₂) n₁ n₂ {L-Trans .{n₁} {n₃} .{n₂}
 -- principal 2.39
 open import BCoPL.CompareNat2 renaming (_is-less-than_ to _is-less-than2_)
 
+induction-CompareNat2 :  {P : (n₁ n₂ : ℕ) → (D : n₁ is-less-than2 n₂) → Set} →
+                        (∀ n → P Z (S n) (L-Zero {n})) × (∀ n₁ n₂ → (D : n₁ is-less-than2 n₂) →
+                                                            P n₁ n₂ D → P (S n₁) (S n₂) (L-SuccSucc D)) →
+                        ∀ n₁ n₂ → (D : n₁ is-less-than2 n₂) → P n₁ n₂ D
+induction-CompareNat2 (p₁ , p₂) .0 ._ (L-Zero {n}) = p₁ n
+
+induction-CompareNat2 (p₁ , p₂) ._ ._ (L-SuccSucc {n₁} {n₂} d) = p₂ n₁ n₂ d (induction-CompareNat2 (p₁ , p₂) n₁ n₂ d)
+
 induction-CompareNat2′ : {P : (n₁ n₂ : ℕ) → {D : n₁ is-less-than2 n₂} → Set} →
                         (∀ n → P Z (S n) {L-Zero}) × (∀ n₁ n₂ → ∀ {d₁} →
                                                         P n₁ n₂ {d₁} → P (S n₁) (S n₂) {L-SuccSucc d₁}) →
@@ -93,6 +101,13 @@ induction-CompareNat2′ (p₁ , p₂) ._ ._ {L-SuccSucc {n₁} {n₂} d} = p₂
 
 -- principal 2.40
 open import BCoPL.CompareNat3 renaming (_is-less-than_ to _is-less-than3_)
+
+induction-CompareNat3 : {P : (n₁ n₂ : ℕ) → (D : n₁ is-less-than3 n₂) → Set} →
+                        (∀ n → P n (S n) (L-Succ {n})) × (∀ n₁ n₂ → (D : n₁ is-less-than3 n₂) →
+                                                        P n₁ n₂ D → P n₁ (S n₂) (L-SuccR D)) →
+                        ∀ n₁ n₂ → (D : n₁ is-less-than3 n₂) → P n₁ n₂ D
+induction-CompareNat3 (p₁ , p₂) n₁ .(S n₁) L-Succ = p₁ n₁
+induction-CompareNat3 (p₁ , p₂) n₁ ._ (L-SuccR .{n₁} {n₂} D) = p₂ n₁ n₂ D (induction-CompareNat3 (p₁ , p₂) n₁ n₂ D)
 
 induction-CompareNat3′ : {P : (n₁ n₂ : ℕ) → {D : n₁ is-less-than3 n₂} → Set} →
                         (∀ n → P n (S n) {L-Succ}) × (∀ n₁ n₂ → ∀ {d₁} →
