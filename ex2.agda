@@ -86,16 +86,16 @@ count-of-cut-stampsheetSn≡n′ = cov-inductionℕ help
   where
     help₂ : {k : ℕ} →
         ((j : Fin (S k)) (s : StampSheet (S (toℕ j))) → count-of-cut s ≡ toℕ j) →
-        ∀ x y → x + y ≡ k →
+        ∀ x y k → x + y ≡ k →
         (sj : StampSheet (S x)) (sk : StampSheet (S y)) →
         count-of-cut sj + count-of-cut sk ≡ k
-    help₂ prf x y p sj sk with (fromℕ x) | (x+y≡k→x≤k (cong S p))
+    help₂ prf x y k p sj sk with (fromℕ x) | (x+y≡k→x≤k (cong S p))
     ... | j′ | x≤k with inject≤ j′ x≤k | inject≤-lemma j′ x≤k
     ... | j″ | lemmaⱼ = {!!}
     help : (k : ℕ) → ((j : Fin k) (s : StampSheet (S (toℕ j))) → count-of-cut s ≡ toℕ j) →
        (s : StampSheet (S k)) → count-of-cut s ≡ k
     help Z prf tip = refl
-    help (S k) prf (cut {x} {y} p sj sk) = cong S (help₂ prf x y p sj sk)
+    help (S k) prf (cut {x} {y} .{k} p sj sk) = cong S (help₂ prf x y k p sj sk)
 
 
 -- definition 2.34
