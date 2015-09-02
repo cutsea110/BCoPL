@@ -67,10 +67,6 @@ count-of-cut : {n : ℕ} → StampSheet n → ℕ
 count-of-cut tip = Z
 count-of-cut (cut p sj sk) = 1 + count-of-cut sj + count-of-cut sk
 
-x+y≡k→x≤k : ∀ {x y k} → x + y ≡ k → x ≤ k
-x+y≡k→x≤k p with sym p
-x+y≡k→x≤k {x} {y} p | refl = m≤m+n x y
-
 count-of-cut-stampsheetSn≡n : (n : ℕ) → (s : StampSheet (S n)) → count-of-cut s ≡ n
 count-of-cut-stampsheetSn≡n Z tip = refl
 count-of-cut-stampsheetSn≡n (S n) (cut {j} {k} .{n} p sj sk) = cong S (help j k n p sj sk)
@@ -80,6 +76,10 @@ count-of-cut-stampsheetSn≡n (S n) (cut {j} {k} .{n} p sj sk) = cong S (help j 
        (sj : StampSheet (S j)) (sk : StampSheet (S k)) →
        count-of-cut sj + count-of-cut sk ≡ n
     help j k n p sj sk rewrite count-of-cut-stampsheetSn≡n j sj | count-of-cut-stampsheetSn≡n k sk = p
+
+x+y≡k→x≤k : ∀ {x y k} → x + y ≡ k → x ≤ k
+x+y≡k→x≤k p with sym p
+x+y≡k→x≤k {x} {y} p | refl = m≤m+n x y
 
 count-of-cut-stampsheetSn≡n′ : (n : ℕ) → (s : StampSheet (S n)) → count-of-cut s ≡ n
 count-of-cut-stampsheetSn≡n′ = cov-inductionℕ help
