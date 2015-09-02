@@ -72,6 +72,17 @@ x+y≡k→x≤k p with sym p
 x+y≡k→x≤k {x} {y} p | refl = m≤m+n x y
 
 count-of-cut-stampsheetSn≡n : (n : ℕ) → (s : StampSheet (S n)) → count-of-cut s ≡ n
+count-of-cut-stampsheetSn≡n Z tip = refl
+count-of-cut-stampsheetSn≡n (S n) (cut {j} {k} .{n} p sj sk) = cong S (help j k n p sj sk)
+  where
+    help : ∀ j k n →
+       j + k ≡ n →
+       (sj : StampSheet (S j)) (sk : StampSheet (S k)) →
+       count-of-cut sj + count-of-cut sk ≡ n
+    help j k n p sj sk rewrite count-of-cut-stampsheetSn≡n j sj | count-of-cut-stampsheetSn≡n k sk = p
+
+{--
+count-of-cut-stampsheetSn≡n : (n : ℕ) → (s : StampSheet (S n)) → count-of-cut s ≡ n
 count-of-cut-stampsheetSn≡n = cov-inductionℕ help
   where
     help₂ : {k : ℕ} →
@@ -86,6 +97,7 @@ count-of-cut-stampsheetSn≡n = cov-inductionℕ help
        (s : StampSheet (S k)) → count-of-cut s ≡ k
     help Z prf tip = refl
     help (S k) prf (cut {x} {y} p sj sk) = cong S (help₂ prf x y p sj sk)
+--}
 
 -- definition 2.34
 plus : ℕ × ℕ → ℕ
