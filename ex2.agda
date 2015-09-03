@@ -81,21 +81,36 @@ x+y≡k→x≤k : ∀ {x y k} → x + y ≡ k → x ≤ k
 x+y≡k→x≤k p with sym p
 x+y≡k→x≤k {x} {y} p | refl = m≤m+n x y
 
+x+y≡k→y≤k : ∀ {x y k} → x + y ≡ k → y ≤ k
+x+y≡k→y≤k {x} {y} {k} p rewrite +-comm x y = x+y≡k→x≤k p
+
+to-from-identity : ∀ j n → (j≤n : j ≤ n) → toℕ (inject≤ (fromℕ j) (s≤s j≤n)) ≡ j
+to-from-identity Z k p = refl
+to-from-identity (S j) Z ()
+to-from-identity (S j) (S k) (s≤s p) = cong S (to-from-identity j k p)
+
+convert : (j n : ℕ) → (j≤n : j ≤ n) → (s : StampSheet (S j)) → ∃ λ (j′ : Fin (S n)) → j ≡ toℕ j′
+convert j n j≤n s = inject≤ (fromℕ j) (s≤s j≤n) , sym (to-from-identity j n j≤n)
+
 count-of-cut-stampsheetSn≡n′ : (n : ℕ) → (s : StampSheet (S n)) → count-of-cut s ≡ n
 count-of-cut-stampsheetSn≡n′ = cov-inductionℕ help
   where
-    help₂ : {k : ℕ} →
-        ((j : Fin (S k)) (s : StampSheet (S (toℕ j))) → count-of-cut s ≡ toℕ j) →
-        ∀ x y k → x + y ≡ k →
-        (sj : StampSheet (S x)) (sk : StampSheet (S y)) →
-        count-of-cut sj + count-of-cut sk ≡ k
-    help₂ prf x y k p sj sk with (fromℕ x) | (x+y≡k→x≤k (cong S p))
-    ... | j′ | x≤k with inject≤ j′ x≤k | inject≤-lemma j′ x≤k
-    ... | j″ | lemmaⱼ = {!!}
+    help₂ : {n : ℕ} →
+        ((j′ : Fin (S n)) → (s : StampSheet (S (toℕ j′))) → count-of-cut s ≡ toℕ j′) →
+        ∀ j k → j + k ≡ n →
+        (sj : StampSheet (S j)) (sk : StampSheet (S k)) →
+        count-of-cut sj + count-of-cut sk ≡ n
+    help₂ {n} prf j k p sj sk with x+y≡k→x≤k {j} {k} {n} p
+    ... | j≤n with inject≤ (fromℕ j) (s≤s j≤n)
+    ... | j′ with convert j n j≤n sj
+    help₂ {n} prf .(toℕ j″) k p sj sk | j≤n | j′ | j″ , refl with x+y≡k→y≤k {toℕ j″} {k} {n} p
+    ... | k≤n with inject≤ (fromℕ k) (s≤s k≤n)
+    ... | k′ with convert k n k≤n sk
+    help₂ prf .(toℕ j″) .(toℕ k″) p sj sk | j≤n | j′ | j″ , refl | k≤n | k′ | k″ , refl rewrite prf j″ sj | prf k″ sk = p
     help : (k : ℕ) → ((j : Fin k) (s : StampSheet (S (toℕ j))) → count-of-cut s ≡ toℕ j) →
        (s : StampSheet (S k)) → count-of-cut s ≡ k
     help Z prf tip = refl
-    help (S k) prf (cut {x} {y} .{k} p sj sk) = cong S (help₂ prf x y k p sj sk)
+    help (S n) prf (cut {j} {k} .{n} p sj sk) = cong S (help₂ {n} prf j k p sj sk)
 
 
 -- definition 2.34
