@@ -136,14 +136,6 @@ uniqueness--d-> (DR-TimesR x₁ , DR-TimesR x₂) rewrite uniqueness--d-> (x₁ 
 -d->→⟶ (DR-TimesR p) with -d->→⟶ p
 ... | prf = R-TimesR prf
 
--- theorem 2.25
-weak-normalization : (e : Exp) → ∃ λ n → e -*-> n
-weak-normalization (Nat n) = (Nat n) , MR-Zero
-weak-normalization (e₁ ⊕ e₂) with weak-normalization e₁ | weak-normalization e₂
-... | prf₁ | prf₂ = (e₁ ⊕ e₂) , MR-Zero
-weak-normalization (e₁ ⊛ e₂) with weak-normalization e₁ | weak-normalization e₂
-... | prf₁ | prf₂ = e₁ ⊛ e₂ , MR-Zero
-
 -- theorem 2.26
 -- size? p42?
 
@@ -215,6 +207,25 @@ both-reduction-⊛ p q = MR-Multi (left-reduction-⊛ p) (right-reduction-⊛ q)
   = MR-Multi (both-reduction-⊛ (MR-Multi prf₁ prf₂) (MR-One x)) (MR-One (R-Times t))
 ... | MR-Multi prf₁ prf₂ | MR-Multi prf₃ prf₄
   = MR-Multi (both-reduction-⊛ (MR-Multi prf₁ prf₂) (MR-Multi prf₃ prf₄)) (MR-One (R-Times t))
+
+-- theorem 2.25
+weak-normalization : (e : Exp) → ∃ λ n → e -*-> Nat n
+weak-normalization (Nat n) = n , MR-Zero
+weak-normalization (e₁ ⊕ e₂) with weak-normalization e₁ | weak-normalization e₂
+... | n₁ , e₁-*->n₁ | n₂ , e₂-*->n₂ = (n₁ + n₂) , MR-Multi (both-reduction-⊕ e₁-*->n₁ e₂-*->n₂) (MR-One (R-Plus (help-⊕ n₁ n₂)))
+  where
+    help-⊕ : ∀ x y → x plus y is (x + y)
+    help-⊕ Z y = P-Zero
+    help-⊕ (S x) y = P-Succ (help-⊕ x y)
+weak-normalization (e₁ ⊛ e₂) with weak-normalization e₁ | weak-normalization e₂
+... | n₁ , e₁-*->n₁ | n₂ , e₂-*->n₂ = (n₁ * n₂) , MR-Multi (both-reduction-⊛ e₁-*->n₁ e₂-*->n₂) (MR-One (R-Times (help-⊛ n₁ n₂)))
+  where
+    help-⊕ : ∀ x y → x plus y is (x + y)
+    help-⊕ Z y = P-Zero
+    help-⊕ (S x) y = P-Succ (help-⊕ x y)
+    help-⊛ : ∀ x y → x times y is (x * y)
+    help-⊛ Z y = T-Zero
+    help-⊛ (S x) y = T-Succ (help-⊛ x y) (help-⊕ y (x * y))
 
 -- theorem 2.28
 n-*->e→e≡n : ∀ {e n} → Nat n -*-> e → e ≡ Nat n
