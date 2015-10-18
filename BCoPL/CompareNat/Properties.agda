@@ -126,3 +126,18 @@ equality-comparenat-1→3 (L-Trans p₁ p₂) with equality-comparenat-1→3 p�
     help (L-SuccR p₃) L-Succ = L-SuccR (L-SuccR p₃)
     help (L-SuccR p₃) (L-SuccR p₄) = L-SuccR (help (L-SuccR p₃) p₄)
 
+-- theorem 2.36
+open import Data.Product
+open import Relation.Binary.PropositionalEquality as PropEq
+
+open import BCoPL.Induction using (induction-CompareNat1′)
+
+p : (n₁ n₂ : ℕ) → {D : n₁ is-less-than1 n₂} → Set
+p n₁ n₂ {d} = (∃ λ n₁′ → n₁ ≡ S n₁′) → (∃ λ n₂′ → n₂ ≡ S n₂′)
+
+foo = induction-CompareNat1′ {p}
+
+n≥1∧n<m→m≥1 : ∀ n₁ n₂ → S n₁ is-less-than1 n₂ → ∃ λ n₃ → n₂ ≡ S n₃
+n≥1∧n<m→m≥1 = {!!}
+
+

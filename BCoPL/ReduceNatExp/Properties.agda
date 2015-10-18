@@ -209,23 +209,21 @@ both-reduction-⊛ p q = MR-Multi (left-reduction-⊛ p) (right-reduction-⊛ q)
   = MR-Multi (both-reduction-⊛ (MR-Multi prf₁ prf₂) (MR-Multi prf₃ prf₄)) (MR-One (R-Times t))
 
 -- theorem 2.25
+x-plus-y-is-x+y : ∀ x y → x plus y is (x + y)
+x-plus-y-is-x+y Z y = P-Zero
+x-plus-y-is-x+y (S x) y = P-Succ (x-plus-y-is-x+y x y)
+x-times-y-is-x*y : ∀ x y → x times y is (x * y)
+x-times-y-is-x*y Z y = T-Zero
+x-times-y-is-x*y (S x) y = T-Succ (x-times-y-is-x*y x y) (x-plus-y-is-x+y y (x * y))
+
 weak-normalization : (e : Exp) → ∃ λ n → e -*-> Nat n
 weak-normalization (Nat n) = n , MR-Zero
 weak-normalization (e₁ ⊕ e₂) with weak-normalization e₁ | weak-normalization e₂
-... | n₁ , e₁-*->n₁ | n₂ , e₂-*->n₂ = (n₁ + n₂) , MR-Multi (both-reduction-⊕ e₁-*->n₁ e₂-*->n₂) (MR-One (R-Plus (help-⊕ n₁ n₂)))
-  where
-    help-⊕ : ∀ x y → x plus y is (x + y)
-    help-⊕ Z y = P-Zero
-    help-⊕ (S x) y = P-Succ (help-⊕ x y)
+... | n₁ , e₁-*->n₁ | n₂ , e₂-*->n₂
+  = (n₁ + n₂) , MR-Multi (both-reduction-⊕ e₁-*->n₁ e₂-*->n₂) (MR-One (R-Plus (x-plus-y-is-x+y n₁ n₂)))
 weak-normalization (e₁ ⊛ e₂) with weak-normalization e₁ | weak-normalization e₂
-... | n₁ , e₁-*->n₁ | n₂ , e₂-*->n₂ = (n₁ * n₂) , MR-Multi (both-reduction-⊛ e₁-*->n₁ e₂-*->n₂) (MR-One (R-Times (help-⊛ n₁ n₂)))
-  where
-    help-⊕ : ∀ x y → x plus y is (x + y)
-    help-⊕ Z y = P-Zero
-    help-⊕ (S x) y = P-Succ (help-⊕ x y)
-    help-⊛ : ∀ x y → x times y is (x * y)
-    help-⊛ Z y = T-Zero
-    help-⊛ (S x) y = T-Succ (help-⊛ x y) (help-⊕ y (x * y))
+... | n₁ , e₁-*->n₁ | n₂ , e₂-*->n₂
+  = (n₁ * n₂) , MR-Multi (both-reduction-⊛ e₁-*->n₁ e₂-*->n₂) (MR-One (R-Times (x-times-y-is-x*y n₁ n₂)))
 
 -- theorem 2.28
 n-*->e→e≡n : ∀ {e n} → Nat n -*-> e → e ≡ Nat n
@@ -255,19 +253,55 @@ right-⇓-⊛ {e₁} {e₂} {n₂} {n} p (E-Times q₁ q₂ x) rewrite uniquenes
 ... | n₁ , proj₂ | n₂ , proj₄ with uniqueness-⇓ (p₁ , proj₂) | uniqueness-⇓ (p₂ , proj₄)
 ... | refl | refl = n₁ , n₂ , p₁ , p₂ , x
 
+backward : ∀ {e e′ n} → (e -*-> e′) × (e′ ⇓ n) → e -*-> Nat n
+backward (e-*->e′ , e′⇓n) = MR-Multi e-*->e′ (⇓→-*-> e′⇓n)
+
+⟶→⇓ : ∀ {e e′ n} → e ⟶ e′ × e′ ⇓ n → e ⇓ n
+⟶→⇓ (R-Plus x , E-Const) = E-Plus E-Const E-Const x
+⟶→⇓ (R-Times x , E-Const) = E-Times E-Const E-Const x
+⟶→⇓ (R-PlusL e⟶e′ , E-Plus e′⇓n₁ e′⇓n₂ x) = E-Plus (⟶→⇓ (e⟶e′ , e′⇓n₁)) e′⇓n₂ x
+⟶→⇓ (R-PlusR e⟶e′ , E-Plus e′⇓n₁ e′⇓n₂ x) = E-Plus e′⇓n₁ (⟶→⇓ (e⟶e′ , e′⇓n₂)) x
+⟶→⇓ (R-TimesL e⟶e′ , E-Times e′⇓n₁ e′⇓n₂ x) = E-Times (⟶→⇓ (e⟶e′ , e′⇓n₁)) e′⇓n₂ x
+⟶→⇓ (R-TimesR e⟶e′ , E-Times e′⇓n₁ e′⇓n₂ x) = E-Times e′⇓n₁ (⟶→⇓ (e⟶e′ , e′⇓n₂)) x
+
+pullback : ∀ {e e′ n} → (e -*-> e′) × (e′ ⇓ n) → e ⇓ n
+pullback {Nat n} (e-*->e′ , e′⇓n) with n-*->e→e≡n e-*->e′
+... | refl = e′⇓n
+pullback {e₁ ⊕ e₂} {n = n} (e-*->e′ , e′⇓n) with weak-normalization e₁ | weak-normalization e₂
+... | n₁ , e₁-*->n₁ | n₂ , e₂-*->n₂ with pullback (e₁-*->n₁ , E-Const) | pullback (e₂-*->n₂ , E-Const)
+... | x | y = E-Plus x y {!!}
+pullback {e₁ ⊛ e₂} {n = n} (e-*->e′ , e′⇓n) with weak-normalization e₁ | weak-normalization e₂
+... | n₁ , e₁-*->n₁ | n₂ , e₂-*->n₂ with pullback (e₁-*->n₁ , E-Const) | pullback (e₂-*->n₂ , E-Const)
+... | x | y = E-Times x y {!!}
+
+{--
+pullback (MR-Zero , e′⇓n) = e′⇓n
+pullback (MR-One (R-Plus x) , E-Const) = E-Plus E-Const E-Const x
+pullback (MR-One (R-Times x) , E-Const) = E-Times E-Const E-Const x
+pullback (MR-One (R-PlusL x) , E-Plus e′⇓n₁ e′⇓n₂ p) = E-Plus (⟶→⇓ (x , e′⇓n₁)) e′⇓n₂ p
+pullback (MR-One (R-PlusR x) , E-Plus e′⇓n₁ e′⇓n₂ p) = E-Plus e′⇓n₁ (⟶→⇓ (x , e′⇓n₂)) p
+pullback (MR-One (R-TimesL x) , E-Times e′⇓n₁ e′⇓n₂ t) = E-Times (⟶→⇓ (x , e′⇓n₁)) e′⇓n₂ t
+pullback (MR-One (R-TimesR x) , E-Times e′⇓n₁ e′⇓n₂ t) = E-Times e′⇓n₁ (⟶→⇓ (x , e′⇓n₂)) t
+pullback (MR-Multi e-*->e′ e′-*->e″ , e″⇓n) = {!!}
+--}
+
 -*->→⇓ : ∀ {e n} → e -*-> Nat n → e ⇓ n
 -*->→⇓ MR-Zero = E-Const
 -*->→⇓ (MR-One (R-Plus x)) = E-Plus E-Const E-Const x
 -*->→⇓ (MR-One (R-Times x)) = E-Times E-Const E-Const x
--*->→⇓ (MR-Multi p₁ p₂) = {!!}
+-*->→⇓ (MR-Multi p₁ p₂) = pullback (p₁ , (-*->→⇓ p₂))
+
 {--
+-*->→⇓ : ∀ {e n} → e -*-> Nat n → e ⇓ n
 -*->→⇓ {Nat n} MR-Zero = E-Const
 -*->→⇓ {Nat n} (MR-One ())
 -*->→⇓ {Nat n} (MR-Multi p₁ p₂) with n-*->e→e≡n p₁
 ... | refl with n-*->e→e≡n p₂
 ... | refl = E-Const
 -*->→⇓ {._ ⊕ ._} (MR-One (R-Plus x)) = E-Plus E-Const E-Const x
--*->→⇓ {e₁ ⊕ e₂} (MR-Multi p₁ p₂) = {!!}
+-*->→⇓ {e₁ ⊕ e₂} (MR-Multi p₁ p₂) with -*->→⇓ p₂
+... | n′ with backward (p₁ , n′)
+... | prf = {!!}
 -*->→⇓ {._ ⊛ ._} (MR-One (R-Times x)) = E-Times E-Const E-Const x
 -*->→⇓ {e₁ ⊛ e₂} (MR-Multi p₁ p₂) = {!!}
 --}
