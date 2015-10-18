@@ -16,12 +16,12 @@ data Exp : Set where
   _⊝_ : Exp → Exp → Exp
   _⊛_ : Exp → Exp → Exp
   _≺_ : Exp → Exp → Exp
-  If_Then_Else_ : Exp → Exp → Exp → Exp
+  if_then_else_ : Exp → Exp → Exp → Exp
 
 infixl 9 _⊛_
 infixl 8 _⊕_ _⊝_
 infix 7 _≺_
-infix 6 If_Then_Else_
+infix 6 if_then_else_
 infixl 5 _⇓_
 
 
@@ -41,23 +41,23 @@ private
   + m < + n = m <ℕ n
 
 data _plus_is_ : Value → Value → Value → Set where
-  B-PLUS : ∀ {i₁ i₂ i₃} → i₁ + i₂ ≡ i₃ → i i₁ plus i i₂ is i i₃
+  B-Plus : ∀ {i₁ i₂ i₃} → i₁ + i₂ ≡ i₃ → i i₁ plus i i₂ is i i₃
 
 data _minus_is_ : Value → Value → Value → Set where
-  B-MINUS : ∀ {i₁ i₂ i₃} → i₁ - i₂ ≡ i₃ → i i₁ minus i i₂ is i i₃
+  B-Minus : ∀ {i₁ i₂ i₃} → i₁ - i₂ ≡ i₃ → i i₁ minus i i₂ is i i₃
 
 data _times_is_ : Value → Value → Value → Set where
-  B-TIMES : ∀ {i₁ i₂ i₃} → i₁ * i₂ ≡ i₃ → i i₁ times i i₂ is i i₃
+  B-Times : ∀ {i₁ i₂ i₃} → i₁ * i₂ ≡ i₃ → i i₁ times i i₂ is i i₃
 
 data _less-than_is_ : Value → Value → Value → Set where
-  B-LT : ∀ {i₁ i₂ v} → i₁ < i₂ ≡ v → i i₁ less-than i i₂ is b v
+  B-Lt : ∀ {i₁ i₂ v} → i₁ < i₂ ≡ v → i i₁ less-than i i₂ is b v
 
 data _⇓_ : Exp → Value → Set where
-  E-INT : ∀ {z} → i z ⇓ i z
-  E-BOOL : ∀ {v} → b v ⇓ b v
-  E-IFT : ∀ {e₁ e₂ e₃ v} → e₁ ⇓ b true → e₂ ⇓ v → If e₁ Then e₂ Else e₃ ⇓ v
-  E-IFF : ∀ {e₁ e₂ e₃ v} → e₁ ⇓ b false → e₃ ⇓ v → If e₁ Then e₂ Else e₃ ⇓ v
-  E-PLUS : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ plus i₂ is i₃ → e₁ ⊕ e₂ ⇓ i₃
-  E-MINUS : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ minus i₂ is i₃ → e₁ ⊝ e₂ ⇓ i₃
-  E-TIMES : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ times i₂ is i₃ → e₁ ⊛ e₂ ⇓ i₃
-  E-LT : ∀ {e₁ i₁ e₂ i₂ b₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ less-than i₂ is b₃ → e₁ ≺ e₂ ⇓ b₃
+  E-Int : ∀ {z} → i z ⇓ i z
+  E-Bool : ∀ {v} → b v ⇓ b v
+  E-IfT : ∀ {e₁ e₂ e₃ v} → e₁ ⇓ b true → e₂ ⇓ v → if e₁ then e₂ else e₃ ⇓ v
+  E-IfF : ∀ {e₁ e₂ e₃ v} → e₁ ⇓ b false → e₃ ⇓ v → if e₁ then e₂ else e₃ ⇓ v
+  E-Plus : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ plus i₂ is i₃ → e₁ ⊕ e₂ ⇓ i₃
+  E-Minus : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ minus i₂ is i₃ → e₁ ⊝ e₂ ⇓ i₃
+  E-Times : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ times i₂ is i₃ → e₁ ⊛ e₂ ⇓ i₃
+  E-Lt : ∀ {e₁ i₁ e₂ i₂ b₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ less-than i₂ is b₃ → e₁ ≺ e₂ ⇓ b₃
