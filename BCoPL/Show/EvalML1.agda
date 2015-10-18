@@ -22,22 +22,26 @@ showValue (i n) = showℤ n
 showValue (b v) = show𝔹 v
 
 showDerivationPlus : ∀ {i₁ i₂ i₃} → i₁ plus i₂ is i₃ → String
-showDerivationPlus = {!!}
+showDerivationPlus {i₁} {i₂} {i₃} p
+  = showValue i₁ ++ " plus " ++ showValue i₂ ++ " is " ++ showValue i₃ ++ " by B-Plus {};"
 showDerivationMinus : ∀ {i₁ i₂ i₃} → i₁ minus i₂ is i₃ → String
-showDerivationMinus = {!!}
+showDerivationMinus {i₁} {i₂} {i₃} p
+  = showValue i₁ ++ " minus " ++ showValue i₂ ++ " is " ++ showValue i₃ ++ " by B-Minus {};"
 showDerivationTimes : ∀ {i₁ i₂ i₃} → i₁ times i₂ is i₃ → String
-showDerivationTimes = {!!}
+showDerivationTimes {i₁} {i₂} {i₃} p
+  = showValue i₁ ++ " times " ++ showValue i₂ ++ " is " ++ showValue i₃ ++ " by B-Times {};"
 showDerivationLessThan : ∀ {i₁ i₂ b} → i₁ less-than i₂ is b → String
-showDerivationLessThan = {!!}
+showDerivationLessThan {i₁} {i₂} {v} p
+  = showValue i₁ ++ " less than " ++ showValue i₂ ++ " is " ++ showValue v ++ " by B-Lt {};"
 
 showJudge⇓ : ∀ {e v} → e ⇓ v → String
 showJudge⇓ E-Int = "E-Int {};"
 showJudge⇓ E-Bool = "E-Bool {};"
-showJudge⇓ (E-IfT e₁ e₂) = "E-IfT {" ++ showJudge⇓ e₁ ++ showJudge⇓ e₂ ++ "};"
-showJudge⇓ (E-IfF e₁ e₂) = "E-IfF {" ++ showJudge⇓ e₁ ++ showJudge⇓ e₂ ++ "};"
-showJudge⇓ (E-Plus e₁ e₂ p) = "E-Plus {" ++ showJudge⇓ e₁ ++ showJudge⇓ e₂ ++ showDerivationPlus p ++ "};"
-showJudge⇓ (E-Minus e₁ e₂ p) = "E-Minus {" ++ showJudge⇓ e₁ ++ showJudge⇓ e₂ ++ showDerivationMinus p ++ "};"
-showJudge⇓ (E-Times e₁ e₂ p) = "E-Times {" ++ showJudge⇓ e₁ ++ showJudge⇓ e₂ ++ showDerivationTimes p ++ "};"
-showJudge⇓ (E-Lt e₁ e₂ p) = "E-Lt {" ++ showJudge⇓ e₁ ++ showJudge⇓ e₂ ++ showDerivationLessThan p ++ "};"
+showJudge⇓ (E-IfT e₁ e₂) = "E-IfT {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ "};"
+showJudge⇓ (E-IfF e₁ e₂) = "E-IfF {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ "};"
+showJudge⇓ (E-Plus e₁ e₂ p) = "E-Plus {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ showDerivationPlus p ++ "};"
+showJudge⇓ (E-Minus e₁ e₂ p) = "E-Minus {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ showDerivationMinus p ++ "};"
+showJudge⇓ (E-Times e₁ e₂ p) = "E-Times {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ showDerivationTimes p ++ "};"
+showJudge⇓ (E-Lt e₁ e₂ p) = "E-Lt {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ showDerivationLessThan p ++ "};"
 
 showDerivation⇓ {e} {v} p = showExp e ++ " evalto " ++ showValue v ++ " by " ++ showJudge⇓ p
