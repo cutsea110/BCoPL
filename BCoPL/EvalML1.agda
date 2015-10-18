@@ -20,21 +20,25 @@ data Exp : Set where
 
 infixl 9 _⊛_
 infixl 8 _⊕_ _⊝_
-infix 7 _≺_ _<ℕ_ _<_
+infix 7 _≺_
 infix 6 If_Then_Else_
 infixl 5 _⇓_
 
-_<ℕ_ : ℕ → ℕ → Bool
-Z <ℕ Z = false
-Z <ℕ S n = true
-S m <ℕ Z = false
-S m <ℕ S n = m <ℕ n
 
-_<_ : ℤ → ℤ → Bool
--[1+ m ] < -[1+ n ] = n <ℕ m
--[1+ m ] < + n = true
-+ m < -[1+ n ] = false
-+ m < + n = m <ℕ n
+private
+  _<ℕ_ : ℕ → ℕ → Bool
+  Z <ℕ Z = false
+  Z <ℕ S n = true
+  S m <ℕ Z = false
+  S m <ℕ S n = m <ℕ n
+
+  infix 7 _<ℕ_ _<_
+
+  _<_ : ℤ → ℤ → Bool
+  -[1+ m ] < -[1+ n ] = n <ℕ m
+  -[1+ m ] < + n = true
+  + m < -[1+ n ] = false
+  + m < + n = m <ℕ n
 
 data _plus_is_ : Value → Value → Value → Set where
   B-PLUS : ∀ {i₁ i₂ i₃} → i₁ + i₂ ≡ i₃ → i i₁ plus i i₂ is i i₃
