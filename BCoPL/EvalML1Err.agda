@@ -5,7 +5,7 @@ open import Data.Bool using (Bool; true; false) public
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
 open import Relation.Binary.PropositionalEquality using (refl;_≡_) public
 open import Data.Sum renaming (_⊎_ to _∨_; inj₁ to left; inj₂ to right) public
-open import Data.Product
+open import Data.Product using (_×_; _,_) public
 
 data Val : Set where
   i : ℤ → Val
@@ -74,12 +74,12 @@ data _less-than_is_ : Value → Value → Value → Set where
 data _⇓_ : Exp → Value → Set where
   E-Int : ∀ {z} → i z ⇓ right (i z)
   E-Bool : ∀ {v} → b v ⇓ right (b v)
-  E-IfT : ∀ {e₁ e₂ e₃ v} → e₁ ⇓ right (b true) → e₂ ⇓ v → if e₁ then e₂ else e₃ ⇓ v
-  E-IfF : ∀ {e₁ e₂ e₃ v} → e₁ ⇓ right (b false) → e₃ ⇓ v → if e₁ then e₂ else e₃ ⇓ v
-  E-Plus : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ plus i₂ is i₃ → e₁ ⊕ e₂ ⇓ i₃
-  E-Minus : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ minus i₂ is i₃ → e₁ ⊝ e₂ ⇓ i₃
-  E-Times : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ times i₂ is i₃ → e₁ ⊛ e₂ ⇓ i₃
-  E-Lt : ∀ {e₁ i₁ e₂ i₂ b₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ less-than i₂ is b₃ → e₁ ≺ e₂ ⇓ b₃
+  E-IfT : ∀ {e₁ e₂ e₃ v} → e₁ ⇓ right (b true) → e₂ ⇓ right v → if e₁ then e₂ else e₃ ⇓ right v
+  E-IfF : ∀ {e₁ e₂ e₃ v} → e₁ ⇓ right (b false) → e₃ ⇓ right v → if e₁ then e₂ else e₃ ⇓ right v
+  E-Plus : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ right i₁ → e₂ ⇓ right i₂ → right i₁ plus right i₂ is right i₃ → e₁ ⊕ e₂ ⇓ right i₃
+  E-Minus : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ right i₁ → e₂ ⇓ right i₂ → right i₁ minus right i₂ is right i₃ → e₁ ⊝ e₂ ⇓ right i₃
+  E-Times : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ right i₁ → e₂ ⇓ right i₂ → right i₁ times right i₂ is right i₃ → e₁ ⊛ e₂ ⇓ right i₃
+  E-Lt : ∀ {e₁ i₁ e₂ i₂ b₃} → e₁ ⇓ right i₁ → e₂ ⇓ right i₂ → right i₁ less-than right i₂ is right b₃ → e₁ ≺ e₂ ⇓ right b₃
 
   E-IfInt : ∀ {e₁ e₂ e₃ z} → e₁ ⇓ right (i z) → if e₁ then e₂ else e₃ ⇓ left error?
   E-PlusBoolL : ∀ {e₁ e₂ v} → e₁ ⇓ right (b v) → e₁ ⊕ e₂ ⇓ left error+
