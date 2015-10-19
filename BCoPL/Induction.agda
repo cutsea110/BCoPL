@@ -134,3 +134,14 @@ induction-CompareNat3″ : {P : ∀ {n₁ n₂} → (D : n₁ is-less-than3 n₂
                         ∀ {n₁ n₂} → (D : n₁ is-less-than3 n₂) → P D
 induction-CompareNat3″ (p₁ , p₂) L-Succ = p₁
 induction-CompareNat3″ (p₁ , p₂) (L-SuccR D) = p₂ D (induction-CompareNat3″ (p₁ , p₂) D)
+
+-- principal 3.3
+open import BCoPL.EvalML1 renaming (Exp to Exp′)
+
+induction-EvalML1 : {P : Exp′ → Set} →
+                    (∀ n → P (i n)) →
+                    (∀ v → P (b v)) →
+                    (∀ e₁ e₂ _⊗_ → P e₁ × P e₂ → P (e₁ ⊗ e₂)) →
+                    (∀ e₁ e₂ e₃ → P e₁ × P e₂ × P e₃ → P (if e₁ then e₂ else e₃)) →
+                    ((e : Exp′) → P e)
+induction-EvalML1 = {!!}
