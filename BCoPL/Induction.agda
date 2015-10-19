@@ -143,10 +143,10 @@ induction-EvalML1 : {P : Exp′ → Set} →
                     (∀ v → P (b v)) →
                     (∀ e₁ e₂ ⊗ → P e₁ × P e₂ → P (op ⊗ e₁ e₂)) →
                     (∀ e₁ e₂ e₃ → P e₁ × P e₂ × P e₃ → P (if e₁ then e₂ else e₃)) →
-                    ((e : Exp′) → P e)
+                    (e : Exp′) → P e
 induction-EvalML1 int bool bop cond (i x) = int x
 induction-EvalML1 int bool bop cond (b x) = bool x
 induction-EvalML1 int bool bop cond (op ⊗ e₁ e₂)
  = bop e₁ e₂ ⊗ (induction-EvalML1 int bool bop cond e₁ , induction-EvalML1 int bool bop cond e₂)
 induction-EvalML1 int bool bop cond (if e₁ then e₂ else e₃)
- = cond e₁ e₂ e₃ ((induction-EvalML1 int bool bop cond e₁) , ((induction-EvalML1 int bool bop cond e₂) , (induction-EvalML1 int bool bop cond e₃)))
+ = cond e₁ e₂ e₃ (induction-EvalML1 int bool bop cond e₁ , induction-EvalML1 int bool bop cond e₂ , induction-EvalML1 int bool bop cond e₃)
