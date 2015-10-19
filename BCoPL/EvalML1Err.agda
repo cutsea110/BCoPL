@@ -12,11 +12,7 @@ data Val : Set where
   b : Bool → Val
 
 data Error : Set where
-  error? : Error
-  error+ : Error
-  error- : Error
-  error* : Error
-  error< : Error
+  error : Error
 
 Value = Error ∨ Val
 
@@ -43,6 +39,7 @@ infix 7 _≺_
 infix 6 if_then_else_
 infixl 5 _⇓_
 
+_<_ : ℤ → ℤ → Bool
 
 private
   _<ℕ_ : ℕ → ℕ → Bool
@@ -53,7 +50,6 @@ private
 
   infix 7 _<ℕ_ _<_
 
-  _<_ : ℤ → ℤ → Bool
   -[1+ m ] < -[1+ n ] = n <ℕ m
   -[1+ m ] < + n = true
   + m < -[1+ n ] = false
@@ -81,24 +77,24 @@ data _⇓_ : Exp → Value → Set where
   E-Times : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ right i₁ → e₂ ⇓ right i₂ → right i₁ times right i₂ is right i₃ → e₁ ⊛ e₂ ⇓ right i₃
   E-Lt : ∀ {e₁ i₁ e₂ i₂ b₃} → e₁ ⇓ right i₁ → e₂ ⇓ right i₂ → right i₁ less-than right i₂ is right b₃ → e₁ ≺ e₂ ⇓ right b₃
 
-  E-IfInt : ∀ {e₁ e₂ e₃ z} → e₁ ⇓ right (i z) → if e₁ then e₂ else e₃ ⇓ left error?
-  E-PlusBoolL : ∀ {e₁ e₂ v} → e₁ ⇓ right (b v) → e₁ ⊕ e₂ ⇓ left error+
-  E-PlusBoolR : ∀ {e₁ e₂ v} → e₂ ⇓ right (b v) → e₁ ⊕ e₂ ⇓ left error+
-  E-MinusBoolL : ∀ {e₁ e₂ v} → e₁ ⇓ right (b v) → e₁ ⊝ e₂ ⇓ left error-
-  E-MinusBoolR : ∀ {e₁ e₂ v} → e₂ ⇓ right (b v) → e₁ ⊝ e₂ ⇓ left error-
-  E-TimesBoolL : ∀ {e₁ e₂ v} → e₁ ⇓ right (b v) → e₁ ⊛ e₂ ⇓ left error*
-  E-TimesBoolR : ∀ {e₁ e₂ v} → e₂ ⇓ right (b v) → e₁ ⊛ e₂ ⇓ left error*
-  E-LtBoolL : ∀ {e₁ e₂ v} → e₁ ⇓ right (b v) → e₁ ≺ e₂ ⇓ left error<
-  E-LtBoolR : ∀ {e₁ e₂ v} → e₂ ⇓ right (b v) → e₁ ≺ e₂ ⇓ left error<
+  E-IfInt : ∀ {e₁ e₂ e₃ z} → e₁ ⇓ right (i z) → if e₁ then e₂ else e₃ ⇓ left error
+  E-PlusBoolL : ∀ {e₁ e₂ v} → e₁ ⇓ right (b v) → e₁ ⊕ e₂ ⇓ left error
+  E-PlusBoolR : ∀ {e₁ e₂ v} → e₂ ⇓ right (b v) → e₁ ⊕ e₂ ⇓ left error
+  E-MinusBoolL : ∀ {e₁ e₂ v} → e₁ ⇓ right (b v) → e₁ ⊝ e₂ ⇓ left error
+  E-MinusBoolR : ∀ {e₁ e₂ v} → e₂ ⇓ right (b v) → e₁ ⊝ e₂ ⇓ left error
+  E-TimesBoolL : ∀ {e₁ e₂ v} → e₁ ⇓ right (b v) → e₁ ⊛ e₂ ⇓ left error
+  E-TimesBoolR : ∀ {e₁ e₂ v} → e₂ ⇓ right (b v) → e₁ ⊛ e₂ ⇓ left error
+  E-LtBoolL : ∀ {e₁ e₂ v} → e₁ ⇓ right (b v) → e₁ ≺ e₂ ⇓ left error
+  E-LtBoolR : ∀ {e₁ e₂ v} → e₂ ⇓ right (b v) → e₁ ≺ e₂ ⇓ left error
 
-  E-IfError : ∀ {e₁ e₂ e₃ ε} → e₁ ⇓ left ε → if e₁ then e₂ else e₃ ⇓ left ε
-  E-IfTError : ∀ {e₁ e₂ e₃ ε} → e₁ ⇓ right (b true) × e₂ ⇓ left ε → if e₁ then e₂ else e₃ ⇓ left ε
-  E-IfFError : ∀ {e₁ e₂ e₃ ε} → e₁ ⇓ right (b false) × e₃ ⇓ left ε → if e₁ then e₂ else e₃ ⇓ left ε
-  E-PlusErrorL : ∀ {e₁ e₂ ε} → e₁ ⇓ left ε → e₁ ⊕ e₂ ⇓ left ε
-  E-PlusErrorR : ∀ {e₁ e₂ ε} → e₂ ⇓ left ε → e₁ ⊕ e₂ ⇓ left ε
-  E-MinusErrorL : ∀ {e₁ e₂ ε} → e₁ ⇓ left ε → e₁ ⊝ e₂ ⇓ left ε
-  E-MinusErrorR : ∀ {e₁ e₂ ε} → e₂ ⇓ left ε → e₁ ⊝ e₂ ⇓ left ε
-  E-TimesErrorL : ∀ {e₁ e₂ ε} → e₁ ⇓ left ε → e₁ ⊛ e₂ ⇓ left ε
-  E-TimesErrorR : ∀ {e₁ e₂ ε} → e₂ ⇓ left ε → e₁ ⊛ e₂ ⇓ left ε
-  E-LtErrorL : ∀ {e₁ e₂ ε} → e₁ ⇓ left ε → e₁ ≺ e₂ ⇓ left ε
-  E-LtErrorR : ∀ {e₁ e₂ ε} → e₂ ⇓ left ε → e₁ ≺ e₂ ⇓ left ε
+  E-IfError : ∀ {e₁ e₂ e₃} → e₁ ⇓ left error → if e₁ then e₂ else e₃ ⇓ left error
+  E-IfTError : ∀ {e₁ e₂ e₃} → e₁ ⇓ right (b true) × e₂ ⇓ left error → if e₁ then e₂ else e₃ ⇓ left error
+  E-IfFError : ∀ {e₁ e₂ e₃} → e₁ ⇓ right (b false) × e₃ ⇓ left error → if e₁ then e₂ else e₃ ⇓ left error
+  E-PlusErrorL : ∀ {e₁ e₂} → e₁ ⇓ left error → e₁ ⊕ e₂ ⇓ left error
+  E-PlusErrorR : ∀ {e₁ e₂} → e₂ ⇓ left error → e₁ ⊕ e₂ ⇓ left error
+  E-MinusErrorL : ∀ {e₁ e₂} → e₁ ⇓ left error → e₁ ⊝ e₂ ⇓ left error
+  E-MinusErrorR : ∀ {e₁ e₂} → e₂ ⇓ left error → e₁ ⊝ e₂ ⇓ left error
+  E-TimesErrorL : ∀ {e₁ e₂} → e₁ ⇓ left error → e₁ ⊛ e₂ ⇓ left error
+  E-TimesErrorR : ∀ {e₁ e₂} → e₂ ⇓ left error → e₁ ⊛ e₂ ⇓ left error
+  E-LtErrorL : ∀ {e₁ e₂} → e₁ ⇓ left error → e₁ ≺ e₂ ⇓ left error
+  E-LtErrorR : ∀ {e₁ e₂} → e₂ ⇓ left error → e₁ ≺ e₂ ⇓ left error
