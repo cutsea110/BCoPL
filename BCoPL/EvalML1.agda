@@ -9,14 +9,22 @@ data Value : Set where
   i : ℤ → Value
   b : Bool → Value
 
+data Prim : Set where
+  prim⊕ : Prim
+  prim⊝ : Prim
+  prim⊛ : Prim
+  prim≺ : Prim
+
 data Exp : Set where
   i : ℤ → Exp
   b : Bool → Exp
-  _⊕_ : Exp → Exp → Exp
-  _⊝_ : Exp → Exp → Exp
-  _⊛_ : Exp → Exp → Exp
-  _≺_ : Exp → Exp → Exp
+  op : Prim → Exp → Exp → Exp
   if_then_else_ : Exp → Exp → Exp → Exp
+
+_⊕_ = op prim⊕
+_⊝_ = op prim⊝
+_⊛_ = op prim⊛
+_≺_ = op prim≺
 
 infixl 9 _⊛_
 infixl 8 _⊕_ _⊝_

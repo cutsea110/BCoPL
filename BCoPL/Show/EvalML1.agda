@@ -11,10 +11,10 @@ showExp : Exp → String
 
 showExp (i n) = showℤ n
 showExp (b v) = show𝔹 v
-showExp (e₁ ⊕ e₂) = "(" ++ showExp e₁ ++ " + " ++ showExp e₂ ++ ")"
-showExp (e₁ ⊝ e₂) = "(" ++ showExp e₁ ++ " - " ++ showExp e₂ ++ ")"
-showExp (e₁ ⊛ e₂) = "(" ++ showExp e₁ ++ " * " ++ showExp e₂ ++ ")"
-showExp (e₁ ≺ e₂) = "(" ++ showExp e₁ ++ " < " ++ showExp e₂ ++ ")"
+showExp (op prim⊕ e₁ e₂) = "(" ++ showExp e₁ ++ " + " ++ showExp e₂ ++ ")"
+showExp (op prim⊝ e₁ e₂) = "(" ++ showExp e₁ ++ " - " ++ showExp e₂ ++ ")"
+showExp (op prim⊛ e₁ e₂) = "(" ++ showExp e₁ ++ " * " ++ showExp e₂ ++ ")"
+showExp (op prim≺ e₁ e₂) = "(" ++ showExp e₁ ++ " < " ++ showExp e₂ ++ ")"
 showExp (if e₁ then e₂ else e₃) = "if " ++ showExp e₁ ++ " then " ++ showExp e₂ ++ " else " ++ showExp e₃
 
 showValue : Value → String
