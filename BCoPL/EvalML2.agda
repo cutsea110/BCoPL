@@ -47,8 +47,9 @@ infixl 20 _⊱_
 infixl 9 _⊛_
 infixl 8 _⊕_ _⊝_
 infix 7 _≺_
-infix 6 if_then_else_
+infix 6 if_then_else_ ℓet_≔_ιn_
 infixl 5 _⊢_⇓_
+
 
 private
   _<ℕ_ : ℕ → ℕ → Bool
@@ -81,7 +82,7 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
   E-Int : ∀ {ε z} → ε ⊢ i z ⇓ i z
   E-Bool : ∀ {ε v} → ε ⊢ b v ⇓ b v
   E-Var1 : ∀ {ε x v} → ε ⊱ (x , v) ⊢ var x ⇓ v
-  E-Var2 : ∀ {ε x y v₁ v₂} → {p : x ≢ y} → ε ⊢ var x ⇓ v₂ → ε ⊱ (y , v₁) ⊢ var x ⇓ v₂
+  E-Var2 : ∀ {ε x y v₁ v₂} → (p : x ≢ y) → ε ⊢ var x ⇓ v₂ → ε ⊱ (y , v₁) ⊢ var x ⇓ v₂
   E-Plus : ∀ {ε e₁ i₁ e₂ i₂ i₃} → ε ⊢ e₁ ⇓ i₁ → ε ⊢ e₂ ⇓ i₂ → i₁ plus i₂ is i₃ → ε ⊢ e₁ ⊕ e₂ ⇓ i₃
   E-Minus : ∀ {ε e₁ i₁ e₂ i₂ i₃} → ε ⊢ e₁ ⇓ i₁ → ε ⊢ e₂ ⇓ i₂ → i₁ minus i₂ is i₃ → ε ⊢ e₁ ⊝ e₂ ⇓ i₃
   E-Times : ∀ {ε e₁ i₁ e₂ i₂ i₃} → ε ⊢ e₁ ⇓ i₁ → ε ⊢ e₂ ⇓ i₂ → i₁ times i₂ is i₃ → ε ⊢ e₁ ⊛ e₂ ⇓ i₃
