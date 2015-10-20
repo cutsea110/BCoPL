@@ -2,12 +2,12 @@ module BCoPL.EvalML2 where
 
 open import Data.Bool using (Bool; true; false) public
 open import Data.Integer public
-open import Data.List
+open import Data.List public
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
-open import Data.Product
-open import Data.String
+open import Data.Product using (_×_;_,_) public
+open import Data.String using (String) public
 
-open import Relation.Binary.Core
+open import Relation.Binary.Core public
 open import Relation.Binary.PropositionalEquality using (refl;_≡_) public
 
 data Value : Set where
