@@ -13,8 +13,7 @@ data Value : Set where
   i : ℤ → Value
   b : Bool → Value
 
-data Var : Set where
-  ⟨_⟩ : String → Var
+Var = String
 
 BindedValue = Var × Value
 
