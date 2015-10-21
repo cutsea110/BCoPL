@@ -29,7 +29,7 @@ showExp (if e₁ then e₂ else e₃) = "if " ++ showExp e₁ ++ " then " ++ sho
 showExp (ℓet x ≔ e₁ ιn e₂) = "let " ++ x ++ " = " ++ showExp e₁ ++ " in " ++ showExp e₂
 showExp (ℓetrec f ≔fun x ⇒ e₁ ιn e₂) = "let rec " ++ f ++ " = fun " ++ x ++ " -> " ++ showExp e₁ ++ " in " ++ showExp e₂
 showExp (fun x ⇒ e) = "(fun " ++ x ++ " -> " ++ showExp e ++ ")"
-showExp (app e₁ e₂) = showExp e₁ ++ " " ++ showExp e₂
+showExp (app e₁ e₂) = showExp e₁ ++ "(" ++ showExp e₂ ++ ")"
 
 showValue (i n) = showℤ n
 showValue (b v) = show𝔹 v
