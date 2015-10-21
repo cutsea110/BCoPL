@@ -50,9 +50,8 @@ infixl 20 _⊱_
 infixl 9 _⊛_
 infixl 8 _⊕_ _⊝_
 infix 7 _≺_
-infix 6 if_then_else_ ℓet_≔_ιn_
+infix 6 if_then_else_ ℓet_≔_ιn_ fun_⇒_
 infixl 5 _⊢_⇓_
-
 
 private
   _<ℕ_ : ℕ → ℕ → Bool
