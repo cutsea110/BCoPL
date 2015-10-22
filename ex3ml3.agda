@@ -209,9 +209,33 @@ ex-5-1-3 = E-Let E-Fun
 };
 -}
 
-q47 : ● ⊢ ℓet "twice" ≔ fun "f" ⇒ fun "x" ⇒ app (var "f") (app (var "f") (var "x")) ιn app (app (var "twice") (app (var "twice") (fun "x" ⇒ var "x" ⊛ var "x"))) (i (+ 2)) ⇓ i (+ 65536)
-q47 = ?
-
+q47 : ● ⊢ ℓet "twice" ≔ fun "f" ⇒ fun "x" ⇒ app (var "f") (app (var "f") (var "x")) ιn
+           app (app (app (var "twice") (var "twice")) (fun "x" ⇒ var "x" ⊛ var "x")) (i (+ 2)) ⇓ i (+ 65536)
+q47 = E-Let E-Fun
+            (E-App (E-App (E-App E-Var1 E-Var1 E-Fun)
+                          E-Fun
+                          (E-App (E-Var2 f≢x E-Var1)
+                                 (E-App (E-Var2 f≢x E-Var1)
+                                        E-Var1
+                                        E-Fun)
+                                 E-Fun))
+                   E-Int
+                   (E-App (E-Var2 f≢x E-Var1)
+                          (E-App (E-Var2 f≢x E-Var1)
+                                 E-Var1
+                                 (E-App (E-Var2 f≢x E-Var1)
+                                        (E-App (E-Var2 f≢x E-Var1)
+                                               E-Var1
+                                               (E-Times E-Var1 E-Var1 (B-Times refl)))
+                                        (E-Times E-Var1 E-Var1 (B-Times refl))))
+                          (E-App (E-Var2 f≢x E-Var1)
+                                 (E-App (E-Var2 f≢x E-Var1)
+                                        E-Var1
+                                        (E-Times E-Var1 E-Var1 (B-Times refl)))
+                                 (E-Times E-Var1 E-Var1 (B-Times refl)))))
+  where
+    f≢x : "f" ≡ "x" → ⊥
+    f≢x ()
 {-
 -}
 
