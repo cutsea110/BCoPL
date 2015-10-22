@@ -1,4 +1,4 @@
-module ex3ml2 where
+module ex4 where
 
 open import Data.Empty using (⊥)
 
