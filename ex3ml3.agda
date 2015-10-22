@@ -405,3 +405,358 @@ ex-5-1-4 = E-Let E-Fun
 };
 -}
 
+q49 : ● ⊢ ℓet "s" ≔ fun "f" ⇒ fun "g" ⇒ fun "x" ⇒ app (app (var "f") (var "x")) (app (var "g") (var "x")) ιn
+           ℓet "k" ≔ fun "x" ⇒ fun "y" ⇒ var "x" ιn
+           app (app (app (var "s") (var "k")) (var "k")) (i (+ 7)) ⇓ i (+ 7)
+q49 = E-Let E-Fun
+            (E-Let E-Fun
+                   (E-App (E-App (E-App (E-Var2 s≢k E-Var1) E-Var1 E-Fun) E-Var1 E-Fun)
+                          E-Int
+                          (E-App (E-App (E-Var2 f≢x (E-Var2 f≢g E-Var1)) E-Var1 E-Fun)
+                                 (E-App (E-Var2 g≢x E-Var1) E-Var1 E-Fun)
+                                 (E-Var2 x≢y E-Var1))))
+  where
+    s≢k : "s" ≡ "k" → ⊥
+    s≢k ()
+    f≢x : "f" ≡ "x" → ⊥
+    f≢x ()
+    f≢g : "f" ≡ "g" → ⊥
+    f≢g ()
+    g≢x : "g" ≡ "x" → ⊥
+    g≢x ()
+    x≢y : "x" ≡ "y" → ⊥
+    x≢y ()
+{-
+|- let s = (fun f -> (fun g -> (fun x -> f(x)(g(x))))) in let k = (fun x -> (fun y -> x)) in s(k)(k)(7) evalto 7 by E-Let {
+  |- (fun f -> (fun g -> (fun x -> f(x)(g(x))))) evalto ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))] by E-Fun {};
+  s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))] |- let k = (fun x -> (fun y -> x)) in s(k)(k)(7) evalto 7 by E-Let {
+    s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))] |- (fun x -> (fun y -> x)) evalto (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] by E-Fun {};
+    s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],k = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] |- s(k)(k)(7) evalto 7 by E-App {
+      s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],k = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] |- s(k)(k) evalto (f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],g = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)])[fun x -> f(x)(g(x))] by E-App {
+        s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],k = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] |- s(k) evalto (f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)])[fun g -> (fun x -> f(x)(g(x)))] by E-App {
+          s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],k = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] |- s evalto ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))] by E-Var2 {
+            s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))] |- s evalto ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))] by E-Var1 {};
+          };
+          s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],k = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] |- k evalto (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] by E-Var1 {};
+          f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] |- (fun g -> (fun x -> f(x)(g(x)))) evalto (f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)])[fun g -> (fun x -> f(x)(g(x)))] by E-Fun {};
+        };
+        s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],k = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] |- k evalto (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] by E-Var1 {};
+        f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],g = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] |- (fun x -> f(x)(g(x))) evalto (f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],g = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)])[fun x -> f(x)(g(x))] by E-Fun {};
+      };
+      s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],k = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] |- 7 evalto 7 by E-Int {};
+      f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],g = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],x = 7 |- f(x)(g(x)) evalto 7 by E-App {
+        f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],g = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],x = 7 |- f(x) evalto (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],x = 7)[fun y -> x] by E-App {
+          f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],g = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],x = 7 |- f evalto (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] by E-Var2 {
+            f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],g = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] |- f evalto (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] by E-Var2 {
+              f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] |- f evalto (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] by E-Var1 {};
+            };
+          };
+          f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],g = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],x = 7 |- x evalto 7 by E-Var1 {};
+          s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],x = 7 |- (fun y -> x) evalto (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],x = 7)[fun y -> x] by E-Fun {};
+        };
+        f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],g = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],x = 7 |- g(x) evalto (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],x = 7)[fun y -> x] by E-App {
+          f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],g = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],x = 7 |- g evalto (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] by E-Var2 {
+            f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],g = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] |- g evalto (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)] by E-Var1 {};
+          };
+          f = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],g = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))])[fun x -> (fun y -> x)],x = 7 |- x evalto 7 by E-Var1 {};
+          s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],x = 7 |- (fun y -> x) evalto (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],x = 7)[fun y -> x] by E-Fun {};
+        };
+        s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],x = 7,y = (s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],x = 7)[fun y -> x] |- x evalto 7 by E-Var2 {
+          s = ()[fun f -> (fun g -> (fun x -> f(x)(g(x))))],x = 7 |- x evalto 7 by E-Var1 {};
+        };
+      };
+    };
+  };
+};
+-}
+
+ex-5-1-5 : ● ⊢ ℓetrec "fact" ≔fun "n" ⇒ if var "n" ≺ i (+ 2) then i (+ 1) else var "n" ⊛ app (var "fact") (var "n" ⊝ i (+ 1)) ιn
+               app (var "fact") (i (+ 3)) ⇓ i (+ 6)
+ex-5-1-5 = E-LetRec (E-AppRec E-Var1
+                              E-Int 
+                             (E-IfF (E-Lt E-Var1 E-Int (B-Lt refl))
+                                    (E-Times E-Var1 (E-AppRec (E-Var2 fact≢n E-Var1)
+                                                              (E-Minus E-Var1 E-Int (B-Minus refl))
+                                                              (E-IfF (E-Lt E-Var1 E-Int (B-Lt refl))
+                                                                     (E-Times E-Var1
+                                                                              (E-AppRec (E-Var2 fact≢n E-Var1)
+                                                                                        (E-Minus E-Var1 E-Int (B-Minus refl))
+                                                                                        (E-IfT (E-Lt E-Var1 E-Int (B-Lt refl)) E-Int))
+                                                                              (B-Times refl))))
+                                                    (B-Times refl))))
+  where
+    fact≢n : "fact" ≡ "n" → ⊥
+    fact≢n ()
+{-
+|- let rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1))) in fact(3) evalto 6 by E-LetRec {
+  fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- fact(3) evalto 6 by E-AppRec {
+    fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- fact evalto ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] by E-Var1 {};
+    fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- 3 evalto 3 by E-Int {};
+    fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 3 |- if (n < 2) then 1 else (n * fact((n - 1))) evalto 6 by E-IfF {
+      fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 3 |- (n < 2) evalto false by E-Lt {
+        fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 3 |- n evalto 3 by E-Var1 {};
+        fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 3 |- 2 evalto 2 by E-Int {};
+        3 less than 2 is false by B-Lt {};
+      };
+      fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 3 |- (n * fact((n - 1))) evalto 6 by E-Times {
+        fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 3 |- n evalto 3 by E-Var1 {};
+        fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 3 |- fact((n - 1)) evalto 2 by E-AppRec {
+          fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 3 |- fact evalto ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] by E-Var2 {
+            fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- fact evalto ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] by E-Var1 {};
+          };
+          fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 3 |- (n - 1) evalto 2 by E-Minus {
+            fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 3 |- n evalto 3 by E-Var1 {};
+            fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 3 |- 1 evalto 1 by E-Int {};
+            3 minus 1 is 2 by B-Minus {};
+          };
+          fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 2 |- if (n < 2) then 1 else (n * fact((n - 1))) evalto 2 by E-IfF {
+            fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 2 |- (n < 2) evalto false by E-Lt {
+              fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 2 |- n evalto 2 by E-Var1 {};
+              fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 2 |- 2 evalto 2 by E-Int {};
+              2 less than 2 is false by B-Lt {};
+            };
+            fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 2 |- (n * fact((n - 1))) evalto 2 by E-Times {
+              fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 2 |- n evalto 2 by E-Var1 {};
+              fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 2 |- fact((n - 1)) evalto 1 by E-AppRec {
+                fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 2 |- fact evalto ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] by E-Var2 {
+                  fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- fact evalto ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] by E-Var1 {};
+                };
+                fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 2 |- (n - 1) evalto 1 by E-Minus {
+                  fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 2 |- n evalto 2 by E-Var1 {};
+                  fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 2 |- 1 evalto 1 by E-Int {};
+                  2 minus 1 is 1 by B-Minus {};
+                };
+                fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 1 |- if (n < 2) then 1 else (n * fact((n - 1))) evalto 1 by E-IfT {
+                  fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 1 |- (n < 2) evalto true by E-Lt {
+                    fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 1 |- n evalto 1 by E-Var1 {};
+                    fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 1 |- 2 evalto 2 by E-Int {};
+                    1 less than 2 is true by B-Lt {};
+                  };
+                  fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],n = 1 |- 1 evalto 1 by E-Int {};
+                };
+              };
+              2 times 1 is 2 by B-Times {};
+            };
+          };
+        };
+        3 times 2 is 6 by B-Times {};
+      };
+    };
+  };
+};
+-}
+
+
+q51 : ● ⊢ ℓetrec "fib" ≔fun "n" ⇒ if var "n" ≺ i (+ 3) then i (+ 1) else app (var "fib") (var "n" ⊝ i (+ 1)) ⊕ app (var "fib") (var "n" ⊝ i (+ 2)) ιn
+           app (var "fib") (i (+ 5)) ⇓ i (+ 5)
+q51 = E-LetRec (E-AppRec E-Var1
+                         E-Int
+                         (E-IfF (E-Lt E-Var1 E-Int (B-Lt refl))
+                                (E-Plus (E-AppRec (E-Var2 fib≢n E-Var1)
+                                                  (E-Minus E-Var1 E-Int (B-Minus refl))
+                                                  (E-IfF (E-Lt E-Var1 E-Int (B-Lt refl))
+                                                         (E-Plus (E-AppRec (E-Var2 fib≢n E-Var1)
+                                                                           (E-Minus E-Var1 E-Int (B-Minus refl))
+                                                                           (E-IfF (E-Lt E-Var1 E-Int (B-Lt refl))
+                                                                                  (E-Plus (E-AppRec (E-Var2 fib≢n E-Var1)
+                                                                                                    (E-Minus E-Var1 E-Int (B-Minus refl))
+                                                                                                    (E-IfT (E-Lt E-Var1 E-Int (B-Lt refl)) E-Int))
+                                                                                          (E-AppRec (E-Var2 fib≢n E-Var1)
+                                                                                                    (E-Minus E-Var1 E-Int (B-Minus refl))
+                                                                                                    (E-IfT (E-Lt E-Var1 E-Int (B-Lt refl))
+                                                                                                           E-Int))
+                                                                                          (B-Plus refl))))
+                                                                 (E-AppRec (E-Var2 fib≢n E-Var1)
+                                                                           (E-Minus E-Var1 E-Int (B-Minus refl))
+                                                                           (E-IfT (E-Lt E-Var1 E-Int (B-Lt refl)) E-Int))
+                                                                 (B-Plus refl))))
+                                        (E-AppRec (E-Var2 fib≢n E-Var1)
+                                                  (E-Minus E-Var1 E-Int (B-Minus refl))
+                                                  (E-IfF (E-Lt E-Var1 E-Int (B-Lt refl))
+                                                         (E-Plus (E-AppRec (E-Var2 fib≢n E-Var1)
+                                                                           (E-Minus E-Var1 E-Int (B-Minus refl))
+                                                                           (E-IfT (E-Lt E-Var1 E-Int (B-Lt refl)) E-Int))
+                                                                 (E-AppRec (E-Var2 fib≢n E-Var1)
+                                                                           (E-Minus E-Var1 E-Int (B-Minus refl))
+                                                                           (E-IfT (E-Lt E-Var1 E-Int (B-Lt refl)) E-Int))
+                                                                 (B-Plus refl))))
+                                        (B-Plus refl))))
+  where
+    fib≢n : "fib" ≡ "n" → ⊥
+    fib≢n ()
+{-
+|- let rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2))) in fib(5) evalto 5 by E-LetRec {
+  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] |- fib(5) evalto 5 by E-AppRec {
+    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var1 {};
+    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] |- 5 evalto 5 by E-Int {};
+    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2))) evalto 5 by E-IfF {
+      fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- (n < 3) evalto false by E-Lt {
+        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- n evalto 5 by E-Var1 {};
+        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- 3 evalto 3 by E-Int {};
+        5 less than 3 is false by B-Lt {};
+      };
+      fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- (fib((n - 1)) + fib((n - 2))) evalto 5 by E-Plus {
+        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- fib((n - 1)) evalto 3 by E-AppRec {
+          fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var2 {
+            fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var1 {};
+          };
+          fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- (n - 1) evalto 4 by E-Minus {
+            fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- n evalto 5 by E-Var1 {};
+            fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- 1 evalto 1 by E-Int {};
+            5 minus 1 is 4 by B-Minus {};
+          };
+          fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2))) evalto 3 by E-IfF {
+            fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- (n < 3) evalto false by E-Lt {
+              fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- n evalto 4 by E-Var1 {};
+              fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- 3 evalto 3 by E-Int {};
+              4 less than 3 is false by B-Lt {};
+            };
+            fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- (fib((n - 1)) + fib((n - 2))) evalto 3 by E-Plus {
+              fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- fib((n - 1)) evalto 2 by E-AppRec {
+                fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var2 {
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var1 {};
+                };
+                fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- (n - 1) evalto 3 by E-Minus {
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- n evalto 4 by E-Var1 {};
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- 1 evalto 1 by E-Int {};
+                  4 minus 1 is 3 by B-Minus {};
+                };
+                fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2))) evalto 2 by E-IfF {
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- (n < 3) evalto false by E-Lt {
+                    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- n evalto 3 by E-Var1 {};
+                    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- 3 evalto 3 by E-Int {};
+                    3 less than 3 is false by B-Lt {};
+                  };
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- (fib((n - 1)) + fib((n - 2))) evalto 2 by E-Plus {
+                    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- fib((n - 1)) evalto 1 by E-AppRec {
+                      fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var2 {
+                        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var1 {};
+                      };
+                      fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- (n - 1) evalto 2 by E-Minus {
+                        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- n evalto 3 by E-Var1 {};
+                        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- 1 evalto 1 by E-Int {};
+                        3 minus 1 is 2 by B-Minus {};
+                      };
+                      fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2))) evalto 1 by E-IfT {
+                        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- (n < 3) evalto true by E-Lt {
+                          fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- n evalto 2 by E-Var1 {};
+                          fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- 3 evalto 3 by E-Int {};
+                          2 less than 3 is true by B-Lt {};
+                        };
+                        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- 1 evalto 1 by E-Int {};
+                      };
+                    };
+                    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- fib((n - 2)) evalto 1 by E-AppRec {
+                      fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var2 {
+                        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var1 {};
+                      };
+                      fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- (n - 2) evalto 1 by E-Minus {
+                        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- n evalto 3 by E-Var1 {};
+                        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- 2 evalto 2 by E-Int {};
+                        3 minus 2 is 1 by B-Minus {};
+                      };
+                      fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 1 |- if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2))) evalto 1 by E-IfT {
+                        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 1 |- (n < 3) evalto true by E-Lt {
+                          fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 1 |- n evalto 1 by E-Var1 {};
+                          fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 1 |- 3 evalto 3 by E-Int {};
+                          1 less than 3 is true by B-Lt {};
+                        };
+                        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 1 |- 1 evalto 1 by E-Int {};
+                      };
+                    };
+                    1 plus 1 is 2 by B-Plus {};
+                  };
+                };
+              };
+              fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- fib((n - 2)) evalto 1 by E-AppRec {
+                fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var2 {
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var1 {};
+                };
+                fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- (n - 2) evalto 2 by E-Minus {
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- n evalto 4 by E-Var1 {};
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 4 |- 2 evalto 2 by E-Int {};
+                  4 minus 2 is 2 by B-Minus {};
+                };
+                fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2))) evalto 1 by E-IfT {
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- (n < 3) evalto true by E-Lt {
+                    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- n evalto 2 by E-Var1 {};
+                    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- 3 evalto 3 by E-Int {};
+                    2 less than 3 is true by B-Lt {};
+                  };
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- 1 evalto 1 by E-Int {};
+                };
+              };
+              2 plus 1 is 3 by B-Plus {};
+            };
+          };
+        };
+        fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- fib((n - 2)) evalto 2 by E-AppRec {
+          fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var2 {
+            fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var1 {};
+          };
+          fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- (n - 2) evalto 3 by E-Minus {
+            fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- n evalto 5 by E-Var1 {};
+            fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 5 |- 2 evalto 2 by E-Int {};
+            5 minus 2 is 3 by B-Minus {};
+          };
+          fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2))) evalto 2 by E-IfF {
+            fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- (n < 3) evalto false by E-Lt {
+              fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- n evalto 3 by E-Var1 {};
+              fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- 3 evalto 3 by E-Int {};
+              3 less than 3 is false by B-Lt {};
+            };
+            fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- (fib((n - 1)) + fib((n - 2))) evalto 2 by E-Plus {
+              fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- fib((n - 1)) evalto 1 by E-AppRec {
+                fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var2 {
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var1 {};
+                };
+                fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- (n - 1) evalto 2 by E-Minus {
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- n evalto 3 by E-Var1 {};
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- 1 evalto 1 by E-Int {};
+                  3 minus 1 is 2 by B-Minus {};
+                };
+                fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2))) evalto 1 by E-IfT {
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- (n < 3) evalto true by E-Lt {
+                    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- n evalto 2 by E-Var1 {};
+                    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- 3 evalto 3 by E-Int {};
+                    2 less than 3 is true by B-Lt {};
+                  };
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 2 |- 1 evalto 1 by E-Int {};
+                };
+              };
+              fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- fib((n - 2)) evalto 1 by E-AppRec {
+                fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var2 {
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] |- fib evalto ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))] by E-Var1 {};
+                };
+                fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- (n - 2) evalto 1 by E-Minus {
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- n evalto 3 by E-Var1 {};
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 3 |- 2 evalto 2 by E-Int {};
+                  3 minus 2 is 1 by B-Minus {};
+                };
+                fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 1 |- if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2))) evalto 1 by E-IfT {
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 1 |- (n < 3) evalto true by E-Lt {
+                    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 1 |- n evalto 1 by E-Var1 {};
+                    fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 1 |- 3 evalto 3 by E-Int {};
+                    1 less than 3 is true by B-Lt {};
+                  };
+                  fib = ()[rec fib = fun n -> if (n < 3) then 1 else (fib((n - 1)) + fib((n - 2)))],n = 1 |- 1 evalto 1 by E-Int {};
+                };
+              };
+              1 plus 1 is 2 by B-Plus {};
+            };
+          };
+        };
+        3 plus 2 is 5 by B-Plus {};
+      };
+    };
+  };
+};
+-}
+
+ex-5-1-6 : ● ⊢ ℓetrec "sum" ≔fun "f" ⇒ fun "n" ⇒ if var "n" ≺ i (+ 1) then i (+ 0) else app (var "f") (var "n") ⊕ app (app (var "sum") (var "f")) (var "n" ⊝ i (+ 1)) ιn
+               app (app (var "sum") (fun "x" ⇒ var "x" ⊛ var "x")) (i (+ 2)) ⇓ i (+ 5)
+ex-5-1-6 = {!!}
+
+q53 : ● ⊢ ℓetrec "fact" ≔fun "self" ⇒ fun "n" ⇒ if var "n" ≺ i (+ 2) then i (+ 1) else var "n" ⊛ app (app (var "self") (var "self")) (var "n" ⊝ i (+ 1)) ιn
+          app (app (var "fact") (var "fact")) (i (+ 3)) ⇓ i (+ 6)
+q53 = {!!}
