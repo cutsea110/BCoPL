@@ -210,92 +210,94 @@ ex-5-1-3 = E-Let E-Fun
 -}
 
 q47 : ● ⊢ ℓet "twice" ≔ fun "f" ⇒ fun "x" ⇒ app (var "f") (app (var "f") (var "x")) ιn app (app (var "twice") (app (var "twice") (fun "x" ⇒ var "x" ⊛ var "x"))) (i (+ 2)) ⇓ i (+ 65536)
-q47 = E-Let E-Fun
-            (E-App (E-App E-Var1 (E-App E-Var1 E-Fun E-Fun) E-Fun)
-                   E-Int
-                   (E-App (E-Var2 f≢x E-Var1)
-                          (E-App (E-Var2 f≢x E-Var1)
-                                 E-Var1
-                                 (E-App (E-Var2 f≢x E-Var1)
-                                        (E-App (E-Var2 f≢x E-Var1)
-                                               E-Var1
-                                               (E-Times E-Var1 E-Var1 (B-Times refl)))
-                                        (E-Times E-Var1 E-Var1 (B-Times refl))))
-                          (E-App (E-Var2 f≢x E-Var1)
-                                 (E-App (E-Var2 f≢x E-Var1)
-                                        E-Var1
-                                        (E-Times E-Var1 E-Var1 (B-Times refl)))
-                                 (E-Times E-Var1 E-Var1 (B-Times refl)))))
+q47 = ?
+
+{-
+-}
+
+ex-5-1-4 : ● ⊢ ℓet "compose" ≔ fun "f" ⇒ (fun "g" ⇒ (fun "x" ⇒ app (var "f") (app (var "g") (var "x")))) ιn
+                ℓet "p" ≔ fun "x" ⇒ var "x" ⊛ var "x" ιn
+                ℓet "q" ≔ fun "x" ⇒ var "x" ⊕ (i (+ 4)) ιn
+                app (app (app (var "compose") (var "p")) (var "q")) (i (+ 4)) ⇓ i (+ 64)
+ex-5-1-4 = E-Let E-Fun
+                 (E-Let E-Fun
+                        (E-Let E-Fun
+                               (E-App (E-App (E-App (E-Var2 compose≢q (E-Var2 compose≢p E-Var1))
+                                                    (E-Var2 p≢q E-Var1)
+                                                    E-Fun)
+                                             E-Var1 E-Fun)
+                                      E-Int
+                                      (E-App (E-Var2 f≢x (E-Var2 f≢g E-Var1))
+                                             (E-App (E-Var2 g≢x E-Var1)
+                                                    E-Var1
+                                                    (E-Plus E-Var1 E-Int (B-Plus refl)))
+                                             (E-Times E-Var1 E-Var1 (B-Times refl))))))
   where
+    compose≢q : "compose" ≡ "q" → ⊥
+    compose≢q ()
+    compose≢p : "compose" ≡ "p" → ⊥
+    compose≢p ()
+    p≢q : "p" ≡ "q" → ⊥
+    p≢q ()
     f≢x : "f" ≡ "x" → ⊥
     f≢x ()
+    f≢g : "f" ≡ "g" → ⊥
+    f≢g ()
+    g≢x : "g" ≡ "x" → ⊥
+    g≢x ()
 {-
-|- let twice = (fun f -> (fun x -> f(f(x)))) in twice(twice((fun x -> (x * x))))(1) evalto 1 by E-Let {
-  |- (fun f -> (fun x -> f(f(x)))) evalto ()[fun f -> (fun x -> f(f(x)))] by E-Fun {};
-  twice = ()[fun f -> (fun x -> f(f(x)))] |- twice(twice((fun x -> (x * x))))(1) evalto 1 by E-App {
-    twice = ()[fun f -> (fun x -> f(f(x)))] |- twice(twice((fun x -> (x * x)))) evalto (f = (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))])[fun x -> f(f(x))] by E-App {
-      twice = ()[fun f -> (fun x -> f(f(x)))] |- twice evalto ()[fun f -> (fun x -> f(f(x)))] by E-Var1 {};
-      twice = ()[fun f -> (fun x -> f(f(x)))] |- twice((fun x -> (x * x))) evalto (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))] by E-App {
-        twice = ()[fun f -> (fun x -> f(f(x)))] |- twice evalto ()[fun f -> (fun x -> f(f(x)))] by E-Var1 {};
-        twice = ()[fun f -> (fun x -> f(f(x)))] |- (fun x -> (x * x)) evalto (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] by E-Fun {};
-        f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] |- (fun x -> f(f(x))) evalto (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))] by E-Fun {};
-      };
-      f = (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))] |- (fun x -> f(f(x))) evalto (f = (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))])[fun x -> f(f(x))] by E-Fun {};
-    };
-    twice = ()[fun f -> (fun x -> f(f(x)))] |- 1 evalto 1 by E-Int {};
-    f = (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))],x = 1 |- f(f(x)) evalto 1 by E-App {
-      f = (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))],x = 1 |- f evalto (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))] by E-Var2 {
-        f = (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))] |- f evalto (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))] by E-Var1 {};
-      };
-      f = (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))],x = 1 |- f(x) evalto 1 by E-App {
-        f = (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))],x = 1 |- f evalto (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))] by E-Var2 {
-          f = (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))] |- f evalto (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))] by E-Var1 {};
-        };
-        f = (f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)])[fun x -> f(f(x))],x = 1 |- x evalto 1 by E-Var1 {};
-        f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)],x = 1 |- f(f(x)) evalto 1 by E-App {
-          f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)],x = 1 |- f evalto (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] by E-Var2 {
-            f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] |- f evalto (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] by E-Var1 {};
-          };
-          f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)],x = 1 |- f(x) evalto 1 by E-App {
-            f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)],x = 1 |- f evalto (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] by E-Var2 {
-              f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] |- f evalto (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] by E-Var1 {};
+-- compile test.agda by C-cC-xC-c
+-- test.agda has main action to putStrLn showDerivation⇓ ex-5-1-4
+
+|- let compose = (fun f -> (fun g -> (fun x -> f(g(x))))) in let p = (fun x -> (x * x)) in let q = (fun x -> (x + 4)) in compose(p)(q)(4) evalto 64 by E-Let {
+  |- (fun f -> (fun g -> (fun x -> f(g(x))))) evalto ()[fun f -> (fun g -> (fun x -> f(g(x))))] by E-Fun {};
+  compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))] |- let p = (fun x -> (x * x)) in let q = (fun x -> (x + 4)) in compose(p)(q)(4) evalto 64 by E-Let {
+    compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))] |- (fun x -> (x * x)) evalto (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)] by E-Fun {};
+    compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)] |- let q = (fun x -> (x + 4)) in compose(p)(q)(4) evalto 64 by E-Let {
+      compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)] |- (fun x -> (x + 4)) evalto (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] by E-Fun {};
+      compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],q = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] |- compose(p)(q)(4) evalto 64 by E-App {
+        compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],q = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] |- compose(p)(q) evalto (f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],g = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)])[fun x -> f(g(x))] by E-App {
+          compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],q = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] |- compose(p) evalto (f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun g -> (fun x -> f(g(x)))] by E-App {
+            compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],q = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] |- compose evalto ()[fun f -> (fun g -> (fun x -> f(g(x))))] by E-Var2 {
+              compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)] |- compose evalto ()[fun f -> (fun g -> (fun x -> f(g(x))))] by E-Var2 {
+                compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))] |- compose evalto ()[fun f -> (fun g -> (fun x -> f(g(x))))] by E-Var1 {};
+              };
             };
-            f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)],x = 1 |- x evalto 1 by E-Var1 {};
-            twice = ()[fun f -> (fun x -> f(f(x)))],x = 1 |- (x * x) evalto 1 by E-Times {
-              twice = ()[fun f -> (fun x -> f(f(x)))],x = 1 |- x evalto 1 by E-Var1 {};
-              twice = ()[fun f -> (fun x -> f(f(x)))],x = 1 |- x evalto 1 by E-Var1 {};
-              1 times 1 is 1 by B-Times {};
+            compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],q = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] |- p evalto (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)] by E-Var2 {
+              compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)] |- p evalto (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)] by E-Var1 {};
+            };
+            f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)] |- (fun g -> (fun x -> f(g(x)))) evalto (f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun g -> (fun x -> f(g(x)))] by E-Fun {};
+          };
+          compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],q = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] |- q evalto (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] by E-Var1 {};
+          f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],g = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] |- (fun x -> f(g(x))) evalto (f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],g = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)])[fun x -> f(g(x))] by E-Fun {};
+        };
+        compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],q = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] |- 4 evalto 4 by E-Int {};
+        f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],g = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)],x = 4 |- f(g(x)) evalto 64 by E-App {
+          f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],g = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)],x = 4 |- f evalto (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)] by E-Var2 {
+            f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],g = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] |- f evalto (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)] by E-Var2 {
+              f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)] |- f evalto (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)] by E-Var1 {};
             };
           };
-          twice = ()[fun f -> (fun x -> f(f(x)))],x = 1 |- (x * x) evalto 1 by E-Times {
-            twice = ()[fun f -> (fun x -> f(f(x)))],x = 1 |- x evalto 1 by E-Var1 {};
-            twice = ()[fun f -> (fun x -> f(f(x)))],x = 1 |- x evalto 1 by E-Var1 {};
-            1 times 1 is 1 by B-Times {};
+          f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],g = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)],x = 4 |- g(x) evalto 8 by E-App {
+            f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],g = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)],x = 4 |- g evalto (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] by E-Var2 {
+              f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],g = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] |- g evalto (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)] by E-Var1 {};
+            };
+            f = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],g = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)])[fun x -> (x + 4)],x = 4 |- x evalto 4 by E-Var1 {};
+            compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],x = 4 |- (x + 4) evalto 8 by E-Plus {
+              compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],x = 4 |- x evalto 4 by E-Var1 {};
+              compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],p = (compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))])[fun x -> (x * x)],x = 4 |- 4 evalto 4 by E-Int {};
+              4 plus 4 is 8 by B-Plus {};
+            };
           };
-        };
-      };
-      f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)],x = 1 |- f(f(x)) evalto 1 by E-App {
-        f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)],x = 1 |- f evalto (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] by E-Var2 {
-          f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] |- f evalto (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] by E-Var1 {};
-        };
-        f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)],x = 1 |- f(x) evalto 1 by E-App {
-          f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)],x = 1 |- f evalto (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] by E-Var2 {
-            f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] |- f evalto (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)] by E-Var1 {};
+          compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],x = 8 |- (x * x) evalto 64 by E-Times {
+            compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],x = 8 |- x evalto 8 by E-Var1 {};
+            compose = ()[fun f -> (fun g -> (fun x -> f(g(x))))],x = 8 |- x evalto 8 by E-Var1 {};
+            8 times 8 is 64 by B-Times {};
           };
-          f = (twice = ()[fun f -> (fun x -> f(f(x)))])[fun x -> (x * x)],x = 1 |- x evalto 1 by E-Var1 {};
-          twice = ()[fun f -> (fun x -> f(f(x)))],x = 1 |- (x * x) evalto 1 by E-Times {
-            twice = ()[fun f -> (fun x -> f(f(x)))],x = 1 |- x evalto 1 by E-Var1 {};
-            twice = ()[fun f -> (fun x -> f(f(x)))],x = 1 |- x evalto 1 by E-Var1 {};
-            1 times 1 is 1 by B-Times {};
-          };
-        };
-        twice = ()[fun f -> (fun x -> f(f(x)))],x = 1 |- (x * x) evalto 1 by E-Times {
-          twice = ()[fun f -> (fun x -> f(f(x)))],x = 1 |- x evalto 1 by E-Var1 {};
-          twice = ()[fun f -> (fun x -> f(f(x)))],x = 1 |- x evalto 1 by E-Var1 {};
-          1 times 1 is 1 by B-Times {};
         };
       };
     };
   };
 };
 -}
+
