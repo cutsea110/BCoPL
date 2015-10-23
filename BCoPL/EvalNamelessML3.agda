@@ -208,8 +208,8 @@ data _⊢_⇓_ : DBValueList → DBExp → DBValue → Set where
          → ν ⊢ d₂ ⇓ i₂
          → i₁ less-than i₂ is i₃
          → ν ⊢ d₁ ≺̂ d₂ ⇓ i₃
-  E-Var : ∀ {ν n}
-          → ν ⊢ # n ⇓ ν ⟦ n ⟧
+  E-Var : ∀ {ν n w}
+          → ν ⟦ n ⟧ ≡ w → ν ⊢ # (S n) ⇓ w
   E-Let : ∀ {ν d₁ d₂ w₁ w}
           → ν ⊢ d₁ ⇓ w₁
           → ν ⊱ w₁ ⊢ d₂ ⇓ w
