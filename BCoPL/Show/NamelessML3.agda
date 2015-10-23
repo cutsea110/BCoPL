@@ -12,8 +12,8 @@ showExp : Exp → String
 showDBExp : DBExp → String
 
 showVarList ● = ""
-showVarList (● ⊱ x) = x ++ " "
-showVarList (χ ⊱ x) = showVarList χ ++ "," ++ x ++ " "
+showVarList (● ⊱ x) = x
+showVarList (χ ⊱ x) = showVarList χ ++ "," ++ x
 
 showExp (i n) = showℤ n
 showExp (b v) = show𝔹 v
@@ -57,4 +57,4 @@ showJudge⟾ (TR-App p₁ p₂) = "Tr-App {" ++ showDerivation⟾ p₁ ++ showDe
 showJudge⟾ (TR-LetRec p₁ p₂) = "Tr-LetRec {" ++ showDerivation⟾ p₁ ++ showDerivation⟾ p₂ ++ "};"
 
 
-showDerivation⟾ {χ} {e} {d} p = showVarList χ ++ "|- " ++ showExp e ++ " ==> " ++ showDBExp d ++ " by " ++ showJudge⟾ p
+showDerivation⟾ {χ} {e} {d} p = showVarList χ ++ " |- " ++ showExp e ++ " ==> " ++ showDBExp d ++ " by " ++ showJudge⟾ p
