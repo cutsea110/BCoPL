@@ -53,7 +53,7 @@ showJudge⟾ (TR-Var1 prf) = "Tr-Var1 {};"
 showJudge⟾ (TR-Var2 prf p) = "Tr-Var2 {" ++ showDerivation⟾ p ++ "};"
 showJudge⟾ (TR-Let p₁ p₂) = "Tr-Let {" ++ showDerivation⟾ p₁ ++ showDerivation⟾ p₂ ++ "};"
 showJudge⟾ (TR-Fun p) = "Tr-Fun {" ++ showDerivation⟾ p ++ "};"
-showJudge⟾ (TR-App p₁ p₂) = "Tr-App {" ++ showDerivation⟾ p₁ ++ showDerivation⟾ p₂ ++ "}"
+showJudge⟾ (TR-App p₁ p₂) = "Tr-App {" ++ showDerivation⟾ p₁ ++ showDerivation⟾ p₂ ++ "};"
 showJudge⟾ (TR-LetRec p₁ p₂) = "Tr-LetRec {" ++ showDerivation⟾ p₁ ++ showDerivation⟾ p₂ ++ "};"
 
 
