@@ -105,6 +105,57 @@ ex-6-1-3 = TR-Let (TR-Let (TR-Minus TR-Int TR-Int) (TR-Times (TR-Var1 refl) (TR-
 };
 -}
 
+q62 : ● ⊢ ℓet "y" ≔ i (+ 2) ιn fun "x" ⇒ var "x" ⊕ var "y"
+           ⟾
+           ℓeṭ≔ i (+ 2) ιn fuṇ⇒ # 1 ⊕̂ # 2
+q62 = TR-Let TR-Int (TR-Fun (TR-Plus (TR-Var1 refl) (TR-Var2 x≢y (TR-Var1 refl))))
+  where
+    x≢y : "x" ≡ "y" → ⊥
+    x≢y ()
+{-
+|- let y = 2 in (fun x -> (x + y)) ==> let . = 2 in (fun . -> (#1 + #2)) by Tr-Let {
+  |- 2 ==> 2 by Tr-Int {};
+  y |- (fun x -> (x + y)) ==> (fun . -> (#1 + #2)) by Tr-Fun {
+    y,x |- (x + y) ==> (#1 + #2) by Tr-Plus {
+      y,x |- x ==> #1 by Tr-Var1 {};
+      y,x |- y ==> #2 by Tr-Var2 {
+        y |- y ==> #1 by Tr-Var1 {};
+      };
+    };
+  };
+};
+-}
+
+q64 : ● ⊢ ℓet "sm" ≔ fun "f" ⇒ app (var "f") (i (+ 3)) ⊕ app (var "f") (i (+ 4)) ιn app (var "sm") (fun "x" ⇒ var "x" ⊛ var "x")
+           ⟾
+           ℓeṭ≔ fuṇ⇒ app (# 1) (i (+ 3)) ⊕̂ app (# 1) (i (+ 4)) ιn app (# 1) (fuṇ⇒ # 1 ⊛̂ # 1)
+q64 = TR-Let (TR-Fun (TR-Plus (TR-App (TR-Var1 refl) TR-Int) (TR-App (TR-Var1 refl) TR-Int))) (TR-App (TR-Var1 refl) (TR-Fun (TR-Times (TR-Var1 refl) (TR-Var1 refl))))
+{-
+|- let sm = (fun f -> (f(3) + f(4))) in sm((fun x -> (x * x))) ==> let . = (fun . -> (#1(3) + #1(4))) in #1((fun . -> (#1 * #1))) by Tr-Let {
+  |- (fun f -> (f(3) + f(4))) ==> (fun . -> (#1(3) + #1(4))) by Tr-Fun {
+    f |- (f(3) + f(4)) ==> (#1(3) + #1(4)) by Tr-Plus {
+      f |- f(3) ==> #1(3) by Tr-App {
+        f |- f ==> #1 by Tr-Var1 {};
+        f |- 3 ==> 3 by Tr-Int {};
+      };
+      f |- f(4) ==> #1(4) by Tr-App {
+        f |- f ==> #1 by Tr-Var1 {};
+        f |- 4 ==> 4 by Tr-Int {};
+      };
+    };
+  };
+  sm |- sm((fun x -> (x * x))) ==> #1((fun . -> (#1 * #1))) by Tr-App {
+    sm |- sm ==> #1 by Tr-Var1 {};
+    sm |- (fun x -> (x * x)) ==> (fun . -> (#1 * #1)) by Tr-Fun {
+      sm,x |- (x * x) ==> (#1 * #1) by Tr-Times {
+        sm,x |- x ==> #1 by Tr-Var1 {};
+        sm,x |- x ==> #1 by Tr-Var1 {};
+      };
+    };
+  };
+};
+-}
+
 ex-6-1-4 : ● ⊢ ℓet "a" ≔ i (+ 3) ιn
                 ℓet "f" ≔ fun "y" ⇒ var "y" ⊛ var "a" ιn
                 ℓet "a" ≔ i (+ 5) ιn app (var "f") (i (+ 4))
@@ -150,4 +201,34 @@ ex-6-1-5 : ● ⊢ ℓetrec "fact" ≔fun "n" ⇒
                ⟾
                ℓetrec̣≔fuṇ⇒ if # 1 ≺̂ i (+ 2) then i (+ 1) else # 1 ⊛̂ app (# 2) (# 1 ⊝̂ i (+ 1)) ιn
                app (# 1) (i (+ 3))
-ex-6-1-5 = {!!}
+ex-6-1-5 = TR-LetRec (TR-If (TR-Lt (TR-Var1 refl) TR-Int) TR-Int (TR-Times (TR-Var1 refl) (TR-App (TR-Var2 n≢fact (TR-Var1 refl)) (TR-Minus (TR-Var1 refl) TR-Int)))) (TR-App (TR-Var1 refl) TR-Int)
+  where
+    n≢fact : "n" ≡ "fact" → ⊥
+    n≢fact ()
+{-
+|- let rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1))) in fact(3) ==> let rec . = fun . -> if (#1 < 2) then 1 else (#1 * #2((#1 - 1))) in #1(3) by Tr-LetRec {
+  fact,n |- if (n < 2) then 1 else (n * fact((n - 1))) ==> if (#1 < 2) then 1 else (#1 * #2((#1 - 1))) by Tr-If {
+    fact,n |- (n < 2) ==> (#1 < 2) by Tr-Lt {
+      fact,n |- n ==> #1 by Tr-Var1 {};
+      fact,n |- 2 ==> 2 by Tr-Int {};
+    };
+    fact,n |- 1 ==> 1 by Tr-Int {};
+    fact,n |- (n * fact((n - 1))) ==> (#1 * #2((#1 - 1))) by Tr-Times {
+      fact,n |- n ==> #1 by Tr-Var1 {};
+      fact,n |- fact((n - 1)) ==> #2((#1 - 1)) by Tr-App {
+        fact,n |- fact ==> #2 by Tr-Var2 {
+          fact |- fact ==> #1 by Tr-Var1 {};
+        };
+        fact,n |- (n - 1) ==> (#1 - 1) by Tr-Minus {
+          fact,n |- n ==> #1 by Tr-Var1 {};
+          fact,n |- 1 ==> 1 by Tr-Int {};
+        };
+      };
+    };
+  };
+  fact |- fact(3) ==> #1(3) by Tr-App {
+    fact |- fact ==> #1 by Tr-Var1 {};
+    fact |- 3 ==> 3 by Tr-Int {};
+  };
+};
+-}
