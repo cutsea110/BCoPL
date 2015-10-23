@@ -104,3 +104,50 @@ ex-6-1-3 = TR-Let (TR-Let (TR-Minus TR-Int TR-Int) (TR-Times (TR-Var1 refl) (TR-
   };
 };
 -}
+
+ex-6-1-4 : ● ⊢ ℓet "a" ≔ i (+ 3) ιn
+                ℓet "f" ≔ fun "y" ⇒ var "y" ⊛ var "a" ιn
+                ℓet "a" ≔ i (+ 5) ιn app (var "f") (i (+ 4))
+               ⟾
+               ℓeṭ≔ i (+ 3) ιn
+               ℓeṭ≔ fuṇ⇒ # 1 ⊛̂ # 2 ιn
+               ℓeṭ≔ i (+ 5) ιn app (# 2) (i (+ 4))
+ex-6-1-4 = TR-Let TR-Int (TR-Let (TR-Fun (TR-Times (TR-Var1 refl) (TR-Var2 y≢a (TR-Var1 refl)))) (TR-Let TR-Int (TR-App (TR-Var2 a≢f (TR-Var1 refl)) TR-Int)))
+  where
+    a≢f : "a" ≡ "f" → ⊥
+    a≢f ()
+    y≢a : "y" ≡ "a" → ⊥
+    y≢a ()
+{-
+|- let a = 3 in let f = (fun y -> (y * a)) in let a = 5 in f(4) ==> let . = 3 in let . = (fun . -> (#1 * #2)) in let . = 5 in #2(4) by Tr-Let {
+  |- 3 ==> 3 by Tr-Int {};
+  a |- let f = (fun y -> (y * a)) in let a = 5 in f(4) ==> let . = (fun . -> (#1 * #2)) in let . = 5 in #2(4) by Tr-Let {
+    a |- (fun y -> (y * a)) ==> (fun . -> (#1 * #2)) by Tr-Fun {
+      a,y |- (y * a) ==> (#1 * #2) by Tr-Times {
+        a,y |- y ==> #1 by Tr-Var1 {};
+        a,y |- a ==> #2 by Tr-Var2 {
+          a |- a ==> #1 by Tr-Var1 {};
+        };
+      };
+    };
+    a,f |- let a = 5 in f(4) ==> let . = 5 in #2(4) by Tr-Let {
+      a,f |- 5 ==> 5 by Tr-Int {};
+      a,f,a |- f(4) ==> #2(4) by Tr-App {
+        a,f,a |- f ==> #2 by Tr-Var2 {
+          a,f |- f ==> #1 by Tr-Var1 {};
+        };
+        a,f,a |- 4 ==> 4 by Tr-Int {};
+      };
+    };
+  };
+};
+-}
+
+
+ex-6-1-5 : ● ⊢ ℓetrec "fact" ≔fun "n" ⇒
+                      if var "n" ≺ i (+ 2) then i (+ 1) else var "n" ⊛ app (var "fact") (var "n" ⊝ i (+ 1)) ιn
+               app (var "fact") (i (+ 3))
+               ⟾
+               ℓetrec̣≔fuṇ⇒ if # 1 ≺̂ i (+ 2) then i (+ 1) else # 1 ⊛̂ app (# 2) (# 1 ⊝̂ i (+ 1)) ιn
+               app (# 1) (i (+ 3))
+ex-6-1-5 = {!!}
