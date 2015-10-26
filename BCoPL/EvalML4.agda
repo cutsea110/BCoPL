@@ -1,10 +1,10 @@
 module BCoPL.EvalML4 where
 
-open import Data.Bool using (Bool; true; false) public
+open import Data.Bool using (Bool; true; false) renaming (if_then_else_ to _¿_∶_) public
 open import Data.Integer public
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
 open import Data.Product using (_×_;_,_) public
-open import Data.String using (String) public
+open import Data.String using (String; _==_) public
 
 open import Relation.Binary.Core public
 open import Relation.Binary.PropositionalEquality using (refl;_≡_) public
@@ -39,6 +39,7 @@ data Exp : Set where
 
 
 data Value where
+  error : Value
   i : ℤ → Value
   b : Bool → Value
   ⟨_⟩[fun_⇒_] : Env → Var → Exp → Value
@@ -87,17 +88,17 @@ data _times_is_ : Value → Value → Value → Set where
 data _less-than_is_ : Value → Value → Value → Set where
   B-Lt : ∀ {i₁ i₂ v} → i₁ < i₂ ≡ v → i i₁ less-than i i₂ is b v
 
+_⟦_⟧ : Env → Var → Value
+● ⟦ x ⟧ = error
+(ε ⊱ (x , v)) ⟦ y ⟧ = x == y ¿ v ∶ ε ⟦ y ⟧
+
 data _⊢_⇓_ : Env → Exp → Value → Set where
   E-Int : ∀ {ε z}
           → ε ⊢ i z ⇓ i z
   E-Bool : ∀ {ε v}
            → ε ⊢ b v ⇓ b v
-  E-Var1 : ∀ {ε x v}
-           → ε ⊱ (x , v) ⊢ var x ⇓ v
-  E-Var2 : ∀ {ε x y v₁ v₂}
-           → (p : x ≢ y)
-           → ε ⊢ var x ⇓ v₂
-           → ε ⊱ (y , v₁) ⊢ var x ⇓ v₂
+  E-Var : ∀ {ε x v}
+          → ε ⟦ x ⟧ ≡ v → ε ⊢ var x ⇓ v
   E-Plus : ∀ {ε e₁ i₁ e₂ i₂ i₃}
            → ε ⊢ e₁ ⇓ i₁
            → ε ⊢ e₂ ⇓ i₂
