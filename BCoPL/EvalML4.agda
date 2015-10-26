@@ -57,7 +57,7 @@ infixl 10 _⊛_
 infixl 9 _⊕_ _⊝_
 infix 8 _≺_
 infixr 7 _∷_
-infix 6 if_then_else_ ℓet_≔_ιn_ fun_⇒_ ℓetrec_≔fun_⇒_ιn_
+infix 6 if_then_else_ ℓet_≔_ιn_ fun_⇒_ ℓetrec_≔fun_⇒_ιn_ match_with[]⇒_∣_∷_⇒_
 infixl 5 _⊢_⇓_
 
 private
@@ -145,14 +145,16 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
              → ε₂ ⊱ (x , ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ]) ⊱ (y , v₂) ⊢ e₀ ⇓ v
              → ε ⊢ app e₁ e₂ ⇓ v
 
-  E-Nil : ● ⊢ [] ⇓ []
-  E-Cons : ∀ {e₁ e₂ v₁ v₂}
-           → ● ⊢ e₁ ⇓ v₁ → ● ⊢ e₂ ⇓ v₂ → ● ⊢ e₁ ∷ e₂ ⇓ v₁ ∷ v₂
-  E-MatchNil : ∀ {e₁ e₂ e₃ v}
-               → ● ⊢ e₁ ⇓ []
-               → ● ⊢ e₂ ⇓ v
-               → ● ⊢ match e₁ with[]⇒ e₂ ∣ "x" ∷ "y" ⇒ e₃ ⇓ v
-  E-MatchCons : ∀ {e₁ e₂ e₃ v₁ v₂ v}
-                → ● ⊢ e₁ ⇓ v₁ ∷ v₂
-                → ● ⊱ ("x" , v₁) ⊱ ("y" , v₂) ⊢ e₃ ⇓ v
-                → ● ⊢ match e₁ with[]⇒ e₂ ∣ "x" ∷ "y" ⇒ e₃ ⇓ v
+  E-Nil : ∀ {ε} → ε ⊢ [] ⇓ []
+  E-Cons : ∀ {ε e₁ e₂ v₁ v₂}
+           → ε ⊢ e₁ ⇓ v₁
+           → ε ⊢ e₂ ⇓ v₂
+           → ε ⊢ e₁ ∷ e₂ ⇓ v₁ ∷ v₂
+  E-MatchNil : ∀ {ε e₁ e₂ e₃ x y v}
+               → ε ⊢ e₁ ⇓ []
+               → ε ⊢ e₂ ⇓ v
+               → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ v
+  E-MatchCons : ∀ {ε e₁ e₂ e₃ x y v₁ v₂ v}
+                → ε ⊢ e₁ ⇓ v₁ ∷ v₂
+                → ε ⊱ (x , v₁) ⊱ (y , v₂) ⊢ e₃ ⇓ v
+                → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ v
