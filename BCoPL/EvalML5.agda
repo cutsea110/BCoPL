@@ -12,6 +12,7 @@ open import Relation.Binary.PropositionalEquality using (refl;_≡_) public
 Var = String
 data Value : Set
 BindedValue = Var × Value
+data Exp : Set
 
 data Prim : Set where
   prim⊕ : Prim
@@ -23,7 +24,17 @@ data Env : Set where
   ● : Env
   _⊱_ : Env → BindedValue → Env
 
-data Exp : Set where
+data Pat : Set where
+  var : Var → Pat
+  [] : Pat
+  _∷_ : Pat → Pat → Pat
+  ̱ : Pat
+
+data Clauses : Set where
+  _↦_ : Pat → Exp → Clauses
+  _↦_∣_ : Pat → Exp → Clauses → Clauses
+
+data Exp where
   i : ℤ → Exp
   b : Bool → Exp
   var : Var → Exp
@@ -35,8 +46,7 @@ data Exp : Set where
   app : Exp → Exp → Exp
   [] : Exp
   _∷_ : Exp → Exp → Exp
-  match_with[]⇒_∣_∷_⇒_ : Exp → Exp → Var → Var → Exp → Exp
-
+  match_ωith_ : Exp → Clauses → Exp
 
 data Value where
   error : Value
@@ -52,13 +62,14 @@ _⊝_ = op prim⊝
 _⊛_ = op prim⊛
 _≺_ = op prim≺
 
+infixl 21 _⨄_
 infixl 20 _⊱_
 
 infixl 10 _⊛_
 infixl 9 _⊕_ _⊝_
 infix 8 _≺_
 infixr 7 _∷_
-infix 6 if_then_else_ ℓet_≔_ιn_ fun_⇒_ ℓetrec_≔fun_⇒_ιn_ match_with[]⇒_∣_∷_⇒_
+infix 6 if_then_else_ ℓet_≔_ιn_ fun_⇒_ ℓetrec_≔fun_⇒_ιn_ match_ωith_ _matches_when⟨_⟩ _doesn't-match_
 infixl 5 _⊢_⇓_
 
 private
@@ -87,6 +98,26 @@ data _times_is_ : Value → Value → Value → Set where
 
 data _less-than_is_ : Value → Value → Value → Set where
   B-Lt : ∀ {i₁ i₂ v} → i₁ < i₂ ≡ v → i i₁ less-than i i₂ is b v
+
+_⨄_ : Env → Env → Env
+ε₁ ⨄ ● = ε₁
+ε₁ ⨄ (ε₂ ⊱ x) = ε₁ ⨄ ε₂ ⊱ x
+
+data _matches_when⟨_⟩ : Pat → Value → Env → Set where
+  M-Var : ∀ {x v} → var x matches v when⟨ ● ⊱ (x , v) ⟩
+  M-Nil : [] matches [] when⟨ ● ⟩
+  M-Cons : ∀ {ε ε₁ ε₂ p₁ p₂ v₁ v₂}
+           → p₁ matches v₁ when⟨ ε₁ ⟩
+           → p₂ matches v₂ when⟨ ε₂ ⟩
+           → ε ≡ ε₁ ⨄ ε₂
+           → p₁ ∷ p₂ matches v₁ ∷ v₂ when⟨ ε ⟩
+  M-Wild : ∀ {v} → ̱ matches v when⟨ ● ⟩
+
+data _doesn't-match_ : Pat → Value → Set where
+  NM-ConsNil : ∀ {v₁ v₂} → [] doesn't-match v₁ ∷ v₂
+  NM-NilCons : ∀ {p₁ p₂} → p₁ ∷ p₂ doesn't-match []
+  NM-ConsConsL : ∀ {p₁ p₂ v₁ v₂} → p₁ doesn't-match v₁ → p₁ ∷ p₂ doesn't-match v₁ ∷ v₂
+  NM-ConsConsR : ∀ {p₁ p₂ v₁ v₂} → p₂ doesn't-match v₂ → p₁ ∷ p₂ doesn't-match v₁ ∷ v₂
 
 _⟦_⟧ : Env → Var → Value
 ● ⟦ x ⟧ = error
@@ -151,11 +182,20 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
            → ε ⊢ e₁ ⇓ v₁
            → ε ⊢ e₂ ⇓ v₂
            → ε ⊢ e₁ ∷ e₂ ⇓ v₁ ∷ v₂
-  E-MatchNil : ∀ {ε e₁ e₂ e₃ x y v}
-               → ε ⊢ e₁ ⇓ []
-               → ε ⊢ e₂ ⇓ v
-               → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ v
-  E-MatchCons : ∀ {ε e₁ e₂ e₃ x y v₁ v₂ v}
-                → ε ⊢ e₁ ⇓ v₁ ∷ v₂
-                → ε ⊱ (x , v₁) ⊱ (y , v₂) ⊢ e₃ ⇓ v
-                → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ v
+  E-MatchM1 : ∀ {ε ε₁ ε₂ e e₀ e₁ p v v'}
+              → ε ⊢ e₁ ⇓ v
+              → p matches v when⟨ ε₁ ⟩
+              → ε₂ ≡ ε ⨄ ε₁
+              → ε₂ ⊢ e ⇓ v'
+              → ε ⊢ match e₀ ωith p ↦ e ⇓ v'
+  E-MatchM2 : ∀ {ε ε₁ ε₂ e e₀ p v v' c}
+              → ε ⊢ e₀ ⇓ v
+              → p matches v when⟨ ε₁ ⟩
+              → ε₂ ≡ ε ⨄ ε₁
+              → ε₂ ⊢ e ⇓ v'
+              → ε ⊢ match e₀ ωith p ↦ e ∣ c ⇓ v'
+  E-MatchN : ∀ {ε e e₀ p v v' c}
+             → ε ⊢ e₀ ⇓ v
+             → p doesn't-match v
+             → ε ⊢ match e₀ ωith c ⇓ v'
+             → ε ⊢ match e₀ ωith p ↦ e ∣ c ⇓ v'
