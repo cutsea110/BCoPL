@@ -4,7 +4,7 @@ open import Data.String
 open import Data.Nat.Show renaming (show to showℕ)
 open import Data.Integer renaming (show to showℤ)
 open import Data.Bool.Show renaming (show to show𝔹)
-open import BCoPL.EvalML4
+open import BCoPL.EvalML5
 
 showDerivation⇓ : ∀ {ε e v} → ε ⊢ e ⇓ v → String
 showEnv : Env → String
@@ -17,6 +17,16 @@ showBinding (x , v) = x ++ " = " ++ showValue v
 showEnv ● = ""
 showEnv (● ⊱ x) = showBinding x
 showEnv (ε ⊱ x) = showEnv ε ++ "," ++ showBinding x
+
+showPat : Pat → String
+showPat (var x) = x
+showPat [] = "[]"
+showPat (x ∷ y) = "(" ++ showPat x ++ "::" ++ showPat y ++ ")"
+showPat ̱ = "_"
+
+showClauses : Clauses → String
+showClauses (p ↦ e ̣) = showPat p ++ " -> " ++ showExp e
+showClauses (p ↦ e ∣ c) = showPat p ++ " -> " ++ showExp e ++ " | " ++ showClauses c
 
 showExp (i n) = showℤ n
 showExp (b v) = show𝔹 v
@@ -34,8 +44,7 @@ showExp (fun x ⇒ e) = "(fun " ++ x ++ " -> " ++ showExp e ++ ")"
 showExp (app e₁ e₂) = showExp e₁ ++ "(" ++ showExp e₂ ++ ")"
 showExp [] = "[]"
 showExp (x ∷ y) = "(" ++ showExp x ++ " :: " ++ showExp y ++ ")"
-showExp (match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃)
-  = "match " ++ showExp e₁ ++ " with [] -> " ++ showExp e₂ ++ " | " ++ x ++ " :: " ++ y ++ " -> " ++ showExp e₃
+showExp (match e ωith c) = "(match " ++ showExp e ++ " with " ++ showClauses c ++ ")"
 
 showValue error = "*** Error occured by illegal Value ***"
 showValue (i n) = showℤ n
@@ -80,7 +89,8 @@ showJudge⇓ (E-AppRec e₁ e₂ e₃)
   = "E-AppRec {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ showDerivation⇓ e₃ ++ "};"
 showJudge⇓ E-Nil = "E-Nil {};"
 showJudge⇓ (E-Cons e₁ e₂) = "E-Cons {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ "};"
-showJudge⇓ (E-MatchNil e₁ e₂) = "E-MatchNil {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ "};"
-showJudge⇓ (E-MatchCons e₁ e₂) = "E-MatchCons {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ "};"
+showJudge⇓ (E-MatchM1 e₁ p₁ p₂ e₂) = {!!}
+showJudge⇓ (E-MatchM2 e₁ p₁ p₂ e₂) = {!!}
+showJudge⇓ (E-MatchN e₁ p₁ e₂) = {!!}
 
 showDerivation⇓ {ε} {e} {v} p = showEnv ε ++ " |- " ++ showExp e ++ " evalto " ++ showValue v ++ " by " ++ showJudge⇓ p
