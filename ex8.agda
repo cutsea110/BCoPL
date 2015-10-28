@@ -491,3 +491,159 @@ ex-8-1-10 = T-Let (T-Cons (T-Fun (T-Var refl)) (T-Cons (T-Fun T-Int) (T-Cons (T-
 };
 -}
 
+ex-8-1-11 : ● ⊢ ℓetrec "length" ≔fun "l" ⇒
+                       match var "l" with[]⇒ i (+ 0)
+                                       ∣ "x" ∷ "y" ⇒ i (+ 1) ⊕ app (var "length") (var "y") ιn
+                 var "length" ∶ int list ⇀ int
+ex-8-1-11 = T-LetRec (T-Match (T-Var refl)
+                              T-Int
+                              (T-Plus T-Int (T-App (T-Var refl) (T-Var refl))))
+                     (T-Var refl)
+{-
+|- let rec length = fun l -> match l with [] -> 0 | x :: y -> (1 + length(y)) in length : (((int) list)) -> int by T-LetRec {
+  length:(((int) list)) -> int,l:((int) list) |- match l with [] -> 0 | x :: y -> (1 + length(y)) : int by T-Match {
+    length:(((int) list)) -> int,l:((int) list) |- l : ((int) list) by T-Var {};
+    length:(((int) list)) -> int,l:((int) list) |- 0 : int by T-Int {};
+    length:(((int) list)) -> int,l:((int) list),x:int,y:((int) list) |- (1 + length(y)) : int by T-Plus {
+      length:(((int) list)) -> int,l:((int) list),x:int,y:((int) list) |- 1 : int by T-Int {};
+      length:(((int) list)) -> int,l:((int) list),x:int,y:((int) list) |- length(y) : int by T-App {
+        length:(((int) list)) -> int,l:((int) list),x:int,y:((int) list) |- length : (((int) list)) -> int by T-Var {};
+        length:(((int) list)) -> int,l:((int) list),x:int,y:((int) list) |- y : ((int) list) by T-Var {};
+      };
+    };
+  };
+  length:(((int) list)) -> int |- length : (((int) list)) -> int by T-Var {};
+};
+-}
+
+q103 : ● ⊢ ℓetrec "length" ≔fun "l" ⇒
+                  match var "l" with[]⇒ i (+ 0)
+                                  ∣ "x" ∷ "y" ⇒ i (+ 1) ⊕ app (var "length") (var "y") ιn
+            app (var "length") ((fun "x" ⇒ var "x") ∷ (fun "y" ⇒ var "y" ⊕ i (+ 3)) ∷ []) ∶ int
+q103 = T-LetRec (T-Match (T-Var refl)
+                         T-Int
+                         (T-Plus T-Int (T-App (T-Var refl) (T-Var refl))))
+                (T-App (T-Var refl)
+                       (T-Cons (T-Fun (T-Var refl))
+                               (T-Cons (T-Fun (T-Plus (T-Var refl) T-Int))
+                                       T-Nil)))
+{-
+|- let rec length = fun l -> match l with [] -> 0 | x :: y -> (1 + length(y)) in length(((fun x -> x) :: ((fun y -> (y + 3)) :: []))) : int by T-LetRec {
+  length:((((int) -> int) list)) -> int,l:(((int) -> int) list) |- match l with [] -> 0 | x :: y -> (1 + length(y)) : int by T-Match {
+    length:((((int) -> int) list)) -> int,l:(((int) -> int) list) |- l : (((int) -> int) list) by T-Var {};
+    length:((((int) -> int) list)) -> int,l:(((int) -> int) list) |- 0 : int by T-Int {};
+    length:((((int) -> int) list)) -> int,l:(((int) -> int) list),x:(int) -> int,y:(((int) -> int) list) |- (1 + length(y)) : int by T-Plus {
+      length:((((int) -> int) list)) -> int,l:(((int) -> int) list),x:(int) -> int,y:(((int) -> int) list) |- 1 : int by T-Int {};
+      length:((((int) -> int) list)) -> int,l:(((int) -> int) list),x:(int) -> int,y:(((int) -> int) list) |- length(y) : int by T-App {
+        length:((((int) -> int) list)) -> int,l:(((int) -> int) list),x:(int) -> int,y:(((int) -> int) list) |- length : ((((int) -> int) list)) -> int by T-Var {};
+        length:((((int) -> int) list)) -> int,l:(((int) -> int) list),x:(int) -> int,y:(((int) -> int) list) |- y : (((int) -> int) list) by T-Var {};
+      };
+    };
+  };
+  length:((((int) -> int) list)) -> int |- length(((fun x -> x) :: ((fun y -> (y + 3)) :: []))) : int by T-App {
+    length:((((int) -> int) list)) -> int |- length : ((((int) -> int) list)) -> int by T-Var {};
+    length:((((int) -> int) list)) -> int |- ((fun x -> x) :: ((fun y -> (y + 3)) :: [])) : (((int) -> int) list) by T-Cons {
+      length:((((int) -> int) list)) -> int |- (fun x -> x) : (int) -> int by T-Fun {
+        length:((((int) -> int) list)) -> int,x:int |- x : int by T-Var {};
+      };
+      length:((((int) -> int) list)) -> int |- ((fun y -> (y + 3)) :: []) : (((int) -> int) list) by T-Cons {
+        length:((((int) -> int) list)) -> int |- (fun y -> (y + 3)) : (int) -> int by T-Fun {
+          length:((((int) -> int) list)) -> int,y:int |- (y + 3) : int by T-Plus {
+            length:((((int) -> int) list)) -> int,y:int |- y : int by T-Var {};
+            length:((((int) -> int) list)) -> int,y:int |- 3 : int by T-Int {};
+          };
+        };
+        length:((((int) -> int) list)) -> int |- [] : (((int) -> int) list) by T-Nil {};
+      };
+    };
+  };
+};
+-}
+
+q104 : ● ⊢ ℓetrec "append" ≔fun "l1" ⇒ fun "l2" ⇒
+                  match var "l1" with[]⇒ var "l2"
+                                   ∣ "x" ∷ "y" ⇒ var "x" ∷ app (app (var "append") (var "y")) (var "l2") ιn
+            var "append" ∶ int list ⇀ int list ⇀ int list
+q104 = T-LetRec (T-Fun (T-Match (T-Var refl)
+                                (T-Var refl)
+                                (T-Cons (T-Var refl) (T-App (T-App (T-Var refl) (T-Var refl)) (T-Var refl)))))
+                (T-Var refl)
+{-
+|- let rec append = fun l1 -> (fun l2 -> match l1 with [] -> l2 | x :: y -> (x :: append(y)(l2))) in append : (((int) list)) -> (((int) list)) -> ((int) list) by T-LetRec {
+  append:(((int) list)) -> (((int) list)) -> ((int) list),l1:((int) list) |- (fun l2 -> match l1 with [] -> l2 | x :: y -> (x :: append(y)(l2))) : (((int) list)) -> ((int) list) by T-Fun {
+    append:(((int) list)) -> (((int) list)) -> ((int) list),l1:((int) list),l2:((int) list) |- match l1 with [] -> l2 | x :: y -> (x :: append(y)(l2)) : ((int) list) by T-Match {
+      append:(((int) list)) -> (((int) list)) -> ((int) list),l1:((int) list),l2:((int) list) |- l1 : ((int) list) by T-Var {};
+      append:(((int) list)) -> (((int) list)) -> ((int) list),l1:((int) list),l2:((int) list) |- l2 : ((int) list) by T-Var {};
+      append:(((int) list)) -> (((int) list)) -> ((int) list),l1:((int) list),l2:((int) list),x:int,y:((int) list) |- (x :: append(y)(l2)) : ((int) list) by T-Cons {
+        append:(((int) list)) -> (((int) list)) -> ((int) list),l1:((int) list),l2:((int) list),x:int,y:((int) list) |- x : int by T-Var {};
+        append:(((int) list)) -> (((int) list)) -> ((int) list),l1:((int) list),l2:((int) list),x:int,y:((int) list) |- append(y)(l2) : ((int) list) by T-App {
+          append:(((int) list)) -> (((int) list)) -> ((int) list),l1:((int) list),l2:((int) list),x:int,y:((int) list) |- append(y) : (((int) list)) -> ((int) list) by T-App {
+            append:(((int) list)) -> (((int) list)) -> ((int) list),l1:((int) list),l2:((int) list),x:int,y:((int) list) |- append : (((int) list)) -> (((int) list)) -> ((int) list) by T-Var {};
+            append:(((int) list)) -> (((int) list)) -> ((int) list),l1:((int) list),l2:((int) list),x:int,y:((int) list) |- y : ((int) list) by T-Var {};
+          };
+          append:(((int) list)) -> (((int) list)) -> ((int) list),l1:((int) list),l2:((int) list),x:int,y:((int) list) |- l2 : ((int) list) by T-Var {};
+        };
+      };
+    };
+  };
+  append:(((int) list)) -> (((int) list)) -> ((int) list) |- append : (((int) list)) -> (((int) list)) -> ((int) list) by T-Var {};
+};
+-}
+
+q105 : ● ⊢  ℓetrec "append" ≔fun "l1" ⇒ fun "l2" ⇒
+                match var "l1" with[]⇒ var "l2"
+                                 ∣ "x" ∷ "y" ⇒ var "x" ∷ app (app (var "append") (var "y")) (var "l2") ιn
+         app (app (var "append") (b true ∷ [])) (b false ∷ []) ∶ bool list
+q105 = T-LetRec (T-Fun (T-Match (T-Var refl)
+                                (T-Var refl)
+                                (T-Cons (T-Var refl) (T-App (T-App (T-Var refl) (T-Var refl)) (T-Var refl)))))
+                (T-App (T-App (T-Var refl) (T-Cons T-Bool T-Nil)) (T-Cons T-Bool T-Nil))
+{-
+|- let rec append = fun l1 -> (fun l2 -> match l1 with [] -> l2 | x :: y -> (x :: append(y)(l2))) in append((true :: []))((false :: [])) : ((bool) list) by T-LetRec {
+  append:(((bool) list)) -> (((bool) list)) -> ((bool) list),l1:((bool) list) |- (fun l2 -> match l1 with [] -> l2 | x :: y -> (x :: append(y)(l2))) : (((bool) list)) -> ((bool) list) by T-Fun {
+    append:(((bool) list)) -> (((bool) list)) -> ((bool) list),l1:((bool) list),l2:((bool) list) |- match l1 with [] -> l2 | x :: y -> (x :: append(y)(l2)) : ((bool) list) by T-Match {
+      append:(((bool) list)) -> (((bool) list)) -> ((bool) list),l1:((bool) list),l2:((bool) list) |- l1 : ((bool) list) by T-Var {};
+      append:(((bool) list)) -> (((bool) list)) -> ((bool) list),l1:((bool) list),l2:((bool) list) |- l2 : ((bool) list) by T-Var {};
+      append:(((bool) list)) -> (((bool) list)) -> ((bool) list),l1:((bool) list),l2:((bool) list),x:bool,y:((bool) list) |- (x :: append(y)(l2)) : ((bool) list) by T-Cons {
+        append:(((bool) list)) -> (((bool) list)) -> ((bool) list),l1:((bool) list),l2:((bool) list),x:bool,y:((bool) list) |- x : bool by T-Var {};
+        append:(((bool) list)) -> (((bool) list)) -> ((bool) list),l1:((bool) list),l2:((bool) list),x:bool,y:((bool) list) |- append(y)(l2) : ((bool) list) by T-App {
+          append:(((bool) list)) -> (((bool) list)) -> ((bool) list),l1:((bool) list),l2:((bool) list),x:bool,y:((bool) list) |- append(y) : (((bool) list)) -> ((bool) list) by T-App {
+            append:(((bool) list)) -> (((bool) list)) -> ((bool) list),l1:((bool) list),l2:((bool) list),x:bool,y:((bool) list) |- append : (((bool) list)) -> (((bool) list)) -> ((bool) list) by T-Var {};
+            append:(((bool) list)) -> (((bool) list)) -> ((bool) list),l1:((bool) list),l2:((bool) list),x:bool,y:((bool) list) |- y : ((bool) list) by T-Var {};
+          };
+          append:(((bool) list)) -> (((bool) list)) -> ((bool) list),l1:((bool) list),l2:((bool) list),x:bool,y:((bool) list) |- l2 : ((bool) list) by T-Var {};
+        };
+      };
+    };
+  };
+  append:(((bool) list)) -> (((bool) list)) -> ((bool) list) |- append((true :: []))((false :: [])) : ((bool) list) by T-App {
+    append:(((bool) list)) -> (((bool) list)) -> ((bool) list) |- append((true :: [])) : (((bool) list)) -> ((bool) list) by T-App {
+      append:(((bool) list)) -> (((bool) list)) -> ((bool) list) |- append : (((bool) list)) -> (((bool) list)) -> ((bool) list) by T-Var {};
+      append:(((bool) list)) -> (((bool) list)) -> ((bool) list) |- (true :: []) : ((bool) list) by T-Cons {
+        append:(((bool) list)) -> (((bool) list)) -> ((bool) list) |- true : bool by T-Bool {};
+        append:(((bool) list)) -> (((bool) list)) -> ((bool) list) |- [] : ((bool) list) by T-Nil {};
+      };
+    };
+    append:(((bool) list)) -> (((bool) list)) -> ((bool) list) |- (false :: []) : ((bool) list) by T-Cons {
+      append:(((bool) list)) -> (((bool) list)) -> ((bool) list) |- false : bool by T-Bool {};
+      append:(((bool) list)) -> (((bool) list)) -> ((bool) list) |- [] : ((bool) list) by T-Nil {};
+    };
+  };
+};
+-}
+
+q106 : ● ⊢ ℓetrec "map" ≔fun "f" ⇒ fun "l" ⇒
+                  match var "l" with[]⇒ []
+                                  ∣ "x" ∷ "y" ⇒
+                                        app (var "f") (var "x") ∷ app (app (var "map") (var "f")) (var "y") ιn
+            app (app (var "map") (fun "x" ⇒ var "x" ≺ i (+ 3))) (i (+ 4) ∷ i (+ 5) ∷ i (+ 1) ∷ []) ∶ bool list
+q106 = T-LetRec (T-Fun (T-Match (T-Var refl)
+                                T-Nil
+                                (T-Cons (T-App (T-Var refl) (T-Var refl))
+                                        (T-App (T-App (T-Var refl) (T-Var refl)) (T-Var refl)))))
+                (T-App (T-App (T-Var refl)
+                              (T-Fun (T-Lt (T-Var refl) T-Int)))
+                       (T-Cons T-Int (T-Cons T-Int (T-Cons T-Int T-Nil))))
+{-
+
+-}
