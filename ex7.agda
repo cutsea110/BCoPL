@@ -97,7 +97,22 @@ record ex7-1 : Set where
   ex-7-1-3 : ● ⊢ ℓetrec "f" ≔fun "x" ⇒
                         if var "x" ≺ i (+ 1) then [] else var "x" ∷ app (var "f") (var "x" ⊝ i (+ 1)) ιn
                  app (var "f") (i (+ 3)) ⇓ i (+ 3) ∷ i (+ 2) ∷ i (+ 1) ∷ []
-  ex-7-1-3 = E-LetRec (E-AppRec (E-Var refl) E-Int (E-IfF (E-Lt (E-Var refl) E-Int (B-Lt refl)) (E-Cons (E-Var refl) (E-AppRec (E-Var refl) (E-Minus (E-Var refl) E-Int (B-Minus refl)) (E-IfF (E-Lt (E-Var refl) E-Int (B-Lt refl)) (E-Cons (E-Var refl) (E-AppRec (E-Var refl) (E-Minus (E-Var refl) E-Int (B-Minus refl)) (E-IfF (E-Lt (E-Var refl) E-Int (B-Lt refl)) (E-Cons (E-Var refl) (E-AppRec (E-Var refl) (E-Minus (E-Var refl) E-Int (B-Minus refl)) (E-IfT (E-Lt (E-Var refl) E-Int (B-Lt refl)) E-Nil)))))))))))
+  ex-7-1-3 = E-LetRec (E-AppRec (E-Var refl)
+                                E-Int
+                                (E-IfF (E-Lt (E-Var refl) E-Int (B-Lt refl))
+                                       (E-Cons (E-Var refl)
+                                               (E-AppRec (E-Var refl)
+                                                         (E-Minus (E-Var refl) E-Int (B-Minus refl))
+                                                         (E-IfF (E-Lt (E-Var refl) E-Int (B-Lt refl))
+                                                                (E-Cons (E-Var refl)
+                                                                        (E-AppRec (E-Var refl)
+                                                                                  (E-Minus (E-Var refl) E-Int (B-Minus refl))
+                                                                                  (E-IfF (E-Lt (E-Var refl) E-Int (B-Lt refl))
+                                                                                         (E-Cons (E-Var refl)
+                                                                                                 (E-AppRec (E-Var refl)
+                                                                                                           (E-Minus (E-Var refl) E-Int (B-Minus refl))
+                                                                                                           (E-IfT (E-Lt (E-Var refl) E-Int (B-Lt refl))
+                                                                                                                  E-Nil)))))))))))
 {-
 |- let rec f = fun x -> if (x < 1) then [] else x :: f((x - 1)) in f(3) evalto 3 :: 2 :: 1 :: [] by E-LetRec {
   f = ()[rec f = fun x -> if (x < 1) then [] else x :: f((x - 1))] |- f(3) evalto 3 :: 2 :: 1 :: [] by E-AppRec {
@@ -173,7 +188,23 @@ record ex7-1 : Set where
                         match var "l" with[]⇒ i (+ 0)
                                               ∣ "x" ∷ "y" ⇒ i (+ 1) ⊕ app (var "length") (var "y") ιn
                  app (var "length") (i (+ 1) ∷ i (+ 2) ∷ i (+ 3) ∷ []) ⇓ i (+ 3)
-  ex-7-1-4 = E-LetRec (E-AppRec (E-Var refl) (E-Cons E-Int (E-Cons E-Int (E-Cons E-Int E-Nil))) (E-MatchCons (E-Var refl) (E-Plus E-Int (E-AppRec (E-Var refl) (E-Var refl) (E-MatchCons (E-Var refl) (E-Plus E-Int (E-AppRec (E-Var refl) (E-Var refl) (E-MatchCons (E-Var refl) (E-Plus E-Int (E-AppRec (E-Var refl) (E-Var refl) (E-MatchNil (E-Var refl) E-Int)) (B-Plus refl)))) (B-Plus refl)))) (B-Plus refl))))
+  ex-7-1-4 = E-LetRec (E-AppRec (E-Var refl)
+                                (E-Cons E-Int (E-Cons E-Int (E-Cons E-Int E-Nil)))
+                                (E-MatchCons (E-Var refl)
+                                             (E-Plus E-Int
+                                                     (E-AppRec (E-Var refl)
+                                                               (E-Var refl)
+                                                               (E-MatchCons (E-Var refl)
+                                                                            (E-Plus E-Int
+                                                                                    (E-AppRec (E-Var refl)
+                                                                                              (E-Var refl)
+                                                                                              (E-MatchCons (E-Var refl)
+                                                                                                           (E-Plus E-Int
+                                                                                                                   (E-AppRec (E-Var refl)
+                                                                                                                             (E-Var refl)
+                                                                                                                             (E-MatchNil (E-Var refl) E-Int))
+                                                                                                                   (B-Plus refl)))) (B-Plus refl))))
+                                                     (B-Plus refl))))
 {-
 |- let rec length = fun l -> match l with [] -> 0 | x :: y -> (1 + length(y)) in length(1 :: 2 :: 3 :: []) evalto 3 by E-LetRec {
   length = ()[rec length = fun l -> match l with [] -> 0 | x :: y -> (1 + length(y))] |- length(1 :: 2 :: 3 :: []) evalto 3 by E-AppRec {
@@ -233,7 +264,19 @@ record ex7-1 : Set where
                    match var "l" with[]⇒ i (+ 0)
                                          ∣ "x" ∷ "y" ⇒ i (+ 1) ⊕ app (var "length") (var "y") ιn
             app (var "length") ((i (+ 1) ∷ i (+ 2) ∷ []) ∷ (i (+ 3) ∷ i (+ 4) ∷ i (+ 5) ∷ []) ∷ []) ⇓ i (+ 2)
-  q74 = E-LetRec (E-AppRec (E-Var refl) (E-Cons (E-Cons E-Int (E-Cons E-Int E-Nil)) (E-Cons (E-Cons E-Int (E-Cons E-Int (E-Cons E-Int E-Nil))) E-Nil)) (E-MatchCons (E-Var refl) (E-Plus E-Int (E-AppRec (E-Var refl) (E-Var refl) (E-MatchCons (E-Var refl) (E-Plus E-Int (E-AppRec (E-Var refl) (E-Var refl) (E-MatchNil (E-Var refl) E-Int)) (B-Plus refl)))) (B-Plus refl))))
+  q74 = E-LetRec (E-AppRec (E-Var refl)
+                           (E-Cons (E-Cons E-Int (E-Cons E-Int E-Nil)) (E-Cons (E-Cons E-Int (E-Cons E-Int (E-Cons E-Int E-Nil))) E-Nil))
+                           (E-MatchCons (E-Var refl)
+                                        (E-Plus E-Int
+                                                (E-AppRec (E-Var refl)
+                                                          (E-Var refl)
+                                                          (E-MatchCons (E-Var refl)
+                                                                       (E-Plus E-Int
+                                                                               (E-AppRec (E-Var refl)
+                                                                                         (E-Var refl)
+                                                                                         (E-MatchNil (E-Var refl) E-Int))
+                                                                               (B-Plus refl))))
+                                                (B-Plus refl))))
 {-
 |- let rec length = fun l -> match l with [] -> 0 | x :: y -> (1 + length(y)) in length(((1 :: (2 :: [])) :: ((3 :: (4 :: (5 :: []))) :: []))) evalto 2 by E-LetRec {
   length = ()[rec length = fun l -> match l with [] -> 0 | x :: y -> (1 + length(y))] |- length(((1 :: (2 :: [])) :: ((3 :: (4 :: (5 :: []))) :: []))) evalto 2 by E-AppRec {
@@ -294,7 +337,17 @@ record ex7-1 : Set where
                         match var "l1" with[]⇒ var "l2"
                                          ∣ "x" ∷ "y" ⇒ var "x" ∷ app (app (var "append") (var "y")) (var "l2") ιn
                  app (app (var "append") (i (+ 1) ∷ i (+ 2) ∷ [])) (i (+ 3) ∷ i (+ 4) ∷ i (+ 5) ∷ []) ⇓ i (+ 1) ∷ i (+ 2) ∷ i (+ 3) ∷ i (+ 4) ∷ i (+ 5) ∷ []
-  ex-7-1-5 = E-LetRec (E-App (E-AppRec (E-Var refl) (E-Cons E-Int (E-Cons E-Int E-Nil)) E-Fun) (E-Cons E-Int (E-Cons E-Int (E-Cons E-Int E-Nil))) (E-MatchCons (E-Var refl) (E-Cons (E-Var refl) (E-App (E-AppRec (E-Var refl) (E-Var refl) E-Fun) (E-Var refl) (E-MatchCons (E-Var refl) (E-Cons (E-Var refl) (E-App (E-AppRec (E-Var refl) (E-Var refl) E-Fun) (E-Var refl) (E-MatchNil (E-Var refl) (E-Var refl)))))))))
+  ex-7-1-5 = E-LetRec (E-App (E-AppRec (E-Var refl) (E-Cons E-Int (E-Cons E-Int E-Nil)) E-Fun)
+                             (E-Cons E-Int (E-Cons E-Int (E-Cons E-Int E-Nil)))
+                             (E-MatchCons (E-Var refl)
+                                          (E-Cons (E-Var refl)
+                                                  (E-App (E-AppRec (E-Var refl) (E-Var refl) E-Fun)
+                                                         (E-Var refl)
+                                                         (E-MatchCons (E-Var refl)
+                                                                      (E-Cons (E-Var refl)
+                                                                              (E-App (E-AppRec (E-Var refl) (E-Var refl) E-Fun)
+                                                                                     (E-Var refl)
+                                                                                     (E-MatchNil (E-Var refl) (E-Var refl)))))))))
 {-
 |- let rec append = fun l1 -> (fun l2 -> match l1 with [] -> l2 | x :: y -> (x :: append(y)(l2))) in append((1 :: (2 :: [])))((3 :: (4 :: (5 :: [])))) evalto (1 :: (2 :: (3 :: (4 :: (5 :: []))))) by E-LetRec {
   append = ()[rec append = fun l1 -> (fun l2 -> match l1 with [] -> l2 | x :: y -> (x :: append(y)(l2)))] |- append((1 :: (2 :: [])))((3 :: (4 :: (5 :: [])))) evalto (1 :: (2 :: (3 :: (4 :: (5 :: []))))) by E-App {
@@ -359,7 +412,19 @@ record ex7-1 : Set where
                    match var "l" with[]⇒ var "x"
                                  ∣ "f" ∷ "l" ⇒ app (var "f") (app (app (var "apply") (var "l")) (var "x")) ιn
             app (app (var "apply") ((fun "x" ⇒ var "x" ⊛ var "x") ∷ (fun "y" ⇒ var "y" ⊕ i (+ 3)) ∷ [])) (i (+ 4)) ⇓ i (+ 49)
-  q76 = E-LetRec (E-App (E-AppRec (E-Var refl) (E-Cons E-Fun (E-Cons E-Fun E-Nil)) E-Fun) E-Int (E-MatchCons (E-Var refl) (E-App (E-Var refl) (E-App (E-AppRec (E-Var refl) (E-Var refl) E-Fun) (E-Var refl) (E-MatchCons (E-Var refl) (E-App (E-Var refl) (E-App (E-AppRec (E-Var refl) (E-Var refl) E-Fun) (E-Var refl) (E-MatchNil (E-Var refl) (E-Var refl))) (E-Plus (E-Var refl) E-Int (B-Plus refl))))) (E-Times (E-Var refl) (E-Var refl) (B-Times refl)))))
+  q76 = E-LetRec (E-App (E-AppRec (E-Var refl) (E-Cons E-Fun (E-Cons E-Fun E-Nil)) E-Fun)
+                        E-Int
+                        (E-MatchCons (E-Var refl)
+                                     (E-App (E-Var refl)
+                                            (E-App (E-AppRec (E-Var refl) (E-Var refl) E-Fun)
+                                                   (E-Var refl)
+                                                   (E-MatchCons (E-Var refl)
+                                                                (E-App (E-Var refl)
+                                                                       (E-App (E-AppRec (E-Var refl) (E-Var refl) E-Fun)
+                                                                              (E-Var refl)
+                                                                              (E-MatchNil (E-Var refl) (E-Var refl)))
+                                                                       (E-Plus (E-Var refl) E-Int (B-Plus refl)))))
+                                            (E-Times (E-Var refl) (E-Var refl) (B-Times refl)))))
 {-
 |- let rec apply = fun l -> (fun x -> match l with [] -> x | f :: l -> f(apply(l)(x))) in apply(((fun x -> (x * x)) :: ((fun y -> (y + 3)) :: [])))(4) evalto 49 by E-LetRec {
   apply = ()[rec apply = fun l -> (fun x -> match l with [] -> x | f :: l -> f(apply(l)(x)))] |- apply(((fun x -> (x * x)) :: ((fun y -> (y + 3)) :: [])))(4) evalto 49 by E-App {
@@ -425,7 +490,15 @@ record ex7-1 : Set where
                    match var "l" with[]⇒ var "x"
                                  ∣ "f" ∷ "l" ⇒ app (app (var "apply") (var "l")) (app (var "f") (var "x")) ιn
             app (app (var "apply") ((fun "x" ⇒ var "x" ⊛ var "x") ∷ (fun "y" ⇒ var "y" ⊕ i (+ 3)) ∷ [])) (i (+ 4)) ⇓ i (+ 19)
-  q77 = E-LetRec (E-App (E-AppRec (E-Var refl) (E-Cons E-Fun (E-Cons E-Fun E-Nil)) E-Fun) E-Int (E-MatchCons (E-Var refl) (E-App (E-AppRec (E-Var refl) (E-Var refl) E-Fun) (E-App (E-Var refl) (E-Var refl) (E-Times (E-Var refl) (E-Var refl) (B-Times refl))) (E-MatchCons (E-Var refl) (E-App (E-AppRec (E-Var refl) (E-Var refl) E-Fun) (E-App (E-Var refl) (E-Var refl) (E-Plus (E-Var refl) E-Int (B-Plus refl))) (E-MatchNil (E-Var refl) (E-Var refl)))))))
+  q77 = E-LetRec (E-App (E-AppRec (E-Var refl) (E-Cons E-Fun (E-Cons E-Fun E-Nil)) E-Fun)
+                        E-Int
+                        (E-MatchCons (E-Var refl)
+                                     (E-App (E-AppRec (E-Var refl) (E-Var refl) E-Fun)
+                                            (E-App (E-Var refl) (E-Var refl) (E-Times (E-Var refl) (E-Var refl) (B-Times refl)))
+                                            (E-MatchCons (E-Var refl)
+                                                         (E-App (E-AppRec (E-Var refl) (E-Var refl) E-Fun)
+                                                                (E-App (E-Var refl) (E-Var refl) (E-Plus (E-Var refl) E-Int (B-Plus refl)))
+                                                                (E-MatchNil (E-Var refl) (E-Var refl)))))))
 {-
 |- let rec apply = fun l -> (fun x -> match l with [] -> x | f :: l -> apply(l)(f(x))) in apply(((fun x -> (x * x)) :: ((fun y -> (y + 3)) :: [])))(4) evalto 19 by E-LetRec {
   apply = ()[rec apply = fun l -> (fun x -> match l with [] -> x | f :: l -> apply(l)(f(x)))] |- apply(((fun x -> (x * x)) :: ((fun y -> (y + 3)) :: [])))(4) evalto 19 by E-App {
