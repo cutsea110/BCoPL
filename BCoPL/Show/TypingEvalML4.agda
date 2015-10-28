@@ -40,7 +40,7 @@ showJudgeTypes (T-Times τ₁ τ₂)
   = "T-Times {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"
 showJudgeTypes (T-Lt τ₁ τ₂)
   = "T-Lt {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"
-showJudgeTypes (T-Var x) = "T-Var {};"
+showJudgeTypes (T-Var prf) = "T-Var {};"
 showJudgeTypes (T-Let τ₁ τ₂) = "T-Let {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"
 showJudgeTypes (T-Fun τ) = "T-Fun {" ++ showDerivationTypes τ ++ "};"
 showJudgeTypes (T-App τ₁ τ₂) = "T-App {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"
