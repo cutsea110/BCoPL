@@ -342,7 +342,7 @@ q96 = T-Let (T-Fun (T-Fun (T-Fun (T-App (T-Var refl) (T-App (T-Var refl) (T-Var 
 };
 -}
 
-q97 : ● ⊢ ℓet "s" ≔ (fun "f" ⇒ fun "g" ⇒ fun "x" ⇒ app (app (var "f") (var "x")) (app (var "g") (var "x"))) ιn
+q97 : ● ⊢ ℓet "s" ≔ fun "f" ⇒ fun "g" ⇒ fun "x" ⇒ app (app (var "f") (var "x")) (app (var "g") (var "x")) ιn
            ℓet "k1" ≔ fun "x" ⇒ fun "y" ⇒ var "x" ιn
            ℓet "k2" ≔ fun "x" ⇒ fun "y" ⇒ var "x" ιn
            app (app (var "s") (var "k1")) (var "k2") ∶ int ⇀ int
