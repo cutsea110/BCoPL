@@ -572,7 +572,28 @@ record ex7-2 : Set where
                                    then app (var "max") (var "y" ∷ var "z")
                                    else app (var "max") (var "x" ∷ var "z")) ̣
                   ιn app (var "max") (i (+ 9) ∷ i (+ 2) ∷ i (+ 3) ∷ []) ⇓ i (+ 9)
-  ex-7-2-1 = {!!}
+  ex-7-2-1 = E-LetRec (E-AppRec (E-Var refl)
+                                (E-Cons E-Int (E-Cons E-Int (E-Cons E-Int E-Nil)))
+                                (E-MatchN (E-Var refl)
+                                          (NM-ConsConsR NM-ConsNil)
+                                          (E-MatchM1 (E-Var refl)
+                                                     (M-Cons M-Var (M-Cons M-Var M-Var refl) refl)
+                                                     refl
+                                                     (E-IfF (E-Lt (E-Var refl) (E-Var refl) (B-Lt refl))
+                                                            (E-AppRec (E-Var refl)
+                                                                      (E-Cons (E-Var refl) (E-Var refl))
+                                                                      (E-MatchN (E-Var refl)
+                                                                                (NM-ConsConsR NM-ConsNil)
+                                                                                (E-MatchM1 (E-Var refl)
+                                                                                           (M-Cons M-Var (M-Cons M-Var M-Var refl) refl)
+                                                                                           refl
+                                                                                           (E-IfF (E-Lt (E-Var refl) (E-Var refl) (B-Lt refl))
+                                                                                                  (E-AppRec (E-Var refl)
+                                                                                                            (E-Cons (E-Var refl) (E-Var refl))
+                                                                                                            (E-MatchM2 (E-Var refl)
+                                                                                                                       (M-Cons M-Var M-Nil refl)
+                                                                                                                       refl
+                                                                                                                       (E-Var refl)))))))))))
 
   ex-7-2-2 : ● ⊢ ℓetrec "heads" ≔fun "l" ⇒
                         match var "l" ωith
