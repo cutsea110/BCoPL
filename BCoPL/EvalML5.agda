@@ -184,8 +184,8 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
            → ε ⊢ e₁ ⇓ v₁
            → ε ⊢ e₂ ⇓ v₂
            → ε ⊢ e₁ ∷ e₂ ⇓ v₁ ∷ v₂
-  E-MatchM1 : ∀ {ε ε₁ ε₂ e e₀ e₁ p v v'}
-              → ε ⊢ e₁ ⇓ v
+  E-MatchM1 : ∀ {ε ε₁ ε₂ e e₀ p v v'}
+              → ε ⊢ e₀ ⇓ v
               → p matches v when⟨ ε₁ ⟩
               → ε₂ ≡ ε ⨄ ε₁
               → ε₂ ⊢ e ⇓ v'
