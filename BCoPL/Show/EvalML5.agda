@@ -70,6 +70,24 @@ showDerivationLessThan : ∀ {i₁ i₂ b} → i₁ less-than i₂ is b → Stri
 showDerivationLessThan {i₁} {i₂} {v} p
   = showValue i₁ ++ " less than " ++ showValue i₂ ++ " is " ++ showValue v ++ " by B-Lt {};"
 
+showMatches : ∀ {p v ε} → p matches v when⟨ ε ⟩ → String
+showMatches {p} {v} {ε} p₁ = showPat p ++ " matches " ++ showValue v ++ " when (" ++ showEnv ε ++ ") by " ++ showP p₁
+  where
+    showP : ∀ {p v ε} → p matches v when⟨ ε ⟩ → String
+    showP M-Var = "M-Var {};"
+    showP M-Nil = "M-Nil {};"
+    showP (M-Cons p₁ p₂ ε) = "M-Cons {" ++ showMatches p₁ ++ showMatches p₂ ++ "};"
+    showP M-Wild = "M-Wild {};"
+
+showDoesn'tMatch : ∀ {p v} → p doesn't-match v → String
+showDoesn'tMatch {p} {v} p₁ = showPat p ++ " doesn't match " ++ showValue v ++ " by " ++ showP p₁
+  where
+    showP : ∀ {p v} → p doesn't-match v → String
+    showP NM-ConsNil = "NM-ConsNil {};"
+    showP NM-NilCons = "NM-NilCons {};"
+    showP (NM-ConsConsL p) = "NM-ConsConsL {" ++ showDoesn'tMatch p ++ "};"
+    showP (NM-ConsConsR p) = "NM-ConsConsR {" ++ showDoesn'tMatch p ++ "};"
+
 showJudge⇓ : ∀ {ε e v} → ε ⊢ e ⇓ v → String
 showJudge⇓ E-Int = "E-Int {};"
 showJudge⇓ E-Bool = "E-Bool {};"
@@ -88,9 +106,12 @@ showJudge⇓ (E-App e₁ e₂ e₃)
 showJudge⇓ (E-AppRec e₁ e₂ e₃)
   = "E-AppRec {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ showDerivation⇓ e₃ ++ "};"
 showJudge⇓ E-Nil = "E-Nil {};"
-showJudge⇓ (E-Cons e₁ e₂) = "E-Cons {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ "};"
-showJudge⇓ (E-MatchM1 e₁ p₁ p₂ e₂) = {!!}
-showJudge⇓ (E-MatchM2 e₁ p₁ p₂ e₂) = {!!}
-showJudge⇓ (E-MatchN e₁ p₁ e₂) = {!!}
+showJudge⇓ (E-Cons e₁ e₂)
+  = "E-Cons {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ "};"
+showJudge⇓ (E-MatchM1 e₁ p₁ p₂ e₂)
+  = "E-MatchM1 {" ++ showDerivation⇓ e₁ ++ showMatches p₁ ++ showDerivation⇓ e₂ ++ "};"
+showJudge⇓ (E-MatchM2 e₁ p₁ p₂ e₂) = "E-MatchM2 {" ++ showDerivation⇓ e₁ ++ showMatches p₁ ++ showDerivation⇓ e₂ ++ "};"
+showJudge⇓ (E-MatchN e₁ p₁ e₂) = "E-MatchN {" ++ showDerivation⇓ e₁ ++ showDoesn'tMatch p₁ ++ showDerivation⇓ e₂ ++ "};"
 
-showDerivation⇓ {ε} {e} {v} p = showEnv ε ++ " |- " ++ showExp e ++ " evalto " ++ showValue v ++ " by " ++ showJudge⇓ p
+showDerivation⇓ {ε} {e} {v} p
+ = showEnv ε ++ " |- " ++ showExp e ++ " evalto " ++ showValue v ++ " by " ++ showJudge⇓ p
