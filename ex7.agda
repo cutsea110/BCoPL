@@ -599,6 +599,35 @@ record ex7-2 : Set where
                         match var "l" ωith
                                 [] ↦ []
                               ∣ [] ∷ (var "l'") ↦ app (var "heads") (var "l'")
-                              ∣ (var "x") ∷ ̱ ↦ var "x" ∷ app (var "heads") (var "l'") ̣ ιn
-                        app (var "heads") ((i (+ 1) ∷ i (+ 2) ∷ []) ∷ [] ∷ (i (+ 3) ∷ []) ∷ []) ⇓ i (+ 1) ∷ i (+ 3) ∷ []
-  ex-7-2-2 = {!!}
+                              ∣ ((var "x") ∷ ̱) ∷ var "l'" ↦ var "x" ∷ app (var "heads") (var "l'") ̣
+                   ιn app (var "heads") ((i (+ 1) ∷ i (+ 2) ∷ []) ∷ [] ∷ (i (+ 3) ∷ []) ∷ []) ⇓ i (+ 1) ∷ i (+ 3) ∷ []
+  ex-7-2-2 = E-LetRec (E-AppRec (E-Var refl)
+                                (E-Cons (E-Cons E-Int (E-Cons E-Int E-Nil)) (E-Cons E-Nil (E-Cons (E-Cons E-Int E-Nil) E-Nil)))
+                                (E-MatchN (E-Var refl)
+                                          NM-ConsNil
+                                          (E-MatchN (E-Var refl)
+                                                    (NM-ConsConsL NM-ConsNil)
+                                                    (E-MatchM1 (E-Var refl)
+                                                               (M-Cons (M-Cons M-Var M-Wild refl) M-Var refl)
+                                                               refl
+                                                               (E-Cons (E-Var refl)
+                                                                       (E-AppRec (E-Var refl)
+                                                                                 (E-Var refl)
+                                                                                 (E-MatchN (E-Var refl)
+                                                                                           NM-ConsNil
+                                                                                           (E-MatchM2 (E-Var refl)
+                                                                                                      (M-Cons M-Nil M-Var refl)
+                                                                                                      refl
+                                                                                                      (E-AppRec (E-Var refl)
+                                                                                                                (E-Var refl)
+                                                                                                                (E-MatchN (E-Var refl)
+                                                                                                                          NM-ConsNil
+                                                                                                                          (E-MatchN (E-Var refl)
+                                                                                                                                    (NM-ConsConsL NM-ConsNil)
+                                                                                                                                    (E-MatchM1 (E-Var refl)
+                                                                                                                                               (M-Cons (M-Cons M-Var M-Wild refl) M-Var refl)
+                                                                                                                                               refl
+                                                                                                                                               (E-Cons (E-Var refl)
+                                                                                                                                                       (E-AppRec (E-Var refl)
+                                                                                                                                                                 (E-Var refl)
+                                                                                                                                                                 (E-MatchM2 (E-Var refl) M-Nil refl E-Nil)))))))))))))))
