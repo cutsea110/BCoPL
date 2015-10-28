@@ -346,8 +346,7 @@ q97 : ● ⊢ ℓet "s" ≔ fun "f" ⇒ fun "g" ⇒ fun "x" ⇒ app (app (var "f
            ℓet "k1" ≔ fun "x" ⇒ fun "y" ⇒ var "x" ιn
            ℓet "k2" ≔ fun "x" ⇒ fun "y" ⇒ var "x" ιn
            app (app (var "s") (var "k1")) (var "k2") ∶ int ⇀ int
-q97 = T-Let (T-Fun (T-Fun (T-Fun (T-App (T-App (T-Var refl) (T-Var refl))
-                                        (T-App (T-Var refl) (T-Var refl))))))
+q97 = T-Let (T-Fun (T-Fun (T-Fun (T-App (T-App (T-Var refl) (T-Var refl)) (T-App (T-Var refl) (T-Var refl))))))
             (T-Let (T-Fun (T-Fun (T-Var refl)))
                    (T-Let (T-Fun (T-Fun (T-Var refl)))
                           (T-App (T-App (T-Var refl) (T-Var refl))
@@ -355,3 +354,140 @@ q97 = T-Let (T-Fun (T-Fun (T-Fun (T-App (T-App (T-Var refl) (T-Var refl))
 {-
 
 -}
+
+
+q98 : ● ⊢ ℓet "s" ≔ fun "f" ⇒ fun "g" ⇒ fun "x" ⇒ app (app (var "f") (var "x")) (app (var "g") (var "x")) ιn
+           ℓet "k1" ≔ fun "x" ⇒ fun "y" ⇒ var "x" ιn
+           ℓet "k2" ≔ fun "x" ⇒ fun "y" ⇒ var "x" ιn
+           app (app (app (var "s") (var "k1")) (var "k2")) (fun "x" ⇒ var "x" ⊕ i (+ 1)) ∶ int ⇀ int
+q98 = T-Let (T-Fun (T-Fun (T-Fun (T-App (T-App (T-Var refl) (T-Var refl))
+                                        (T-App (T-Var refl) (T-Var refl))))))
+            (T-Let (T-Fun (T-Fun (T-Var refl)))
+                   (T-Let (T-Fun (T-Fun (T-Var refl)))
+                          (T-App (T-App (T-App (T-Var refl)
+                                               (T-Var refl))
+                                        (T-Var refl))
+                                 (T-Fun (T-Plus (T-Var refl) T-Int)))))
+{-
+
+-}
+
+ex-8-1-9 : ● ⊢ ℓetrec "fact" ≔fun "n" ⇒
+                      if var "n" ≺ i (+ 2) then i (+ 1) else var "n" ⊛ app (var "fact") (var "n" ⊝ i (+ 1)) ιn
+                app (var "fact") (i (+ 3)) ∶ int
+ex-8-1-9 = T-LetRec (T-If (T-Lt (T-Var refl) T-Int)
+                          T-Int
+                          (T-Times (T-Var refl)
+                                   (T-App (T-Var refl)
+                                          (T-Minus (T-Var refl) T-Int))))
+                    (T-App (T-Var refl) T-Int)
+{-
+|- let rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1))) in fact(3) : int by T-LetRec {
+  fact:(int) -> int,n:int |- if (n < 2) then 1 else (n * fact((n - 1))) : int by T-If {
+    fact:(int) -> int,n:int |- (n < 2) : bool by T-Lt {
+      fact:(int) -> int,n:int |- n : int by T-Var {};
+      fact:(int) -> int,n:int |- 2 : int by T-Int {};
+    };
+    fact:(int) -> int,n:int |- 1 : int by T-Int {};
+    fact:(int) -> int,n:int |- (n * fact((n - 1))) : int by T-Times {
+      fact:(int) -> int,n:int |- n : int by T-Var {};
+      fact:(int) -> int,n:int |- fact((n - 1)) : int by T-App {
+        fact:(int) -> int,n:int |- fact : (int) -> int by T-Var {};
+        fact:(int) -> int,n:int |- (n - 1) : int by T-Minus {
+          fact:(int) -> int,n:int |- n : int by T-Var {};
+          fact:(int) -> int,n:int |- 1 : int by T-Int {};
+        };
+      };
+    };
+  };
+  fact:(int) -> int |- fact(3) : int by T-App {
+    fact:(int) -> int |- fact : (int) -> int by T-Var {};
+    fact:(int) -> int |- 3 : int by T-Int {};
+  };
+};
+-}
+
+q100 : ● ⊢ ℓetrec "sum" ≔fun "f" ⇒ fun "n" ⇒
+                  if var "n" ≺ i (+ 1)
+                  then i(+ 0)
+                  else app (var "f") (var "n") ⊕ app (app (var "sum") (var "f")) (var "n" ⊝ i (+ 1)) ιn
+            app (app (var "sum") (fun "x" ⇒ var "x" ⊛ var "x")) (i (+ 2)) ∶ int
+q100 = T-LetRec (T-Fun (T-If (T-Lt (T-Var refl) T-Int)
+                             T-Int
+                             (T-Plus (T-App (T-Var refl) (T-Var refl))
+                                     (T-App (T-App (T-Var refl) (T-Var refl))
+                                            (T-Minus (T-Var refl) T-Int)))))
+                (T-App (T-App (T-Var refl)
+                              (T-Fun (T-Times (T-Var refl) (T-Var refl))))
+                       T-Int)
+{-
+|- let rec sum = fun f -> (fun n -> if (n < 1) then 0 else (f(n) + sum(f)((n - 1)))) in sum((fun x -> (x * x)))(2) : int by T-LetRec {
+  sum:((int) -> int) -> (int) -> int,f:(int) -> int |- (fun n -> if (n < 1) then 0 else (f(n) + sum(f)((n - 1)))) : (int) -> int by T-Fun {
+    sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- if (n < 1) then 0 else (f(n) + sum(f)((n - 1))) : int by T-If {
+      sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- (n < 1) : bool by T-Lt {
+        sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- n : int by T-Var {};
+        sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- 1 : int by T-Int {};
+      };
+      sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- 0 : int by T-Int {};
+      sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- (f(n) + sum(f)((n - 1))) : int by T-Plus {
+        sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- f(n) : int by T-App {
+          sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- f : (int) -> int by T-Var {};
+          sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- n : int by T-Var {};
+        };
+        sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- sum(f)((n - 1)) : int by T-App {
+          sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- sum(f) : (int) -> int by T-App {
+            sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- sum : ((int) -> int) -> (int) -> int by T-Var {};
+            sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- f : (int) -> int by T-Var {};
+          };
+          sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- (n - 1) : int by T-Minus {
+            sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- n : int by T-Var {};
+            sum:((int) -> int) -> (int) -> int,f:(int) -> int,n:int |- 1 : int by T-Int {};
+          };
+        };
+      };
+    };
+  };
+  sum:((int) -> int) -> (int) -> int |- sum((fun x -> (x * x)))(2) : int by T-App {
+    sum:((int) -> int) -> (int) -> int |- sum((fun x -> (x * x))) : (int) -> int by T-App {
+      sum:((int) -> int) -> (int) -> int |- sum : ((int) -> int) -> (int) -> int by T-Var {};
+      sum:((int) -> int) -> (int) -> int |- (fun x -> (x * x)) : (int) -> int by T-Fun {
+        sum:((int) -> int) -> (int) -> int,x:int |- (x * x) : int by T-Times {
+          sum:((int) -> int) -> (int) -> int,x:int |- x : int by T-Var {};
+          sum:((int) -> int) -> (int) -> int,x:int |- x : int by T-Var {};
+        };
+      };
+    };
+    sum:((int) -> int) -> (int) -> int |- 2 : int by T-Int {};
+  };
+};
+-}
+
+ex-8-1-10 : ● ⊢ ℓet "l" ≔ (fun "x" ⇒ var "x") ∷ (fun "y" ⇒ i (+ 2)) ∷ (fun "z" ⇒ var "z" ⊕ i (+ 3)) ∷ [] ιn
+                 i (+ 2) ∶ int
+ex-8-1-10 = T-Let (T-Cons (T-Fun (T-Var refl)) (T-Cons (T-Fun T-Int) (T-Cons (T-Fun (T-Plus (T-Var refl) T-Int)) T-Nil)))
+                  T-Int
+{-
+|- let l = ((fun x -> x) :: ((fun y -> 2) :: ((fun z -> (z + 3)) :: []))) in 2 : int by T-Let {
+  |- ((fun x -> x) :: ((fun y -> 2) :: ((fun z -> (z + 3)) :: []))) : (((int) -> int) list) by T-Cons {
+    |- (fun x -> x) : (int) -> int by T-Fun {
+      x:int |- x : int by T-Var {};
+    };
+    |- ((fun y -> 2) :: ((fun z -> (z + 3)) :: [])) : (((int) -> int) list) by T-Cons {
+      |- (fun y -> 2) : (int) -> int by T-Fun {
+        y:int |- 2 : int by T-Int {};
+      };
+      |- ((fun z -> (z + 3)) :: []) : (((int) -> int) list) by T-Cons {
+        |- (fun z -> (z + 3)) : (int) -> int by T-Fun {
+          z:int |- (z + 3) : int by T-Plus {
+            z:int |- z : int by T-Var {};
+            z:int |- 3 : int by T-Int {};
+          };
+        };
+        |- [] : (((int) -> int) list) by T-Nil {};
+      };
+    };
+  };
+  l:(((int) -> int) list) |- 2 : int by T-Int {};
+};
+-}
+

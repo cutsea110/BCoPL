@@ -23,9 +23,9 @@ _〖_〗 : TEnv → Var → Types
 infixl 20 _⊱_
 
 infix 10 _〖_〗
-infix 7 _list
-infixr 6 _⇀_
-infix 5 _⊢_∶_
+infix 8 _list
+infixr 7 _⇀_
+infix 6 _⊢_∶_
 
 data _⊢_∶_ : TEnv → Exp → Types → Set where
   T-Int : ∀ {Γ n} → Γ ⊢ i n ∶ int
