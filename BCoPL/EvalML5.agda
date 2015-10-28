@@ -31,7 +31,7 @@ data Pat : Set where
   ̱ : Pat
 
 data Clauses : Set where
-  _↦_ : Pat → Exp → Clauses
+  _↦_̣ : Pat → Exp → Clauses
   _↦_∣_ : Pat → Exp → Clauses → Clauses
 
 data Exp where
@@ -65,10 +65,12 @@ _≺_ = op prim≺
 infixl 21 _⨄_
 infixl 20 _⊱_
 
-infixl 10 _⊛_
-infixl 9 _⊕_ _⊝_
-infix 8 _≺_
-infixr 7 _∷_
+infixl 12 _⊛_
+infixl 11 _⊕_ _⊝_
+infix 10 _≺_
+infixr 9 _∷_
+infixr 8 _↦_̣
+infixr 7 _↦_∣_
 infix 6 if_then_else_ ℓet_≔_ιn_ fun_⇒_ ℓetrec_≔fun_⇒_ιn_ match_ωith_ _matches_when⟨_⟩ _doesn't-match_
 infixl 5 _⊢_⇓_
 
@@ -187,7 +189,7 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
               → p matches v when⟨ ε₁ ⟩
               → ε₂ ≡ ε ⨄ ε₁
               → ε₂ ⊢ e ⇓ v'
-              → ε ⊢ match e₀ ωith p ↦ e ⇓ v'
+              → ε ⊢ match e₀ ωith p ↦ e ̣ ⇓ v'
   E-MatchM2 : ∀ {ε ε₁ ε₂ e e₀ p v v' c}
               → ε ⊢ e₀ ⇓ v
               → p matches v when⟨ ε₁ ⟩
