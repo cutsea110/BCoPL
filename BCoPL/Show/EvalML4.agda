@@ -11,12 +11,13 @@ showEnv : Env → String
 showExp : Exp → String
 showValue : Value → String
 
-showBinding : BindedValue → String
-showBinding (x , v) = x ++ " = " ++ showValue v
+private
+  showBinding : BindedValue → String
+  showBinding (x , v) = x ++ " = " ++ showValue v
 
-showEnv ● = ""
-showEnv (● ⊱ x) = showBinding x
-showEnv (ε ⊱ x) = showEnv ε ++ "," ++ showBinding x
+  showEnv ● = ""
+  showEnv (● ⊱ x) = showBinding x
+  showEnv (ε ⊱ x) = showEnv ε ++ "," ++ showBinding x
 
 showExp (i n) = showℤ n
 showExp (b v) = show𝔹 v

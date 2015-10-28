@@ -50,7 +50,7 @@ data _⊢_∶_ : TEnv → Exp → Types → Set where
   T-Lt : ∀ {Γ e₁ e₂}
          → Γ ⊢ e₁ ∶ int
          → Γ ⊢ e₂ ∶ int
-         → Γ ⊢ e₁ ≺ e₂ ∶ int
+         → Γ ⊢ e₁ ≺ e₂ ∶ bool
   T-Var : ∀ {Γ x τ}
           → Γ 〖 x 〗 ≡ τ
           → Γ ⊢ var x ∶ τ
