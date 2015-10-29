@@ -44,6 +44,7 @@ data _≿_ : TyScheme → Types → Set where
   inst : ∀ {τ τ₀ αs} → (∃ λ τs → [ zip τs αs ]⊲ τ₀ ≡ τ ) → αs ̣ τ₀ ≿ τ
 
 record example-proof : Set where
+  -- p147 Definition 9.1
   ex1 : ("a" ﹛ ø) ̣ ′ "a" ⇀ ′ "a" ≿ int ⇀ int
   ex1 = inst (int ﹛ ø , refl)
   ex2 : ("a" ﹛ ø) ̣ ′ "a" ⇀ ′ "a" ≿ bool list ⇀ bool list
