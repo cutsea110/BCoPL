@@ -2,6 +2,7 @@ module BCoPL.PolyTypingML4 where
 
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
 open import Data.List renaming ([] to ø; _∷_ to _﹛_)
+open import Data.Product using (∃; proj₁)
 
 open import BCoPL.EvalML4 public
 
@@ -39,13 +40,29 @@ private
   [ τ/α ]⊲ (τ₁ ⇀ τ₂) = [ τ/α ]⊲ τ₁ ⇀ [ τ/α ]⊲ τ₂
   [ τ/α ]⊲ (τ list) = ([ τ/α ]⊲ τ) list
 
+data _≿_ : TyScheme → Types → Set where
+  inst : ∀ {τ τ₀ αs} → (∃ λ τs → [ zip τs αs ]⊲ τ₀ ≡ τ ) → αs ̣ τ₀ ≿ τ
+
+record example-proof : Set where
+  ex1 : ("a" ﹛ ø) ̣ ′ "a" ⇀ ′ "a" ≿ int ⇀ int
+  ex1 = inst (int ﹛ ø , refl)
+  ex2 : ("a" ﹛ ø) ̣ ′ "a" ⇀ ′ "a" ≿ bool list ⇀ bool list
+  ex2 = inst (bool list ﹛ ø , refl)
+  ex3 : ("a" ﹛ ø) ̣ ′ "a" ⇀ ′ "a" ≿ (int ⇀ bool) ⇀ int ⇀ bool
+  ex3 = inst (int ⇀ bool ﹛ ø , refl)
+  ex4 : ("a" ﹛ "b" ﹛ "c" ﹛ ø) ̣ (′ "a" ⇀ ′ "b") ⇀ (′ "c" ⇀ ′ "a") ⇀ ′ "c" ⇀ ′ "b"
+        ≿
+        (int ⇀ bool) ⇀ (int list ⇀ int) ⇀ int list ⇀ bool
+  ex4 = inst (int ﹛ bool ﹛ int list ﹛ ø , refl)
+
+
 infixl 20 _⊱_
 
 infix 10 _〖_〗
 infix 9 _list
 infixr 8 _⇀_
 infix 7 _̣_
-infix 6 _⊢_∶_
+infix 6 _⊢_∶_ _≿_
 
 data _⊢_∶_ : TEnv → Exp → TyScheme → Set where
   T-Int : ∀ {Γ n} → Γ ⊢ i n ∶ ′ int
