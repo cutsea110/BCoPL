@@ -1,7 +1,7 @@
 module ex8 where
 
-open import BCoPL.TypingEvalML4
-open import BCoPL.Show.TypingEvalML4
+open import BCoPL.TypingML4
+open import BCoPL.Show.TypingML4
 
 ex-8-1-1 : ● ⊢ i (+ 3) ⊕ i (+ 5) ∶ int
 ex-8-1-1 = T-Plus T-Int T-Int

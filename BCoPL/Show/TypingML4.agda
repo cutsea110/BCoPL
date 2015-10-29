@@ -1,11 +1,11 @@
-module BCoPL.Show.TypingEvalML4 where
+module BCoPL.Show.TypingML4 where
 
 open import Data.String
 open import Data.Nat.Show renaming (show to showℕ)
 open import Data.Integer renaming (show to showℤ)
 open import Data.Bool.Show renaming (show to show𝔹)
 
-open import BCoPL.TypingEvalML4
+open import BCoPL.TypingML4
 open import BCoPL.Show.EvalML4 public
 
 showDerivationTypes : ∀ {Γ e τ} → Γ ⊢ e ∶ τ → String

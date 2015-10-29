@@ -1,4 +1,4 @@
-module BCoPL.TypingEvalML4 where
+module BCoPL.TypingML4 where
 
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
 
