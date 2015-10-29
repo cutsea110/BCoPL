@@ -28,6 +28,17 @@ _〖_〗 : TEnv → Var → TyScheme
 ● 〖 x 〗 = ′ type-error
 Γ ⊱ (y , e) 〖 x 〗 = y == x ¿ e ∶ Γ 〖 x 〗
 
+private
+  -- type substitution
+  [_]⊲_ : List (Types × TyParam) → Types → Types
+  [ τ/α ]⊲ type-error = type-error
+  [ ø ]⊲ ′ α = ′ α
+  [ (τi , αi) ﹛ τ/α ]⊲ ′ α = αi == α ¿ τi ∶ [ τ/α ]⊲ ′ α
+  [ τ/α ]⊲ bool = bool
+  [ τ/α ]⊲ int = int
+  [ τ/α ]⊲ (τ₁ ⇀ τ₂) = [ τ/α ]⊲ τ₁ ⇀ [ τ/α ]⊲ τ₂
+  [ τ/α ]⊲ (τ list) = ([ τ/α ]⊲ τ) list
+
 infixl 20 _⊱_
 
 infix 10 _〖_〗
