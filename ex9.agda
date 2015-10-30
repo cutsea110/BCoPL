@@ -1,11 +1,12 @@
 module ex9 where
 
 open import BCoPL.PolyTypingML4
+open import BCoPL.Show.PolyTypingML4
 
 q107 : ● ⊢ fun "x" ⇒ var "x" ∶ ′ "a" ⇀ ′ "a"
 q107 = T-Abs (T-Var refl raw)
 {-
-|- fun x -> x : 'a -> 'a by T-Abs {
+|- (fun x -> x) : ('a) -> 'a by T-Abs {
   x:'a |- x : 'a by T-Var {};
 };
 -}
@@ -13,23 +14,21 @@ q107 = T-Abs (T-Var refl raw)
 ex-9-1-1 : ● ⊱ ("f" , [ "a" ] ̣ ′ "a" ⇀ ′ "a") ⊢ app (var "f") (i (+ 3)) ∶ int
 ex-9-1-1 = T-App (T-Var refl (concretion ([ int ] , refl))) T-Int
 {-
-f: 'a.'a -> 'a |- f 3 : int by T-App {
-  f: 'a.'a -> 'a |- f : int -> int by T-Var {};
-  f: 'a.'a -> 'a |- 3 : int by T-Int {};
+f:'a .('a) -> 'a |- f(3) : int by T-App {
+  f:'a .('a) -> 'a |- f : (int) -> int by T-Var {};
+  f:'a .('a) -> 'a |- 3 : int by T-Int {};
 };
 -}
 
 ex-9-1-2 : ● ⊱ ("f" , [ "a" ] ̣ ′ "a" ⇀ ′ "a") ⊢ app (var "f") (fun "x" ⇒ var "x" ⊕ i (+ 3)) ∶ int ⇀ int
--- ex-9-1-2 = T-App (T-Var refl (concretion ([ int ⇀ int ] , refl)))
---                  (T-Abs (T-Plus (T-Var refl {!!}) T-Int))
 ex-9-1-2 = T-App (T-Var refl (concretion ([ int ⇀ int ] , refl))) (T-Abs (T-Plus (T-Var refl raw) T-Int))
 {-
-f: 'a.'a -> 'a |- f (fun x -> x + 3) : int -> int by T-App {
-  f: 'a.'a -> 'a |- f : (int -> int) -> int -> int by T-Var {};
-  f: 'a.'a -> 'a |- fun x -> x + 3 : int -> int by T-Abs {
-    f: 'a.'a -> 'a, x: int |- x + 3 : int by T-Plus {
-      f: 'a.'a -> 'a, x: int |- x : int by T-Var {};
-      f: 'a.'a -> 'a, x: int |- 3 : int by T-Int {};
+f:'a .('a) -> 'a |- f((fun x -> (x + 3))) : (int) -> int by T-App {
+  f:'a .('a) -> 'a |- f : ((int) -> int) -> (int) -> int by T-Var {};
+  f:'a .('a) -> 'a |- (fun x -> (x + 3)) : (int) -> int by T-Abs {
+    f:'a .('a) -> 'a,x:int |- (x + 3) : int by T-Plus {
+      f:'a .('a) -> 'a,x:int |- x : int by T-Var {};
+      f:'a .('a) -> 'a,x:int |- 3 : int by T-Int {};
     };
   };
 };

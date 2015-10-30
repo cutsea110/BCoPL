@@ -25,7 +25,7 @@ private
   showTypes bool = "bool"
   showTypes int = "int"
   showTypes (τ₁ ⇀ τ₂) = "(" ++ showTypes τ₁ ++ ")" ++ " -> " ++ showTypes τ₂
-  showTypes (τ list) = "((" ++ showTypes τ ++ ") list" ++ ")"
+  showTypes (τ list) = "((" ++ showTypes τ ++ ") list)"
 
 showJudgeTypes : ∀ {Γ e τ} → Γ ⊢ e ∶ τ → String
 showJudgeTypes T-Int = "T-Int {};"
