@@ -1,7 +1,7 @@
 module BCoPL.PolyTypingML4 where
 
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
-open import Data.List renaming ([] to ø; _∷_ to _﹛_) public
+open import Data.List renaming ([] to ø; _∷_ to _◂_) public
 open import Data.Product using (∃; proj₁) public
 
 open import BCoPL.EvalML4 public
@@ -34,7 +34,7 @@ private
   [_]⊲_ : List (Types × TyParam) → Types → Types
   [ τ/α ]⊲ type-error = type-error
   [ ø ]⊲ ′ α = ′ α
-  [ (τi , αi) ﹛ τ/α ]⊲ ′ α = αi == α ¿ τi ∶ [ τ/α ]⊲ ′ α
+  [ (τi , αi) ◂ τ/α ]⊲ ′ α = αi == α ¿ τi ∶ [ τ/α ]⊲ ′ α
   [ τ/α ]⊲ bool = bool
   [ τ/α ]⊲ int = int
   [ τ/α ]⊲ (τ₁ ⇀ τ₂) = [ τ/α ]⊲ τ₁ ⇀ [ τ/α ]⊲ τ₂
@@ -45,28 +45,29 @@ private
 
   elem : TyParam → List TyParam → Bool
   elem x ø = false
-  elem x (y ﹛ ys) = x == y ¿ true ∶ elem x ys
+  elem x (y ◂ ys) = x == y ¿ true ∶ elem x ys
 
   _∩_ : List TyParam → List TyParam → List TyParam
   xs ∩ ø = ø
-  xs ∩ (x ﹛ ys) with elem x xs
-  ... | true = x ﹛ (filter (_/=_ x) xs ∩ ys)
+  xs ∩ (x ◂ ys) with elem x xs
+  ... | true = x ◂ (filter (_/=_ x) xs ∩ ys)
   ... | false = xs ∩ ys
 
   _∪_ : List TyParam → List TyParam → List TyParam
   xs ∪ ø = xs
-  xs ∪ x ﹛ ys with elem x xs
+  xs ∪ x ◂ ys with elem x xs
   ... | true = xs ∪ ys
   ... | false = xs ++ [ x ] ∪ ys
 
   _╲_ : List TyParam → List TyParam → List TyParam
   xs ╲ ø = xs
-  xs ╲ (y ﹛ ys) with elem y xs
+  xs ╲ (y ◂ ys) with elem y xs
   ... | true = filter (_/=_ y) xs ╲ ys
   ... | false = xs ╲ ys
 
-data _≿_ : TyScheme → Types → Set where
-  inst : ∀ {τ τ₀ αs} → (∃ λ τs → [ zip τs αs ]⊲ τ₀ ≡ τ ) → αs ̣ τ₀ ≿ τ
+data _≽_ : TyScheme → Types → Set where
+  raw : ∀ {τ} → ′ τ ≽ τ
+  concretion : ∀ {τ τ₀ αs} → (∃ λ τs → [ zip τs αs ]⊲ τ₀ ≡ τ ) → αs ̣ τ₀ ≽ τ
 
 FTVτ : Types → List TyParam
 FTVτ type-error = ø
@@ -86,25 +87,25 @@ FTVΓ (Γ ⊱ (x , σ)) = FTVΓ Γ ∪ FTVσ σ
 
 record ftv-proof : Set where
   -- p147 Definition 9.2
-  ex1 : FTVτ (′ "a" ⇀ ′ "b" list) ≡ "a" ﹛ [ "b" ]
+  ex1 : FTVτ (′ "a" ⇀ ′ "b" list) ≡ "a" ◂ [ "b" ]
   ex1 = refl
   ex2 : FTVσ ([ "a" ] ̣ ′ "a" ⇀ ′ "b" list) ≡ [ "b" ]
   ex2 = refl
-  ex3 : FTVΓ (● ⊱ ("x" , [ "a" ] ̣ ′ "a" ⇀ ′ "b" list) ⊱ ("y" , ′ (′ "c" ⇀ ′ "c"))) ≡ "b" ﹛ [ "c" ]
+  ex3 : FTVΓ (● ⊱ ("x" , [ "a" ] ̣ ′ "a" ⇀ ′ "b" list) ⊱ ("y" , ′ (′ "c" ⇀ ′ "c"))) ≡ "b" ◂ [ "c" ]
   ex3 = refl
 
 record example-proof : Set where
   -- p147 Definition 9.1
-  ex1 : [ "a" ] ̣ ′ "a" ⇀ ′ "a" ≿ int ⇀ int
-  ex1 = inst ([ int ] , refl)
-  ex2 : [ "a" ] ̣ ′ "a" ⇀ ′ "a" ≿ bool list ⇀ bool list
-  ex2 = inst ([ bool list ] , refl)
-  ex3 : [ "a" ] ̣ ′ "a" ⇀ ′ "a" ≿ (int ⇀ bool) ⇀ int ⇀ bool
-  ex3 = inst ([ int ⇀ bool ] , refl)
-  ex4 : ("a" ﹛ "b" ﹛ [ "c" ]) ̣ (′ "a" ⇀ ′ "b") ⇀ (′ "c" ⇀ ′ "a") ⇀ ′ "c" ⇀ ′ "b"
-        ≿
+  ex1 : [ "a" ] ̣ ′ "a" ⇀ ′ "a" ≽ int ⇀ int
+  ex1 = concretion ([ int ] , refl)
+  ex2 : [ "a" ] ̣ ′ "a" ⇀ ′ "a" ≽ bool list ⇀ bool list
+  ex2 = concretion ([ bool list ] , refl)
+  ex3 : [ "a" ] ̣ ′ "a" ⇀ ′ "a" ≽ (int ⇀ bool) ⇀ int ⇀ bool
+  ex3 = concretion ([ int ⇀ bool ] , refl)
+  ex4 : ("a" ◂ ("b" ◂ [ "c" ])) ̣ (′ "a" ⇀ ′ "b") ⇀ (′ "c" ⇀ ′ "a") ⇀ ′ "c" ⇀ ′ "b"
+        ≽
         (int ⇀ bool) ⇀ (int list ⇀ int) ⇀ int list ⇀ bool
-  ex4 = inst (int ﹛ bool ﹛ [ int list ] , refl)
+  ex4 = concretion (int ◂ (bool ◂ [ int list ]) , refl)
 
 
 infixl 20 _⊱_
@@ -113,7 +114,7 @@ infix 10 _〖_〗
 infix 9 _list
 infixr 8 _⇀_
 infix 7 _̣_
-infix 6 _⊢_∶_ _≿_
+infix 6 _⊢_∶_ _≽_
 infixl 4 _∪_
 
 data _⊢_∶_ : TEnv → Exp → Types → Set where
@@ -142,7 +143,7 @@ data _⊢_∶_ : TEnv → Exp → Types → Set where
          → Γ ⊢ e₁ ≺ e₂ ∶ bool
   T-Var : ∀ {Γ x σ τ}
           → Γ 〖 x 〗 ≡ σ
-          → σ ≿ τ
+          → σ ≽ τ
           → Γ ⊢ var x ∶ τ
   T-Let : ∀ {Γ e₁ e₂ τ₁ τ₂ x σ αs}
           → Γ ⊢ e₁ ∶ τ₁
