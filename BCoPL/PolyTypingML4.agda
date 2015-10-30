@@ -1,8 +1,8 @@
 module BCoPL.PolyTypingML4 where
 
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
-open import Data.List renaming ([] to ø; _∷_ to _﹛_)
-open import Data.Product using (∃; proj₁)
+open import Data.List renaming ([] to ø; _∷_ to _﹛_) public
+open import Data.Product using (∃; proj₁) public
 
 open import BCoPL.EvalML4 public
 
