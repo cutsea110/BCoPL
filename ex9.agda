@@ -4,7 +4,7 @@ open import BCoPL.PolyTypingML4
 open import BCoPL.Show.PolyTypingML4
 
 q107 : ● ⊢ fun "x" ⇒ var "x" ∶ ′ "a" ⇀ ′ "a"
-q107 = T-Abs (T-Var refl raw)
+q107 = T-Abs (T-Var "x" (t (′ "a")) refl raw)
 {-
 |- (fun x -> x) : ('a) -> 'a by T-Abs {
   x:'a |- x : 'a by T-Var {};
@@ -12,7 +12,7 @@ q107 = T-Abs (T-Var refl raw)
 -}
 
 ex-9-1-1 : ● ⊱ ("f" , [ "a" ] ̣ ′ "a" ⇀ ′ "a") ⊢ app (var "f") (i (+ 3)) ∶ int
-ex-9-1-1 = T-App (T-Var refl (concretion ([ int ] , refl))) T-Int
+ex-9-1-1 = T-App (T-Var "f" ([ "a" ] ̣ ′ "a" ⇀ ′ "a") refl (concretion ([ int ] , refl))) T-Int
 {-
 f:'a .('a) -> 'a |- f(3) : int by T-App {
   f:'a .('a) -> 'a |- f : (int) -> int by T-Var {};
@@ -21,7 +21,8 @@ f:'a .('a) -> 'a |- f(3) : int by T-App {
 -}
 
 ex-9-1-2 : ● ⊱ ("f" , [ "a" ] ̣ ′ "a" ⇀ ′ "a") ⊢ app (var "f") (fun "x" ⇒ var "x" ⊕ i (+ 3)) ∶ int ⇀ int
-ex-9-1-2 = T-App (T-Var refl (concretion ([ int ⇀ int ] , refl))) (T-Abs (T-Plus (T-Var refl raw) T-Int))
+ex-9-1-2 = T-App (T-Var "f" ([ "a" ] ̣ ′ "a" ⇀ ′ "a") refl (concretion ([ int ⇀ int ] , refl)))
+                 (T-Abs (T-Plus (T-Var "x" (t int) refl raw) T-Int))
 {-
 f:'a .('a) -> 'a |- f((fun x -> (x + 3))) : (int) -> int by T-App {
   f:'a .('a) -> 'a |- f : ((int) -> int) -> (int) -> int by T-Var {};
@@ -35,9 +36,9 @@ f:'a .('a) -> 'a |- f((fun x -> (x + 3))) : (int) -> int by T-App {
 -}
 
 ex-9-1-3 : ● ⊢ ℓet "id" ≔ fun "x" ⇒ var "x" ιn app (var "id") (var "id") ∶ bool ⇀ bool
-ex-9-1-3 = T-Let (T-Abs (T-Var refl raw))
-                 (T-App (T-Var refl (concretion ([ bool ⇀ bool ] , refl)))
-                        (T-Var refl (concretion ([ bool ] , refl))))
+ex-9-1-3 = T-Let (T-Abs (T-Var "x" (t (′ "a")) refl raw))
+                 (T-App (T-Var "id" ([ "a" ] ̣ ′ "a" ⇀ ′ "a") refl (concretion ([ bool ⇀ bool ] , refl)))
+                        (T-Var "id" ([ "a" ] ̣ ′ "a" ⇀ ′ "a") refl (concretion ([ bool ] , refl))))
                  (refl , refl)
 {-
 |- let id = fun x -> x in id id : bool -> bool by T-Let {
@@ -49,12 +50,22 @@ ex-9-1-3 = T-Let (T-Abs (T-Var refl raw))
     id: 'a.'a -> 'a |- id : bool -> bool by T-Var {};
   };
 };
+
+|- let id = (fun x -> x) in id(id) : (bool) -> bool by T-Let {
+  |- (fun x -> x) : ('a) -> 'a by T-Abs {
+    x:'a |- x : 'a by T-Var {};
+  };
+  id:'a .('a) -> 'a |- id(id) : (bool) -> bool by T-App {
+    id:'a .('a) -> 'a |- id : ((bool) -> bool) -> (bool) -> bool by T-Var {};
+    id:'a .('a) -> 'a |- id : (bool) -> bool by T-Var {};
+  };
+};
 -}
 
 q111 : ● ⊱ ("f" , ("a" ◂ [ "b" ]) ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a" ) ⊢
        app (app (var "f") (i (+ 3))) (b true) ⊕ app (app (var "f") (i (+ 2))) (i (+ 4)) ∶ int
-q111 = T-Plus (T-App (T-App (T-Var refl (concretion ((int ◂ [ bool ]) , refl))) T-Int) T-Bool)
-              (T-App (T-App (T-Var refl (concretion ((int ◂ [ int ]) , refl))) T-Int) T-Int)
+q111 = T-Plus (T-App (T-App (T-Var {!!} {!!} refl (concretion ((int ◂ [ bool ]) , refl))) T-Int) T-Bool)
+              (T-App (T-App (T-Var {!!} {!!} refl (concretion ((int ◂ [ int ]) , refl))) T-Int) T-Int)
 {-
 f: 'a 'b.'a->'b->'a |- f 3 true + f 2 4  : int by T-Plus {
   f: 'a 'b.'a->'b->'a |- f 3 true : int by T-App {
@@ -77,9 +88,9 @@ f: 'a 'b.'a->'b->'a |- f 3 true + f 2 4  : int by T-Plus {
 ex-9-1-4 : ● ⊢ ℓet "k" ≔ fun "x" ⇒ fun "y" ⇒ var "x" ιn
                    (app (app (var "k") (i (+ 3))) (b true)) ∷ (app (app (var "k") ((i (+ 1)) ∷ [])) (i (+ 3)))
                 ∶ int list
-ex-9-1-4 = T-Let (T-Abs (T-Abs (T-Var refl raw)))
-                 (T-Cons (T-App (T-App (T-Var refl (concretion ((int ◂ [ bool ]) , refl))) T-Int) T-Bool)
-                         (T-App (T-App (T-Var refl (concretion ((int list) ◂ [ int ] , refl)))
+ex-9-1-4 = T-Let (T-Abs (T-Abs (T-Var {!!} {!!} refl raw)))
+                 (T-Cons (T-App (T-App (T-Var {!!} {!!} refl (concretion ((int ◂ [ bool ]) , refl))) T-Int) T-Bool)
+                         (T-App (T-App (T-Var {!!} {!!} refl (concretion ((int list) ◂ [ int ] , refl)))
                                        (T-Cons T-Int T-Nil))
                                 T-Int))
                  (refl , refl)
@@ -119,16 +130,16 @@ ex-9-1-5 : ● ⊢ ℓet "compose" ≔ fun "f" ⇒ fun "g" ⇒ fun "x" ⇒ app (
                          (app (app (var "compose") (var "g"))
                                    (var "f")))
                     (b true) ∶ int
-ex-9-1-5 = T-Let (T-Abs (T-Abs (T-Abs (T-App (T-Var refl raw)
-                                             (T-App (T-Var refl raw)
-                                                    (T-Var refl raw))))))
-                 (T-Let (T-Abs (T-If (T-Var refl raw) T-Int T-Int))
-                        (T-Let (T-Abs (T-Lt (T-Var refl raw) T-Int))
-                               (T-App (T-App (T-App (T-Var refl (concretion ((bool ⇀ int) ◂ [ int ⇀ bool ] , refl)))
-                                                    (T-Var refl (concretion ([ bool ] , refl))))
-                                             (T-App (T-App (T-Var refl (concretion (((bool ⇀ int) ◂ [ int ⇀ bool ]) , refl)))
-                                                           (T-Var refl (concretion ([ int ] , refl))))
-                                                    (T-Var refl (concretion ([ bool ] , refl)))))
+ex-9-1-5 = T-Let (T-Abs (T-Abs (T-Abs (T-App (T-Var {!!} {!!} refl raw)
+                                             (T-App (T-Var {!!} {!!} refl raw)
+                                                    (T-Var {!!} {!!} refl raw))))))
+                 (T-Let (T-Abs (T-If (T-Var {!!} {!!} refl raw) T-Int T-Int))
+                        (T-Let (T-Abs (T-Lt (T-Var {!!} {!!} refl raw) T-Int))
+                               (T-App (T-App (T-App (T-Var {!!} {!!} refl (concretion ((bool ⇀ int) ◂ [ int ⇀ bool ] , refl)))
+                                                    (T-Var {!!} {!!} refl (concretion ([ bool ] , refl))))
+                                             (T-App (T-App (T-Var {!!} {!!} refl (concretion (((bool ⇀ int) ◂ [ int ⇀ bool ]) , refl)))
+                                                           (T-Var {!!} {!!} refl (concretion ([ int ] , refl))))
+                                                    (T-Var {!!} {!!} refl (concretion ([ bool ] , refl)))))
                                       T-Bool)
                                (refl , refl))
                         (refl , refl))
