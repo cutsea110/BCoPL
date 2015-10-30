@@ -40,18 +40,24 @@ private
   [ τ/α ]⊲ (τ₁ ⇀ τ₂) = [ τ/α ]⊲ τ₁ ⇀ [ τ/α ]⊲ τ₂
   [ τ/α ]⊲ (τ list) = ([ τ/α ]⊲ τ) list
 
+  _/=_ : TyParam → TyParam → Bool
+  x /= y = not (x == y)
+
   elem : TyParam → List TyParam → Bool
   elem x ø = false
   elem x (y ﹛ ys) = x == y ¿ true ∶ elem x ys
+
+  _∩_ : List TyParam → List TyParam → List TyParam
+  xs ∩ ø = ø
+  xs ∩ (x ﹛ ys) with elem x xs
+  ... | true = x ﹛ (filter (_/=_ x) xs ∩ ys)
+  ... | false = xs ∩ ys
 
   _∪_ : List TyParam → List TyParam → List TyParam
   xs ∪ ø = xs
   xs ∪ x ﹛ ys with elem x xs
   ... | true = xs ∪ ys
   ... | false = xs ++ [ x ] ∪ ys
-
-  _/=_ : TyParam → TyParam → Bool
-  x /= y = not (x == y)
 
   _╲_ : List TyParam → List TyParam → List TyParam
   xs ╲ ø = xs
@@ -110,55 +116,58 @@ infix 7 _̣_
 infix 6 _⊢_∶_ _≿_
 infixl 4 _∪_
 
-data _⊢_∶_ : TEnv → Exp → TyScheme → Set where
-  T-Int : ∀ {Γ n} → Γ ⊢ i n ∶ ′ int
-  T-Bool : ∀ {Γ v} → Γ ⊢ b v ∶ ′ bool
+data _⊢_∶_ : TEnv → Exp → Types → Set where
+  T-Int : ∀ {Γ n} → Γ ⊢ i n ∶ int
+  T-Bool : ∀ {Γ v} → Γ ⊢ b v ∶ bool
   T-If : ∀ {Γ e₁ e₂ e₃ τ}
-         → Γ ⊢ e₁ ∶ ′ bool
+         → Γ ⊢ e₁ ∶ bool
          → Γ ⊢ e₂ ∶ τ
          → Γ ⊢ e₃ ∶ τ
          → Γ ⊢ if e₁ then e₂ else e₃ ∶ τ
   T-Plus : ∀ {Γ e₁ e₂}
-           → Γ ⊢ e₁ ∶ ′ int
-           → Γ ⊢ e₂ ∶ ′ int
-           → Γ ⊢ e₁ ⊕ e₂ ∶ ′ int
+           → Γ ⊢ e₁ ∶ int
+           → Γ ⊢ e₂ ∶ int
+           → Γ ⊢ e₁ ⊕ e₂ ∶ int
   T-Minus : ∀ {Γ e₁ e₂}
-            → Γ ⊢ e₁ ∶ ′ int
-            → Γ ⊢ e₂ ∶ ′ int
-            → Γ ⊢ e₁ ⊝ e₂ ∶ ′ int
+            → Γ ⊢ e₁ ∶ int
+            → Γ ⊢ e₂ ∶ int
+            → Γ ⊢ e₁ ⊝ e₂ ∶ int
   T-Times : ∀ {Γ e₁ e₂}
-            → Γ ⊢ e₁ ∶ ′ int
-            → Γ ⊢ e₂ ∶ ′ int
-            → Γ ⊢ e₁ ⊛ e₂ ∶ ′ int
+            → Γ ⊢ e₁ ∶ int
+            → Γ ⊢ e₂ ∶ int
+            → Γ ⊢ e₁ ⊛ e₂ ∶ int
   T-Lt : ∀ {Γ e₁ e₂}
-         → Γ ⊢ e₁ ∶ ′ int
-         → Γ ⊢ e₂ ∶ ′ int
-         → Γ ⊢ e₁ ≺ e₂ ∶ ′ bool
-  T-Var : ∀ {Γ x τ}
-          → Γ 〖 x 〗 ≡ τ
+         → Γ ⊢ e₁ ∶ int
+         → Γ ⊢ e₂ ∶ int
+         → Γ ⊢ e₁ ≺ e₂ ∶ bool
+  T-Var : ∀ {Γ x σ τ}
+          → Γ 〖 x 〗 ≡ σ
+          → σ ≿ τ
           → Γ ⊢ var x ∶ τ
-  T-Let : ∀ {Γ e₁ e₂ τ₁ τ₂ x}
+  T-Let : ∀ {Γ e₁ e₂ τ₁ τ₂ x σ αs}
           → Γ ⊢ e₁ ∶ τ₁
-          → Γ ⊱ (x , τ₁) ⊢ e₂ ∶ τ₂
+          → Γ ⊱ (x , σ) ⊢ e₂ ∶ τ₂
+          → σ ≡ αs ̣ τ₁ × αs ∩ FTVΓ Γ ≡ ø
           → Γ ⊢ ℓet x ≔ e₁ ιn e₂ ∶ τ₂
-  T-Fun : ∀ {Γ x e τ₁ τ₂}
-          → Γ ⊱ (x , ′ (′ τ₁)) ⊢ e ∶ [ τ₂ ] ̣ ′ τ₂
-          → Γ ⊢ fun x ⇒ e ∶ (τ₁ ﹛ [ τ₂ ]) ̣  ′ τ₁ ⇀ ′ τ₂
+  T-Abs : ∀ {Γ x τ₁ τ₂ e}
+          → Γ ⊱ (x , ′ τ₁) ⊢ e ∶ τ₂
+          → Γ ⊢ fun x ⇒ e ∶ τ₁ ⇀ τ₂
   T-App : ∀ {Γ e₁ e₂ τ₁ τ₂}
-          → Γ ⊢ e₁ ∶ (τ₁ ﹛ [ τ₂ ]) ̣ ′ τ₁ ⇀ ′ τ₂
-          → Γ ⊢ e₂ ∶ [ τ₁ ] ̣ ′ τ₁
-          → Γ ⊢ app e₁ e₂ ∶ [ τ₂ ] ̣ ′ τ₂
-  T-LetRec : ∀ {Γ x y e₁ e₂ τ₁ τ₂ τ}
-             → Γ ⊱ (x , (τ₁ ﹛ [ τ₂ ]) ̣ ′ τ₁ ⇀ ′ τ₂) ⊱ (y , [ τ₁ ] ̣ ′ τ₁) ⊢ e₁ ∶ [ τ₂ ] ̣ ′ τ₂
-             → Γ ⊱ (x , (τ₁ ﹛ [ τ₂ ]) ̣ ′ τ₁ ⇀ ′ τ₂) ⊢ e₂ ∶ τ
+          → Γ ⊢ e₁ ∶ τ₁ ⇀ τ₂
+          → Γ ⊢ e₂ ∶ τ₁
+          → Γ ⊢ app e₁ e₂ ∶ τ₂
+  T-LetRec : ∀ {Γ x y e₁ e₂ τ₁ τ₂ τ σ αs}
+             → Γ ⊱ (x , ′ (τ₁ ⇀ τ₂)) ⊱ (y , ′ τ₁) ⊢ e₁ ∶ τ₂
+             → Γ ⊱ (x , σ) ⊢ e₂ ∶ τ
+             → σ ≡ αs ̣ τ₁ ⇀ τ₂ × αs ∩ FTVΓ Γ ≡ ø
              → Γ ⊢ ℓetrec x ≔fun y ⇒ e₁ ιn e₂ ∶ τ
-  T-Nil : ∀ {Γ τ} → Γ ⊢ [] ∶ [ τ ] ̣ ′ τ list
+  T-Nil : ∀ {Γ τ} → Γ ⊢ [] ∶ τ list
   T-Cons : ∀ {Γ τ e₁ e₂}
-           → Γ ⊢ e₁ ∶ [ τ ] ̣ ′ τ
-           → Γ ⊢ e₂ ∶ [ τ ] ̣ ′ τ list
-           → Γ ⊢ e₁ ∷ e₂ ∶ [ τ ] ̣ ′ τ list
+           → Γ ⊢ e₁ ∶ τ
+           → Γ ⊢ e₂ ∶ τ list
+           → Γ ⊢ e₁ ∷ e₂ ∶ τ list
   T-Match : ∀ {Γ e₁ e₂ e₃ τ τ' x y}
-            → Γ ⊢ e₁ ∶ [ τ' ] ̣ ′ τ' list
+            → Γ ⊢ e₁ ∶ τ' list
             → Γ ⊢ e₂ ∶ τ
-            → Γ ⊱ (x , [ τ' ] ̣ ′ τ') ⊱ (y , [ τ' ] ̣ ′ τ' list) ⊢ e₃ ∶ τ
+            → Γ ⊱ (x , ′ τ') ⊱ (y , ′ (τ' list)) ⊢ e₃ ∶ τ
             → Γ ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ∶ τ
