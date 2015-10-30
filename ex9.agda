@@ -78,4 +78,61 @@ f: 'a 'b.'a->'b->'a |- f 3 true + f 2 4  : int by T-Plus {
 ex-9-1-4 : ● ⊢ ℓet "k" ≔ fun "x" ⇒ fun "y" ⇒ var "x" ιn
                    (app (app (var "k") (i (+ 3))) (b true)) ∷ (app (app (var "k") ((i (+ 1)) ∷ [])) (i (+ 3)))
                 ∶ int list
-ex-9-1-4 = {!!}
+ex-9-1-4 = T-Let (T-Abs (T-Abs (T-Var refl raw)))
+                 (T-Cons (T-App (T-App (T-Var refl (concretion ((int ◂ [ bool ]) , refl))) T-Int) T-Bool)
+                         (T-App (T-App (T-Var refl (concretion ((int list) ◂ [ int ] , refl)))
+                                       (T-Cons T-Int T-Nil))
+                                T-Int))
+                 (refl , refl)
+{-
+|- let k = fun x -> fun y -> x in (k 3 true) :: (k (1 :: []) 3) : int list by T-Let {
+  |- fun x -> fun y -> x : 'a -> 'b -> 'a by T-Abs {
+    x: 'a |- fun y -> x : 'b -> 'a by T-Abs {
+      x: 'a, y: 'b |- x : 'a by T-Var {};
+    };
+  };
+  k: 'a 'b.'a->'b->'a |- (k 3 true) :: (k (1 :: []) 3) : int list by T-Cons {
+    k: 'a 'b.'a->'b->'a |- k 3 true : int by T-App {
+      k: 'a 'b.'a->'b->'a |- k 3 : bool -> int by T-App {
+        k: 'a 'b.'a->'b->'a |- k : int -> bool -> int by T-Var {};
+        k: 'a 'b.'a->'b->'a |- 3 : int by T-Int {};
+      };
+      k: 'a 'b.'a->'b->'a |- true : bool by T-Bool {};
+    };
+    k: 'a 'b.'a->'b->'a |- k (1 :: []) 3 : int list by T-App {
+      k: 'a 'b.'a->'b->'a |- k (1 :: []) : int -> int list by T-App {
+        k: 'a 'b.'a->'b->'a |- k : int list -> int -> int list by T-Var {};
+        k: 'a 'b.'a->'b->'a |- 1 :: [] : int list by T-Cons {
+          k: 'a 'b.'a->'b->'a |- 1 : int by T-Int {};
+          k: 'a 'b.'a->'b->'a |- [] : int list by T-Nil {};
+        };
+      };
+      k: 'a 'b.'a->'b->'a |- 3 : int by T-Int {};
+    };
+  };
+};
+-}
+
+ex-9-1-5 : ● ⊢ ℓet "compose" ≔ fun "f" ⇒ fun "g" ⇒ fun "x" ⇒ app (var "f") (app (var "g") (var "x")) ιn
+                ℓet "f" ≔ fun "x" ⇒ if var "x" then i (+ 3) else i (+ 4) ιn
+                ℓet "g" ≔ fun "x" ⇒ var "x" ≺ i (+ 4) ιn
+                app (app (app (var "compose") (var "f"))
+                         (app (app (var "compose") (var "g"))
+                                   (var "f")))
+                    (b true) ∶ int
+ex-9-1-5 = T-Let (T-Abs (T-Abs (T-Abs (T-App (T-Var refl raw)
+                                             (T-App (T-Var refl raw)
+                                                    (T-Var refl raw))))))
+                 (T-Let (T-Abs (T-If (T-Var refl raw) T-Int T-Int))
+                        (T-Let (T-Abs (T-Lt (T-Var refl raw) T-Int))
+                               (T-App (T-App (T-App (T-Var refl (concretion ((bool ⇀ int) ◂ [ int ⇀ bool ] , refl)))
+                                                    (T-Var refl (concretion ([ bool ] , refl))))
+                                             (T-App (T-App (T-Var refl (concretion (((bool ⇀ int) ◂ [ int ⇀ bool ]) , refl)))
+                                                           (T-Var refl (concretion ([ int ] , refl))))
+                                                    (T-Var refl (concretion ([ bool ] , refl)))))
+                                      T-Bool)
+                               (refl , refl))
+                        (refl , refl))
+                 (refl , refl)
+{-
+-}

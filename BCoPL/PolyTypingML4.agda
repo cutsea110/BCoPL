@@ -18,7 +18,7 @@ data Types : Set where
   _list : Types → Types
 
 data TyScheme : Set where
-  ′ : Types → TyScheme
+  t : Types → TyScheme
   _̣_ : List TyParam → Types → TyScheme
 
 data TEnv : Set where
@@ -26,7 +26,7 @@ data TEnv : Set where
   _⊱_ : TEnv → (Var × TyScheme) → TEnv
 
 _〖_〗 : TEnv → Var → TyScheme
-● 〖 x 〗 = ′ type-error
+● 〖 x 〗 = t type-error
 Γ ⊱ (y , e) 〖 x 〗 = y == x ¿ e ∶ Γ 〖 x 〗
 
 private
@@ -66,7 +66,7 @@ private
   ... | false = xs ╲ ys
 
 data _≽_ : TyScheme → Types → Set where
-  raw : ∀ {τ} → ′ τ ≽ τ
+  raw : ∀ {τ} → t τ ≽ τ
   concretion : ∀ {τ τ₀ αs} → (∃ λ τs → [ zip τs αs ]⊲ τ₀ ≡ τ ) → αs ̣ τ₀ ≽ τ
 
 FTVτ : Types → List TyParam
@@ -78,7 +78,7 @@ FTVτ (τ₁ ⇀ τ₂) = FTVτ τ₁ ∪ FTVτ τ₂
 FTVτ (τ list) = FTVτ τ
 
 FTVσ : TyScheme → List TyParam
-FTVσ (′ τ) = FTVτ τ
+FTVσ (t τ) = FTVτ τ
 FTVσ (αs ̣ τ) = FTVτ τ ╲ αs
 
 FTVΓ : TEnv → List TyParam
@@ -91,7 +91,7 @@ record ftv-proof : Set where
   ex1 = refl
   ex2 : FTVσ ([ "a" ] ̣ ′ "a" ⇀ ′ "b" list) ≡ [ "b" ]
   ex2 = refl
-  ex3 : FTVΓ (● ⊱ ("x" , [ "a" ] ̣ ′ "a" ⇀ ′ "b" list) ⊱ ("y" , ′ (′ "c" ⇀ ′ "c"))) ≡ "b" ◂ [ "c" ]
+  ex3 : FTVΓ (● ⊱ ("x" , [ "a" ] ̣ ′ "a" ⇀ ′ "b" list) ⊱ ("y" , t (′ "c" ⇀ ′ "c"))) ≡ "b" ◂ [ "c" ]
   ex3 = refl
 
 record example-proof : Set where
@@ -151,14 +151,14 @@ data _⊢_∶_ : TEnv → Exp → Types → Set where
           → σ ≡ αs ̣ τ₁ × αs ∩ FTVΓ Γ ≡ ø
           → Γ ⊢ ℓet x ≔ e₁ ιn e₂ ∶ τ₂
   T-Abs : ∀ {Γ x τ₁ τ₂ e}
-          → Γ ⊱ (x , ′ τ₁) ⊢ e ∶ τ₂
+          → Γ ⊱ (x , t τ₁) ⊢ e ∶ τ₂
           → Γ ⊢ fun x ⇒ e ∶ τ₁ ⇀ τ₂
   T-App : ∀ {Γ e₁ e₂ τ₁ τ₂}
           → Γ ⊢ e₁ ∶ τ₁ ⇀ τ₂
           → Γ ⊢ e₂ ∶ τ₁
           → Γ ⊢ app e₁ e₂ ∶ τ₂
   T-LetRec : ∀ {Γ x y e₁ e₂ τ₁ τ₂ τ σ αs}
-             → Γ ⊱ (x , ′ (τ₁ ⇀ τ₂)) ⊱ (y , ′ τ₁) ⊢ e₁ ∶ τ₂
+             → Γ ⊱ (x , t (τ₁ ⇀ τ₂)) ⊱ (y , t τ₁) ⊢ e₁ ∶ τ₂
              → Γ ⊱ (x , σ) ⊢ e₂ ∶ τ
              → σ ≡ αs ̣ τ₁ ⇀ τ₂ × αs ∩ FTVΓ Γ ≡ ø
              → Γ ⊢ ℓetrec x ≔fun y ⇒ e₁ ιn e₂ ∶ τ
@@ -170,5 +170,5 @@ data _⊢_∶_ : TEnv → Exp → Types → Set where
   T-Match : ∀ {Γ e₁ e₂ e₃ τ τ' x y}
             → Γ ⊢ e₁ ∶ τ' list
             → Γ ⊢ e₂ ∶ τ
-            → Γ ⊱ (x , ′ τ') ⊱ (y , ′ (τ' list)) ⊢ e₃ ∶ τ
+            → Γ ⊱ (x , t τ') ⊱ (y , t (τ' list)) ⊢ e₃ ∶ τ
             → Γ ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ∶ τ
