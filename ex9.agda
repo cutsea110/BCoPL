@@ -241,3 +241,47 @@ ex-9-1-6 = T-Let (T-Abs (T-Abs (T-App (T-Var "f" (t (′ "a" ⇀ ′ "a")) refl 
   };
 };
 -}
+
+ex-9-1-7 : ● ⊢ ℓet "twice" ≔ fun "f" ⇒ fun "x" ⇒ app (var "f") (app (var "f") (var "x")) ιn
+                app (app (app (var "twice") (var "twice")) (fun "x" ⇒ var "x" ⊕ i (+ 4))) (i (+ 5)) ∶ int
+ex-9-1-7 = T-Let (T-Abs (T-Abs (T-App (T-Var "f" (t (′ "a" ⇀ ′ "a")) refl raw)
+                                      (T-App (T-Var "f" (t (′ "a" ⇀ ′ "a")) refl raw)
+                                             (T-Var "x" (t (′ "a")) refl raw)))))
+                 (T-App (T-App (T-App (T-Var "twice" ([ "a" ] ̣ (′ "a" ⇀ ′ "a") ⇀ ′ "a" ⇀ ′ "a")
+                                             refl (concretion ([ int ⇀ int ] , refl)))
+                                      (T-Var "twice" ([ "a" ] ̣ (′ "a" ⇀ ′ "a") ⇀ ′ "a" ⇀ ′ "a")
+                                             refl (concretion ([ int ] , refl))))
+                               (T-Abs (T-Plus (T-Var "x" (t int) refl raw) T-Int)))
+                        T-Int)
+                 (refl , refl)
+{-
+|- let twice = (fun f -> (fun x -> f(f(x)))) in twice(twice)((fun x -> (x + 4)))(5) : int by T-Let {
+  |- (fun f -> (fun x -> f(f(x)))) : (('a) -> 'a) -> ('a) -> 'a by T-Abs {
+    f:('a) -> 'a |- (fun x -> f(f(x))) : ('a) -> 'a by T-Abs {
+      f:('a) -> 'a,x:'a |- f(f(x)) : 'a by T-App {
+        f:('a) -> 'a,x:'a |- f : ('a) -> 'a by T-Var {};
+        f:('a) -> 'a,x:'a |- f(x) : 'a by T-App {
+          f:('a) -> 'a,x:'a |- f : ('a) -> 'a by T-Var {};
+          f:('a) -> 'a,x:'a |- x : 'a by T-Var {};
+        };
+      };
+    };
+  };
+  twice:'a .(('a) -> 'a) -> ('a) -> 'a |- twice(twice)((fun x -> (x + 4)))(5) : int by T-App {
+    twice:'a .(('a) -> 'a) -> ('a) -> 'a |- twice(twice)((fun x -> (x + 4))) : (int) -> int by T-App {
+      twice:'a .(('a) -> 'a) -> ('a) -> 'a |- twice(twice) : ((int) -> int) -> (int) -> int by T-App {
+        twice:'a .(('a) -> 'a) -> ('a) -> 'a |- twice : (((int) -> int) -> (int) -> int) -> ((int) -> int) -> (int) -> int by T-Var {};
+        twice:'a .(('a) -> 'a) -> ('a) -> 'a |- twice : ((int) -> int) -> (int) -> int by T-Var {};
+      };
+      twice:'a .(('a) -> 'a) -> ('a) -> 'a |- (fun x -> (x + 4)) : (int) -> int by T-Abs {
+        twice:'a .(('a) -> 'a) -> ('a) -> 'a,x:int |- (x + 4) : int by T-Plus {
+          twice:'a .(('a) -> 'a) -> ('a) -> 'a,x:int |- x : int by T-Var {};
+          twice:'a .(('a) -> 'a) -> ('a) -> 'a,x:int |- 4 : int by T-Int {};
+        };
+      };
+    };
+    twice:'a .(('a) -> 'a) -> ('a) -> 'a |- 5 : int by T-Int {};
+  };
+};
+-}
+
