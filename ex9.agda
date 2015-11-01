@@ -336,3 +336,15 @@ q116 = T-Let (T-Abs (T-Abs (T-Abs (T-App (T-App (T-Var "f" (t (′ "a" ⇀ ′ "
   };
 };
 -}
+
+ex-9-1-8 : ● ⊢ ℓet "x" ≔ [] ιn
+                ℓet "y" ≔ i (+ 3) ∷ var "x" ιn
+                b true ∷ var "x" ∶ bool list
+ex-9-1-8 = T-Let T-Nil
+                 (T-Let (T-Cons T-Int (T-Var "x" ([ "a" ] ̣ ′ "a" list) refl (concretion ([ int ] , refl))))
+                        (T-Cons T-Bool (T-Var "x" ([ "a" ] ̣ ′ "a" list) refl (concretion ([ bool ] , refl))))
+                        (refl , refl))
+                 (refl , refl)
+{-
+
+-}
