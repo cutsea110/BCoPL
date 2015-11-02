@@ -465,3 +465,11 @@ ex-9-1-10 = T-LetRec (T-Match (T-Var "l" (t (′ "a" list)) refl raw)
   };
 };
 -}
+
+q120 : ● ⊢ ℓetrec "map" ≔fun "f" ⇒ fun "l" ⇒
+                  (match var "l" with[]⇒ []
+                           ∣ "x" ∷ "y" ⇒ app (var "f") (var "x") ∷ app (app (var "map") (var "f")) (var "y")) ιn
+            app (app (var "map") (fun "x" ⇒ var "x" ≺ i (+ 3)))
+                (app (app (var "map") (fun "x" ⇒ var "x" ⊛ i (+ 2)))
+                     (i (+ 4) ∷ i (+ 5) ∷ i (+ 1) ∷ [])) ∶ bool list
+q120 = {!!}
