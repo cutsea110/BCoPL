@@ -349,14 +349,26 @@ q116 = T-Let {!!}
 ex-9-1-8 : ● ⊢ ℓet "x" ≔ [] ιn
                 ℓet "y" ≔ i (+ 3) ∷ var "x" ιn
                 b true ∷ var "x" ∶ bool list
-ex-9-1-8 = T-Let {!!} T-Nil
-                 (T-Let {!!}
+ex-9-1-8 = T-Let [ "a" ] T-Nil
+                 (T-Let [ "a" ]
                         (T-Cons T-Int (T-Var "x" ([ "a" ] ̣ ′ "a" list) refl (concretion ([ int ] , refl))))
                         (T-Cons T-Bool (T-Var "x" ([ "a" ] ̣ ′ "a" list) refl (concretion ([ bool ] , refl))))
                         (refl , refl))
                  (refl , refl)
 {-
-
+|- let x = [] in let y = (3 :: x) in (true :: x) : ((bool) list) by T-Let {
+  |- [] : (('a) list) by T-Nil {};
+  x:'a .(('a) list) |- let y = (3 :: x) in (true :: x) : ((bool) list) by T-Let {
+    x:'a .(('a) list) |- (3 :: x) : ((int) list) by T-Cons {
+      x:'a .(('a) list) |- 3 : int by T-Int {};
+      x:'a .(('a) list) |- x : ((int) list) by T-Var {};
+    };
+    x:'a .(('a) list),y:'a .((int) list) |- (true :: x) : ((bool) list) by T-Cons {
+      x:'a .(('a) list),y:'a .((int) list) |- true : bool by T-Bool {};
+      x:'a .(('a) list),y:'a .((int) list) |- x : ((bool) list) by T-Var {};
+    };
+  };
+};
 -}
 
 ex-9-1-9 : ● ⊢ ℓet "l" ≔ (fun "x" ⇒ var "x") ∷ [] ιn
