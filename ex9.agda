@@ -414,3 +414,54 @@ ex-9-1-9 = T-Let [ "a" ]
   };
 };
 -}
+
+ex-9-1-10 : ● ⊢ ℓetrec "length" ≔fun "l" ⇒
+                       match var "l" with[]⇒ i (+ 0)
+                               ∣ "x" ∷ "y" ⇒ i (+ 1) ⊕ app (var "length") (var "y") ιn
+                 app (var "length") (i (+ 3) ∷ i (+ 2) ∷ []) ⊕ app (var "length") ((i (+ 1) ∷ []) ∷ []) ∶ int
+ex-9-1-10 = T-LetRec (T-Match (T-Var "l" (t (′ "a" list)) refl raw)
+                              T-Int
+                              (T-Plus T-Int (T-App (T-Var "length" (t (′ "a" list ⇀ int)) refl raw)
+                                                   (T-Var "y" (t (′ "a" list)) refl raw))))
+                     (T-Plus (T-App (T-Var "length" ([ "a" ] ̣ ′ "a" list ⇀ int) refl (concretion ([ int ] , refl)))
+                                    (T-Cons T-Int (T-Cons T-Int T-Nil)))
+                             (T-App (T-Var "length" ([ "a" ] ̣ ′ "a" list ⇀ int) refl (concretion ([ int list ] , refl)))
+                                    (T-Cons (T-Cons T-Int T-Nil) T-Nil)))
+                     (refl , refl)
+{-
+|- let rec length = fun l -> match l with [] -> 0 | x :: y -> (1 + length(y)) in (length((3 :: (2 :: []))) + length(((1 :: []) :: []))) : int by T-LetRec {
+  length:((('a) list)) -> int,l:(('a) list) |- match l with [] -> 0 | x :: y -> (1 + length(y)) : int by T-Match {
+    length:((('a) list)) -> int,l:(('a) list) |- l : (('a) list) by T-Var {};
+    length:((('a) list)) -> int,l:(('a) list) |- 0 : int by T-Int {};
+    length:((('a) list)) -> int,l:(('a) list),x:'a,y:(('a) list) |- (1 + length(y)) : int by T-Plus {
+      length:((('a) list)) -> int,l:(('a) list),x:'a,y:(('a) list) |- 1 : int by T-Int {};
+      length:((('a) list)) -> int,l:(('a) list),x:'a,y:(('a) list) |- length(y) : int by T-App {
+        length:((('a) list)) -> int,l:(('a) list),x:'a,y:(('a) list) |- length : ((('a) list)) -> int by T-Var {};
+        length:((('a) list)) -> int,l:(('a) list),x:'a,y:(('a) list) |- y : (('a) list) by T-Var {};
+      };
+    };
+  };
+  length:'a .((('a) list)) -> int |- (length((3 :: (2 :: []))) + length(((1 :: []) :: []))) : int by T-Plus {
+    length:'a .((('a) list)) -> int |- length((3 :: (2 :: []))) : int by T-App {
+      length:'a .((('a) list)) -> int |- length : (((int) list)) -> int by T-Var {};
+      length:'a .((('a) list)) -> int |- (3 :: (2 :: [])) : ((int) list) by T-Cons {
+        length:'a .((('a) list)) -> int |- 3 : int by T-Int {};
+        length:'a .((('a) list)) -> int |- (2 :: []) : ((int) list) by T-Cons {
+          length:'a .((('a) list)) -> int |- 2 : int by T-Int {};
+          length:'a .((('a) list)) -> int |- [] : ((int) list) by T-Nil {};
+        };
+      };
+    };
+    length:'a .((('a) list)) -> int |- length(((1 :: []) :: [])) : int by T-App {
+      length:'a .((('a) list)) -> int |- length : (((((int) list)) list)) -> int by T-Var {};
+      length:'a .((('a) list)) -> int |- ((1 :: []) :: []) : ((((int) list)) list) by T-Cons {
+        length:'a .((('a) list)) -> int |- (1 :: []) : ((int) list) by T-Cons {
+          length:'a .((('a) list)) -> int |- 1 : int by T-Int {};
+          length:'a .((('a) list)) -> int |- [] : ((int) list) by T-Nil {};
+        };
+        length:'a .((('a) list)) -> int |- [] : ((((int) list)) list) by T-Nil {};
+      };
+    };
+  };
+};
+-}
