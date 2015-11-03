@@ -626,11 +626,11 @@ q122 : ● ⊢ ℓet "f" ≔ fun "x" ⇒
 q122 = T-Let [ "a" ]
              (T-Abs (T-Let [ "b" ]
                            (T-Abs (T-Cons (T-Var "x" (t (′ "a")) refl raw) T-Nil))
-                           (T-If T-Bool (T-App (T-Var "g" (([ "b" ]) ̣ ′ "b" ⇀ ′ "a" list)
-                                                      refl (concretion ((int ◂ [ ′ "a" ]) , refl)))
+                           (T-If T-Bool (T-App (T-Var "g" ([ "b" ] ̣ ′ "b" ⇀ ′ "a" list)
+                                                      refl (concretion ([ int ] , refl)))
                                                T-Int)
-                                        (T-App (T-Var "g" (([ "b" ]) ̣ ′ "b" ⇀ ′ "a" list)
-                                                      refl (concretion ((bool ◂ [ ′ "a" ]) , refl)))
+                                        (T-App (T-Var "g" ([ "b" ] ̣ ′ "b" ⇀ ′ "a" list)
+                                                      refl (concretion ([ bool ] , refl)))
                                                T-Bool))
                            (refl , refl)))
              (T-Match (T-App (T-Var "f" ([ "a" ] ̣ ′ "a" ⇀ ′ "a" list) refl (concretion ([ int ] , refl)))
