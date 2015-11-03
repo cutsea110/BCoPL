@@ -46,8 +46,8 @@ showJudgeTypes (T-Plus τ₁ τ₂)
   = "T-Plus {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"
 showJudgeTypes (T-Minus τ₁ τ₂)
   = "T-Minus {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"
-showJudgeTypes (T-Times τ₁ τ₂)
-  = "T-Times {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"
+showJudgeTypes (T-Mult τ₁ τ₂)
+  = "T-Mult {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"
 showJudgeTypes (T-Lt τ₁ τ₂)
   = "T-Lt {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"
 showJudgeTypes (T-Var x σ Γ〖τ〗 σ≽τ) = "T-Var {};"

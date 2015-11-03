@@ -133,7 +133,7 @@ data _⊢_∶_ : TEnv → Exp → Types → Set where
             → Γ ⊢ e₁ ∶ int
             → Γ ⊢ e₂ ∶ int
             → Γ ⊢ e₁ ⊝ e₂ ∶ int
-  T-Times : ∀ {Γ e₁ e₂}
+  T-Mult : ∀ {Γ e₁ e₂}
             → Γ ⊢ e₁ ∶ int
             → Γ ⊢ e₂ ∶ int
             → Γ ⊢ e₁ ⊛ e₂ ∶ int
