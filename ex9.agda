@@ -212,7 +212,7 @@ ex-9-1-5 = T-Let ("a" ◂ ("b" ◂ [ "c" ]))
 
 ex-9-1-6 : ● ⊢ ℓet "twice" ≔ fun "f" ⇒ fun "x" ⇒ app (var "f") (app (var "f") (var "x")) ιn
                 app (app (var "twice") (fun "x" ⇒ var "x" ⊕ i (+ 4))) (i (+ 5)) ∶ int
-ex-9-1-6 = T-Let ([ "a" ])
+ex-9-1-6 = T-Let [ "a" ]
                  (T-Abs (T-Abs (T-App (T-Var "f" (t (′ "a" ⇀ ′ "a")) refl raw)
                                       (T-App (T-Var "f" (t (′ "a" ⇀ ′ "a")) refl raw)
                                              (T-Var "x" (t (′ "a")) refl raw)))))
@@ -549,14 +549,133 @@ q121 : ● ⊢ ℓetrec "map" ≔fun "f" ⇒ fun "l" ⇒
             ℓet "f" ≔ app (var "map") (fun "x" ⇒ var "x") ιn
             ℓet "a" ≔ app (var "f") (i (+ 3) ∷ []) ιn
             app (var "f") (b true ∷ []) ∶ bool list
-q121 = {!!}
+q121 = T-LetRec (T-Abs (T-Match (T-Var "l" (t (′ "a" list)) refl raw)
+                                T-Nil
+                                (T-Cons (T-App (T-Var "f" (t (′ "a" ⇀ ′ "b")) refl raw)
+                                               (T-Var "x" (t (′ "a")) refl raw))
+                                        (T-App (T-App (T-Var "map" (t ((′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)) refl raw)
+                                                      (T-Var "f" (t (′ "a" ⇀ ′ "b")) refl raw))
+                                               (T-Var "y" (t (′ "a" list)) refl raw)))))
+                (T-Let [ "a" ]
+                       (T-App (T-Var "map" (("a" ◂ [ "b" ]) ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)
+                                     refl (concretion ((′ "a" ◂ [ ′ "a" ]) , refl)))
+                              (T-Abs (T-Var "x" (t (′ "a")) refl raw)))
+                       (T-Let [ "a" ]
+                              (T-App (T-Var "f" ([ "a" ] ̣ ′ "a" list ⇀ ′ "a" list)
+                                            refl (concretion ([ int ] , refl)))
+                                     (T-Cons T-Int T-Nil))
+                              (T-App (T-Var "f" ([ "a" ] ̣ ′ "a" list ⇀ ′ "a" list)
+                                            refl (concretion ([ bool ] , refl)))
+                                     (T-Cons T-Bool T-Nil))
+                              (refl , refl))
+                       (refl , refl))
+                (refl , refl)
+{-
+|- let rec map = fun f -> (fun l -> match l with [] -> [] | x :: y -> (f(x) :: map(f)(y))) in let f = map((fun x -> x)) in let a = f((3 :: [])) in f((true :: [])) : ((bool) list) by T-LetRec {
+  map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b |- (fun l -> match l with [] -> [] | x :: y -> (f(x) :: map(f)(y))) : ((('a) list)) -> (('b) list) by T-Abs {
+    map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b,l:(('a) list) |- match l with [] -> [] | x :: y -> (f(x) :: map(f)(y)) : (('b) list) by T-Match {
+      map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b,l:(('a) list) |- l : (('a) list) by T-Var {};
+      map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b,l:(('a) list) |- [] : (('b) list) by T-Nil {};
+      map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b,l:(('a) list),x:'a,y:(('a) list) |- (f(x) :: map(f)(y)) : (('b) list) by T-Cons {
+        map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b,l:(('a) list),x:'a,y:(('a) list) |- f(x) : 'b by T-App {
+          map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b,l:(('a) list),x:'a,y:(('a) list) |- f : ('a) -> 'b by T-Var {};
+          map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b,l:(('a) list),x:'a,y:(('a) list) |- x : 'a by T-Var {};
+        };
+        map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b,l:(('a) list),x:'a,y:(('a) list) |- map(f)(y) : (('b) list) by T-App {
+          map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b,l:(('a) list),x:'a,y:(('a) list) |- map(f) : ((('a) list)) -> (('b) list) by T-App {
+            map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b,l:(('a) list),x:'a,y:(('a) list) |- map : (('a) -> 'b) -> ((('a) list)) -> (('b) list) by T-Var {};
+            map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b,l:(('a) list),x:'a,y:(('a) list) |- f : ('a) -> 'b by T-Var {};
+          };
+          map:(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:('a) -> 'b,l:(('a) list),x:'a,y:(('a) list) |- y : (('a) list) by T-Var {};
+        };
+      };
+    };
+  };
+  map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list) |- let f = map((fun x -> x)) in let a = f((3 :: [])) in f((true :: [])) : ((bool) list) by T-Let {
+    map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list) |- map((fun x -> x)) : ((('a) list)) -> (('a) list) by T-App {
+      map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list) |- map : (('a) -> 'a) -> ((('a) list)) -> (('a) list) by T-Var {};
+      map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list) |- (fun x -> x) : ('a) -> 'a by T-Abs {
+        map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list),x:'a |- x : 'a by T-Var {};
+      };
+    };
+    map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:'a .((('a) list)) -> (('a) list) |- let a = f((3 :: [])) in f((true :: [])) : ((bool) list) by T-Let {
+      map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:'a .((('a) list)) -> (('a) list) |- f((3 :: [])) : ((int) list) by T-App {
+        map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:'a .((('a) list)) -> (('a) list) |- f : (((int) list)) -> ((int) list) by T-Var {};
+        map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:'a .((('a) list)) -> (('a) list) |- (3 :: []) : ((int) list) by T-Cons {
+          map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:'a .((('a) list)) -> (('a) list) |- 3 : int by T-Int {};
+          map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:'a .((('a) list)) -> (('a) list) |- [] : ((int) list) by T-Nil {};
+        };
+      };
+      map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:'a .((('a) list)) -> (('a) list),a:'a .((int) list) |- f((true :: [])) : ((bool) list) by T-App {
+        map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:'a .((('a) list)) -> (('a) list),a:'a .((int) list) |- f : (((bool) list)) -> ((bool) list) by T-Var {};
+        map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:'a .((('a) list)) -> (('a) list),a:'a .((int) list) |- (true :: []) : ((bool) list) by T-Cons {
+          map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:'a .((('a) list)) -> (('a) list),a:'a .((int) list) |- true : bool by T-Bool {};
+          map:'a 'b .(('a) -> 'b) -> ((('a) list)) -> (('b) list),f:'a .((('a) list)) -> (('a) list),a:'a .((int) list) |- [] : ((bool) list) by T-Nil {};
+        };
+      };
+    };
+  };
+};
+-}
 
 q122 : ● ⊢ ℓet "f" ≔ fun "x" ⇒
                ℓet "g" ≔ fun "y" ⇒ var "x" ∷ [] ιn
                if b true then app (var "g") (i (+ 3)) else app (var "g") (b false) ιn
             match app (var "f") (i (+ 2)) with[]⇒ app (var "f") (b true)
                                             ∣ "x" ∷ "y" ⇒ [] ∶ bool list
-q122 = {!!}
+q122 = T-Let [ "a" ]
+             (T-Abs (T-Let [ "b" ]
+                           (T-Abs (T-Cons (T-Var "x" (t (′ "a")) refl raw) T-Nil))
+                           (T-If T-Bool (T-App (T-Var "g" (([ "b" ]) ̣ ′ "b" ⇀ ′ "a" list)
+                                                      refl (concretion ((int ◂ [ ′ "a" ]) , refl)))
+                                               T-Int)
+                                        (T-App (T-Var "g" (([ "b" ]) ̣ ′ "b" ⇀ ′ "a" list)
+                                                      refl (concretion ((bool ◂ [ ′ "a" ]) , refl)))
+                                               T-Bool))
+                           (refl , refl)))
+             (T-Match (T-App (T-Var "f" ([ "a" ] ̣ ′ "a" ⇀ ′ "a" list) refl (concretion ([ int ] , refl)))
+                             T-Int)
+                      (T-App (T-Var "f" ([ "a" ] ̣ ′ "a" ⇀ ′ "a" list) refl (concretion ([ bool ] , refl)))
+                             T-Bool)
+                      T-Nil)
+             (refl , refl)
+{-
+|- let f = (fun x -> let g = (fun y -> (x :: [])) in if true then g(3) else g(false)) in match f(2) with [] -> f(true) | x :: y -> [] : ((bool) list) by T-Let {
+  |- (fun x -> let g = (fun y -> (x :: [])) in if true then g(3) else g(false)) : ('a) -> (('a) list) by T-Abs {
+    x:'a |- let g = (fun y -> (x :: [])) in if true then g(3) else g(false) : (('a) list) by T-Let {
+      x:'a |- (fun y -> (x :: [])) : ('b) -> (('a) list) by T-Abs {
+        x:'a,y:'b |- (x :: []) : (('a) list) by T-Cons {
+          x:'a,y:'b |- x : 'a by T-Var {};
+          x:'a,y:'b |- [] : (('a) list) by T-Nil {};
+        };
+      };
+      x:'a,g:'b .('b) -> (('a) list) |- if true then g(3) else g(false) : (('a) list) by T-If {
+        x:'a,g:'b .('b) -> (('a) list) |- true : bool by T-Bool {};
+        x:'a,g:'b .('b) -> (('a) list) |- g(3) : (('a) list) by T-App {
+          x:'a,g:'b .('b) -> (('a) list) |- g : (int) -> (('a) list) by T-Var {};
+          x:'a,g:'b .('b) -> (('a) list) |- 3 : int by T-Int {};
+        };
+        x:'a,g:'b .('b) -> (('a) list) |- g(false) : (('a) list) by T-App {
+          x:'a,g:'b .('b) -> (('a) list) |- g : (bool) -> (('a) list) by T-Var {};
+          x:'a,g:'b .('b) -> (('a) list) |- false : bool by T-Bool {};
+        };
+      };
+    };
+  };
+  f:'a .('a) -> (('a) list) |- match f(2) with [] -> f(true) | x :: y -> [] : ((bool) list) by T-Match {
+    f:'a .('a) -> (('a) list) |- f(2) : ((int) list) by T-App {
+      f:'a .('a) -> (('a) list) |- f : (int) -> ((int) list) by T-Var {};
+      f:'a .('a) -> (('a) list) |- 2 : int by T-Int {};
+    };
+    f:'a .('a) -> (('a) list) |- f(true) : ((bool) list) by T-App {
+      f:'a .('a) -> (('a) list) |- f : (bool) -> ((bool) list) by T-Var {};
+      f:'a .('a) -> (('a) list) |- true : bool by T-Bool {};
+    };
+    f:'a .('a) -> (('a) list),x:int,y:((int) list) |- [] : ((bool) list) by T-Nil {};
+  };
+};
+-}
+
 
 q123 : ● ⊢ ℓet "f" ≔ fun "x" ⇒
                ℓet "g" ≔ fun "y" ⇒ app (var "y") (var "x") ∷ [] ιn
