@@ -541,3 +541,27 @@ q120 = T-LetRec (T-Abs (T-Match (T-Var "l" (t (′ "a" list)) refl raw)
   };
 };
 -}
+
+q121 : ● ⊢ ℓetrec "map" ≔fun "f" ⇒ fun "l" ⇒
+                  (match var "l" with[]⇒ []
+                                   ∣ "x" ∷ "y" ⇒
+                                     app (var "f") (var "x") ∷ app (app (var "map") (var "f")) (var "y")) ιn
+            ℓet "f" ≔ app (var "map") (fun "x" ⇒ var "x") ιn
+            ℓet "a" ≔ app (var "f") (i (+ 3) ∷ []) ιn
+            app (var "f") (b true ∷ []) ∶ bool list
+q121 = {!!}
+
+q122 : ● ⊢ ℓet "f" ≔ fun "x" ⇒
+               ℓet "g" ≔ fun "y" ⇒ var "x" ∷ [] ιn
+               if b true then app (var "g") (i (+ 3)) else app (var "g") (b false) ιn
+            match app (var "f") (i (+ 2)) with[]⇒ app (var "f") (b true)
+                                            ∣ "x" ∷ "y" ⇒ [] ∶ bool list
+q122 = {!!}
+
+q123 : ● ⊢ ℓet "f" ≔ fun "x" ⇒
+               ℓet "g" ≔ fun "y" ⇒ app (var "y") (var "x") ∷ [] ιn
+               app (var "g") (fun "z" ⇒ i (+ 4)) ιn
+            match app (var "f") (b true) with[]⇒ i (+ 3) ∷ []
+                          ∣ "x" ∷ "y" ⇒ app (var "f") (var "x") ∶ int list
+q123 = {!!}
+
