@@ -53,10 +53,10 @@ showCont (⟦ sop ⟧≫ cont) = "{" ++ showSection sop ++ "} >> " ++ showCont c
 showJudge⇒ : ∀ {v₁ v₂ k} → v₁ ⇒ k ⇓ v₂ → String
 showJudge⇒ C-Ret = "C-Ret {};"
 showJudge⇒ (C-EvalR d) = "C-EvalR {" ++ showDerivation⇓ d ++ "};"
-showJudge⇒ (C-Plus p d) = "C-Plus {" ++ showDerivation⇒ d ++ "};"
-showJudge⇒ (C-Minus p d) = "C-Minus {" ++ showDerivation⇒ d ++ "};"
-showJudge⇒ (C-Times p d) = "C-Times {" ++ showDerivation⇒ d ++ "};"
-showJudge⇒ (C-Lt p d) = "C-Lt {" ++ showDerivation⇒ d ++ "};"
+showJudge⇒ (C-Plus p d) = "C-Plus {" ++ showDerivationPlus p ++ showDerivation⇒ d ++ "};"
+showJudge⇒ (C-Minus p d) = "C-Minus {" ++ showDerivationMinus p ++ showDerivation⇒ d ++ "};"
+showJudge⇒ (C-Times p d) = "C-Times {" ++ showDerivationTimes p ++ showDerivation⇒ d ++ "};"
+showJudge⇒ (C-Lt p d) = "C-Lt {" ++ showDerivationLessThan p ++ showDerivation⇒ d ++ "};"
 showJudge⇒ (C-IfT d) = "C-IfT {" ++ showDerivation⇓ d ++ "};"
 showJudge⇒ (C-IfF d) = "C-IfF {" ++ showDerivation⇓ d ++ "};"
 
