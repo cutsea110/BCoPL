@@ -54,9 +54,9 @@ data Section : Set where
   _⊢if⋆then_else_ : Env → Exp → Exp → Section
   _⊢let_≔⋆in_ : Env → Var → Exp → Section
   _⊢app⋆_ : Env → Exp → Section
-  _⊢app_⋆ : Env → Value → Section
+  _⋆ppa : Value → Section
   _⊢⋆∷_ : Env → Exp → Section
-  _⊢_∷⋆ : Env → Value → Section
+  _∷⋆ : Value → Section
   _⊢match⋆with[]⇒_∣_∷_⇒_ : Env → Exp → Var → Var → Exp → Section
 
 _⊢⋆⊕_ : Env → Exp → Section
@@ -93,7 +93,7 @@ infix 8 _≺_
 infixr 7 _∷_
 infix 6 if_then_else_ ℓet_≔_ιn_ fun_⇒_ ℓetrec_≔fun_⇒_ιn_ match_with[]⇒_∣_∷_⇒_
 infixr 6 ⟦_⟧≫_
-infix 6 _⊢_<$_ _$>_ _⊢if⋆then_else_ _⊢let_≔⋆in_ _⊢app⋆_ _⊢app_⋆ _⊢⋆∷_ _⊢_∷⋆ _⊢match⋆with[]⇒_∣_∷_⇒_
+infix 6 _⊢_<$_ _$>_ _⊢if⋆then_else_ _⊢let_≔⋆in_ _⊢app⋆_ _⋆ppa _⊢⋆∷_ _∷⋆ _⊢match⋆with[]⇒_∣_∷_⇒_
 infixl 5 _⇒_⇓_ _⊢_≫_⇓_
 
 private
@@ -131,6 +131,57 @@ data _⇒_⇓_ : Value → Cont → Value → Set
 data _⊢_≫_⇓_ : Env → Exp → Cont → Value → Set
 
 data _⇒_⇓_ where
+  C-Ret : ∀ {v}
+          → v ⇒ ⋆ ⇓ v
+  C-EvalR : ∀ {ε e v₁ v₂ k ⊗}
+            → ε ⊢ e ≫ ⟦ v₁ $> ⊗ ⟧≫ k ⇓ v₂
+            → v₁ ⇒ ⟦ ε ⊢ ⊗ <$ e ⟧≫ k ⇓ v₂
+  C-Plus : ∀ {i₁ i₂ i₃ k v}
+           → i₁ plus i₂ is i₃
+           → i₃ ⇒ k ⇓ v
+           → i₂ ⇒ ⟦ i₁ ⊕⋆ ⟧≫ k ⇓ v
+  C-Minus : ∀ {i₁ i₂ i₃ k v}
+            → i₁ minus i₂ is i₃
+            → i₃ ⇒ k ⇓ v
+            → i₂ ⇒ ⟦ i₁ ⊝⋆ ⟧≫ k ⇓ v
+  C-Times : ∀ {i₁ i₂ i₃ k v}
+            → i₁ times i₂ is i₃
+            → i₃ ⇒ k ⇓ v
+            → i₂ ⇒ ⟦ i₁ ⊛⋆ ⟧≫ k ⇓ v
+  C-Lt : ∀ {i₁ i₂ i₃ k v}
+         → i₁ less-than i₂ is i₃
+         → i₃ ⇒ k ⇓ v
+         → i₂ ⇒ ⟦ i₁ ≺⋆ ⟧≫ k ⇓ v
+  C-IfT : ∀ {ε e₁ e₂ k v}
+          → ε ⊢ e₁ ≫ k ⇓ v
+          → b true ⇒ ⟦ ε ⊢if⋆then e₁ else e₂ ⟧≫ k ⇓ v
+  C-IfF : ∀ {ε e₁ e₂ k v}
+          → ε ⊢ e₂ ≫ k ⇓ v
+          → b true ⇒ ⟦ ε ⊢if⋆then e₁ else e₂ ⟧≫ k ⇓ v
+  C-LetBody : ∀ {ε x v₁ v₂ e k}
+              → ε ⊱ (x , v₁) ⊢ e ≫ k ⇓ v₂
+              → v₁ ⇒ ⟦ ε ⊢let x ≔⋆in e ⟧≫ k ⇓ v₂
+  C-EvalArg : ∀ {ε e k v v₁}
+              → ε ⊢ e ≫ ⟦ v₁ ⋆ppa ⟧≫ k ⇓ v
+              → v₁ ⇒ ⟦ ε ⊢app⋆ e ⟧≫ k ⇓ v
+  C-EvalFun : ∀ {ε x e v₁ v₂ k}
+              → ε ⊱ (x , v₁) ⊢ e ≫ k ⇓ v₂
+              → v₁ ⇒ ⟦ ⟨ ε ⟩[fun x ⇒ e ] ⋆ppa ⟧≫ k ⇓ v₂
+  C-EvalFunR : ∀ {ε x y v₁ v₂ e k}
+               → ε ⊱ (x , ⟨ ε ⟩[rec x ≔fun y ⇒ e ]) ⊱ (y , v₁) ⊢ e ≫ k ⇓ v₂
+               → v₁ ⇒ ⟦ ⟨ ε ⟩[rec x ≔fun y ⇒ e ] ⋆ppa ⟧≫ k ⇓ v₂
+  C-EvalConsR : ∀ {ε v₁ v₂ e k}
+                → ε ⊢ e ≫ ⟦ v₁ ∷⋆ ⟧≫ k ⇓ v₂
+                → v₁ ⇒ ⟦ ε ⊢⋆∷ e ⟧≫ k ⇓ v₂
+  C-Cons : ∀ {v₁ v₂ v₃ k}
+           → v₁ ∷ v₂ ⇒ k ⇓ v₃
+           → v₂ ⇒ ⟦ v₁ ∷⋆ ⟧≫ k ⇓ v₃
+  C-MatchNil : ∀ {ε x y e₁ e₂ k v}
+               → ε ⊢ e₁ ≫ k ⇓ v
+               → [] ⇒ ⟦ ε ⊢match⋆with[]⇒ e₁ ∣ x ∷ y ⇒ e₂ ⟧≫ k ⇓ v
+  C-MatchCons : ∀ {ε x y v₁ v₂ e₁ e₂ k v}
+                → ε ⊱ (x , v₁) ⊱ (y , v₂) ⊢ e₂ ≫ k ⇓ v
+                → v₁ ∷ v₂ ⇒ ⟦ ε ⊢match⋆with[]⇒ e₁ ∣ x ∷ y ⇒ e₂ ⟧≫ k ⇓ v
 
 data _⊢_≫_⇓_ where
   E-Int : ∀ {n k v ε}
