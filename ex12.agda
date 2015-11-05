@@ -214,11 +214,16 @@ q137 : ● ⊢ ℓet "f" ≔ fun "x" ⇒ fun "k1" ⇒ fun "k2" ⇒
                (if var "x" ≺ i (+ 0)
                 then app (var "k1") (var "x")
                 else app (var "k2") (var "x")) ιn
-            i (+ 1) ⊕ (letcc "k1" ιn (i (+ 2)) ⊕ letcc "k2" ιn app (app (app (var "f") (i -[1+ 1 ])) (var "k1")) (var "k2")) ≫ ⋆ ⇓ i -[1+ 0 ]
-q137 = {!!}
+            i (+ 1) ⊕ letcc "k1" ιn (i (+ 2) ⊕ letcc "k2" ιn app (app (app (var "f") (i -[1+ 1 ])) (var "k1")) (var "k2")) ≫ ⋆ ⇓ i -[1+ 0 ]
+q137 = E-Let (E-Fun (C-LetBody (E-BinOp (E-Int (C-EvalR (E-LetCc (E-BinOp (E-Int (C-EvalR (E-LetCc (E-App (E-App (E-App (E-Var refl (C-EvalArg (E-Int (C-EvalFun (E-Fun (C-EvalArg (E-Var refl (C-EvalFun (E-Fun (C-EvalArg (E-Var refl (C-EvalFun (E-If (E-BinOp (E-Var refl (C-EvalR (E-Int (C-Lt (B-Lt refl) (C-IfT (E-App (E-Var refl (C-EvalArg (E-Var refl (C-EvalFunC (C-Plus (B-Plus refl) C-Ret))))))))))))))))))))))))))))))))))))))
+{-
+
+-}
 
 q138 : ● ⊢ ℓet "f" ≔ fun "x" ⇒ fun "k1" ⇒ fun "k2" ⇒
-               (if var "x" ≺ i (+ 0) then app (var "k1") (var "x") else app (var "k2") (var "x")) ιn
+               (if var "x" ≺ i (+ 0)
+                then app (var "k1") (var "x")
+                else app (var "k2") (var "x")) ιn
             i (+ 1) ⊕ letcc "k1" ιn (i (+ 2) ⊕ letcc "k2" ιn app (app (app (var "f") (i (+ 2))) (var "k1")) (var "k2")) ≫ ⋆ ⇓ i (+ 5)
 q138 = E-Let (E-Fun (C-LetBody (E-BinOp (E-Int (C-EvalR (E-LetCc (E-BinOp (E-Int (C-EvalR (E-LetCc (E-App (E-App (E-App (E-Var refl (C-EvalArg (E-Int (C-EvalFun (E-Fun (C-EvalArg (E-Var refl (C-EvalFun (E-Fun (C-EvalArg (E-Var refl (C-EvalFun (E-If (E-BinOp (E-Var refl (C-EvalR (E-Int (C-Lt (B-Lt refl) (C-IfF (E-App (E-Var refl (C-EvalArg (E-Var refl (C-EvalFunC (C-Plus (B-Plus refl) (C-Plus (B-Plus refl) C-Ret)))))))))))))))))))))))))))))))))))))))
 {-
