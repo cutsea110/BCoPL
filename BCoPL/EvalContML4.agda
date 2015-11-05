@@ -47,6 +47,28 @@ data Value where
   [] : Value
   _∷_ : Value → Value → Value
 
+data Section : Set where
+  _<$_ : Prim → Exp → Section
+  _$>_ : Value → Prim → Section
+  if⋆then_else_ : Exp → Exp → Section
+
+⋆⊕_ : Exp → Section
+⋆⊕ e = prim⊕ <$ e
+_⊕⋆ : Value → Section
+v ⊕⋆ = v $> prim⊕
+⋆⊝_ : Exp → Section
+⋆⊝ e = prim⊝ <$ e
+_⊝⋆ : Value → Section
+v ⊝⋆ = v $> prim⊝
+⋆⊛_ : Exp → Section
+⋆⊛ e = prim⊛ <$ e
+_⊛⋆ : Value → Section
+v ⊛⋆ = v $> prim⊛
+⋆≺_ : Exp → Section
+⋆≺ e = prim≺ <$ e
+_≺⋆ : Value → Section
+v ≺⋆ = v $> prim≺
+
 _⊕_ = op prim⊕
 _⊝_ = op prim⊝
 _⊛_ = op prim⊛
