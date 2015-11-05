@@ -37,6 +37,7 @@ data Exp : Set where
   [] : Exp
   _∷_ : Exp → Exp → Exp
   match_with[]⇒_∣_∷_⇒_ : Exp → Exp → Var → Var → Exp → Exp
+  letcc_ιn_ : Var → Exp → Exp
 
 
 data Value where
@@ -47,6 +48,7 @@ data Value where
   ⟨_⟩[rec_≔fun_⇒_] : Env → Var → Var → Exp → Value
   [] : Value
   _∷_ : Value → Value → Value
+  ⟪_⟫ : Cont → Value
 
 data Section : Set where
   _⊢_<$_ : Env → Prim → Exp → Section
@@ -157,7 +159,7 @@ data _⇒_⇓_ where
           → b true ⇒ ⟦ ε ⊢if⋆then e₁ else e₂ ⟧≫ k ⇓ v
   C-IfF : ∀ {ε e₁ e₂ k v}
           → ε ⊢ e₂ ≫ k ⇓ v
-          → b true ⇒ ⟦ ε ⊢if⋆then e₁ else e₂ ⟧≫ k ⇓ v
+          → b false ⇒ ⟦ ε ⊢if⋆then e₁ else e₂ ⟧≫ k ⇓ v
   C-LetBody : ∀ {ε x v₁ v₂ e k}
               → ε ⊱ (x , v₁) ⊢ e ≫ k ⇓ v₂
               → v₁ ⇒ ⟦ ε ⊢let x ≔⋆in e ⟧≫ k ⇓ v₂
@@ -182,6 +184,9 @@ data _⇒_⇓_ where
   C-MatchCons : ∀ {ε x y v₁ v₂ e₁ e₂ k v}
                 → ε ⊱ (x , v₁) ⊱ (y , v₂) ⊢ e₂ ≫ k ⇓ v
                 → v₁ ∷ v₂ ⇒ ⟦ ε ⊢match⋆with[]⇒ e₁ ∣ x ∷ y ⇒ e₂ ⟧≫ k ⇓ v
+  C-EvalFunC : ∀ {v₁ v₂ k₁ k₂}
+               → v₁ ⇒ k₁ ⇓ v₂
+               → v₁ ⇒ ⟦ ⟪ k₁ ⟫ ⋆ppa ⟧≫ k₂ ⇓ v₂
 
 data _⊢_≫_⇓_ where
   E-Int : ∀ {n k v ε}
@@ -221,3 +226,6 @@ data _⊢_≫_⇓_ where
   E-Match : ∀ {ε e₁ e₂ e₃ x y k v}
             → ε ⊢ e₁ ≫ ⟦ ε ⊢match⋆with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⟧≫ k ⇓ v
             → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ≫ k ⇓ v
+  E-LetCc : ∀ {ε x e k v}
+            → ε ⊱ (x , ⟪ k ⟫) ⊢ e ≫ k ⇓ v
+            → ε ⊢ letcc x ιn e ≫ k ⇓ v
