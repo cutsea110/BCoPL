@@ -21,11 +21,31 @@ data Exp : Set where
   op : Prim → Exp → Exp → Exp
   if_then_else_ : Exp → Exp → Exp → Exp
 
+data Section : Set where
+  _<$_ : Prim → Exp → Section
+  _$>_ : Value → Prim → Section
+  if⋆then_else_ : Exp → Exp → Section
+
+⋆⊕_ : Exp → Section
+⋆⊕ e = prim⊕ <$ e
+_⊕⋆ : Value → Section
+v ⊕⋆ = v $> prim⊕
+⋆⊝_ : Exp → Section
+⋆⊝ e = prim⊝ <$ e
+_⊝⋆ : Value → Section
+v ⊝⋆ = v $> prim⊝
+⋆⊛_ : Exp → Section
+⋆⊛ e = prim⊛ <$ e
+_⊛⋆ : Value → Section
+v ⊛⋆ = v $> prim⊛
+⋆≺_ : Exp → Section
+⋆≺ e = prim≺ <$ e
+_≺⋆ : Value → Section
+v ≺⋆ = v $> prim≺
+
 data Cont : Set where
   ⋆ : Cont
-  ⟦⋆_<$_⟧≫_ : Prim → Exp → Cont → Cont
-  ⟦_$>_⋆⟧≫_ : Value → Prim → Cont → Cont
-  ⟦if⋆then_else_⟧≫_ : Exp → Exp → Cont → Cont
+  ⟦_⟧≫_ : Section → Cont → Cont
 
 _⊕_ = op prim⊕
 _⊝_ = op prim⊝
@@ -35,8 +55,9 @@ _≺_ = op prim≺
 infixl 9 _⊛_
 infixl 8 _⊕_ _⊝_
 infix 7 _≺_
-infix 6 if_then_else_
-infixl 5 _⇓_
+infix 6 if_then_else_ if⋆then_else_
+infixr 6 ⟦_⟧≫_
+infixl 5 _≫_⇓_ _⇒_⇓_
 
 
 private
@@ -66,12 +87,21 @@ data _times_is_ : Value → Value → Value → Set where
 data _less-than_is_ : Value → Value → Value → Set where
   B-Lt : ∀ {i₁ i₂ v} → i₁ < i₂ ≡ v → i i₁ less-than i i₂ is b v
 
-data _⇓_ : Exp → Value → Set where
-  E-Int : ∀ {z} → i z ⇓ i z
-  E-Bool : ∀ {v} → b v ⇓ b v
-  E-IfT : ∀ {e₁ e₂ e₃ v} → e₁ ⇓ b true → e₂ ⇓ v → if e₁ then e₂ else e₃ ⇓ v
-  E-IfF : ∀ {e₁ e₂ e₃ v} → e₁ ⇓ b false → e₃ ⇓ v → if e₁ then e₂ else e₃ ⇓ v
-  E-Plus : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ plus i₂ is i₃ → e₁ ⊕ e₂ ⇓ i₃
-  E-Minus : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ minus i₂ is i₃ → e₁ ⊝ e₂ ⇓ i₃
-  E-Times : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ times i₂ is i₃ → e₁ ⊛ e₂ ⇓ i₃
-  E-Lt : ∀ {e₁ i₁ e₂ i₂ b₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ less-than i₂ is b₃ → e₁ ≺ e₂ ⇓ b₃
+data _≫_⇓_ : Exp → Cont → Value → Set
+data _⇒_⇓_ : Value → Cont → Value → Set
+
+data _⇒_⇓_ where
+  C-Ret : ∀ {v} → v ⇒ ⋆ ⇓ v
+  C-EvalR : ∀ {e v₁ v₂ k ⊗} → e ≫ ⟦ v₁ $> ⊗ ⟧≫ k ⇓ v₂ → v₁ ⇒ ⟦ ⊗ <$ e ⟧≫ k ⇓ v₂
+  C-Plus : ∀ {i₁ i₂ i₃ k v} → i₁ plus i₂ is i₃ → i₃ ⇒ k ⇓ v → i₂ ⇒ ⟦ i₁ ⊕⋆ ⟧≫ k ⇓ v
+  C-Minus : ∀ {i₁ i₂ i₃ k v} → i₁ minus i₂ is i₃ → i₃ ⇒ k ⇓ v → i₂ ⇒ ⟦ i₁ ⊝⋆ ⟧≫ k ⇓ v
+  C-Times : ∀ {i₁ i₂ i₃ k v} → i₁ times i₂ is i₃ → i₃ ⇒ k ⇓ v → i₂ ⇒ ⟦ i₁ ⊛⋆ ⟧≫ k ⇓ v
+  C-Lt : ∀ {i₁ i₂ i₃ k v} → i₁ less-than i₂ is i₃ → i₃ ⇒ k ⇓ v → i₂ ⇒ ⟦ i₁ ≺⋆ ⟧≫ k ⇓ v
+  C-IfT : ∀ {e₁ e₂ k v} → e₁ ≫ k ⇓ v → b true ⇒ ⟦ if⋆then e₁ else e₂ ⟧≫ k ⇓ v
+  C-IfF : ∀ {e₁ e₂ k v} → e₂ ≫ k ⇓ v → b false ⇒ ⟦ if⋆then e₁ else e₂ ⟧≫ k ⇓ v
+
+data _≫_⇓_ where
+  E-Int : ∀ {n k v} → i n ⇒ k ⇓ v → i n ≫ k ⇓ v
+  E-Bool : ∀ {x k v} → b x ⇒ k ⇓ v → b x ≫ k ⇓ v
+  E-BinOp : ∀ {e₁ e₂ k v ⊗} → e₁ ≫ ⟦ ⊗ <$ e₂ ⟧≫ k ⇓ v → op ⊗ e₁ e₂ ≫ k ⇓ v
+  E-If : ∀ {e₁ e₂ e₃ k v} → e₁ ≫ ⟦ if⋆then e₂ else e₃ ⟧≫ k ⇓ v → if e₁ then e₂ else e₃ ≫ k ⇓ v
