@@ -133,3 +133,40 @@ data _⊢_≫_⇓_ : Env → Exp → Cont → Value → Set
 data _⇒_⇓_ where
 
 data _⊢_≫_⇓_ where
+  E-Int : ∀ {n k v ε}
+          → i n ⇒ k ⇓ v
+          → ε ⊢ i n ≫ k ⇓ v
+  E-Bool : ∀ {x k v ε}
+           → b x ⇒ k ⇓ v
+           → ε ⊢ b x ≫ k ⇓ v
+  E-If : ∀ {ε e₁ e₂ e₃ k v}
+         → ε ⊢ e₁ ≫ ⟦ ε ⊢if⋆then e₂ else e₃ ⟧≫ k ⇓ v
+         → ε ⊢ if e₁ then e₂ else e₃ ≫ k ⇓ v
+  E-BinOp : ∀ {ε e₁ e₂ k v ⊗}
+            → ε ⊢ e₁ ≫ ⟦ ε ⊢ ⊗ <$ e₂ ⟧≫ k ⇓ v
+            → ε ⊢ op ⊗ e₁ e₂ ≫ k ⇓ v
+  E-Var : ∀ {ε x v₁ v₂ k}
+          → ε ⟦ x ⟧ ≡ v₁
+          → v₁ ⇒ k ⇓ v₂
+          → ε ⊢ var x ≫ k ⇓ v₂
+  E-Let : ∀ {ε e₁ e₂ x k v}
+          → ε ⊢ e₁ ≫ ⟦ ε ⊢let x ≔⋆in e₂ ⟧≫ k ⇓ v
+          → ε ⊢ ℓet x ≔ e₁ ιn e₂ ≫ k ⇓ v
+  E-Fun : ∀ {ε e x k v}
+          → ⟨ ε ⟩[fun x ⇒ e ] ⇒ k ⇓ v
+          → ε ⊢ fun x ⇒ e ≫ k ⇓ v
+  E-App : ∀ {ε e₁ e₂ k v}
+          → ε ⊢ e₁ ≫ ⟦ ε ⊢app⋆ e₂ ⟧≫ k ⇓ v
+          → ε ⊢ app e₁ e₂ ≫ k ⇓ v
+  E-LetRec : ∀ {ε x y e₁ e₂ k v}
+             → ε ⊱ (x , ⟨ ε ⟩[rec x ≔fun y ⇒ e₁ ]) ⊢ e₂ ≫ k ⇓ v
+             → ε ⊢ ℓetrec x ≔fun y ⇒ e₁ ιn e₂ ≫ k ⇓ v
+  E-Nil : ∀ {ε k v}
+          → [] ⇒ k ⇓ v
+          → ε ⊢ [] ≫ k ⇓ v
+  E-Cons : ∀ {ε e₁ e₂ k v}
+           → ε ⊢ e₁ ≫ ⟦ ε ⊢⋆∷ e₂ ⟧≫ k ⇓ v
+           → ε ⊢ e₁ ∷ e₂ ≫ k ⇓ v
+  E-Match : ∀ {ε e₁ e₂ e₃ x y k v}
+            → ε ⊢ e₁ ≫ ⟦ ε ⊢match⋆with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⟧≫ k ⇓ v
+            → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ≫ k ⇓ v
