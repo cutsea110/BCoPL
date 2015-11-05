@@ -94,7 +94,7 @@ infixr 7 _∷_
 infix 6 if_then_else_ ℓet_≔_ιn_ fun_⇒_ ℓetrec_≔fun_⇒_ιn_ match_with[]⇒_∣_∷_⇒_
 infixr 6 ⟦_⟧≫_
 infix 6 _⊢_<$_ _$>_ _⊢if⋆then_else_ _⊢let_≔⋆in_ _⊢app⋆_ _⊢app_⋆ _⊢⋆∷_ _⊢_∷⋆ _⊢match⋆with[]⇒_∣_∷_⇒_
-infixl 5 _⊢_⇓_
+infixl 5 _⇒_⇓_ _⊢_≫_⇓_
 
 private
   _<ℕ_ : ℕ → ℕ → Bool
@@ -127,70 +127,9 @@ _⟦_⟧ : Env → Var → Value
 ● ⟦ x ⟧ = error
 (ε ⊱ (x , v)) ⟦ y ⟧ = x == y ¿ v ∶ ε ⟦ y ⟧
 
-data _⊢_⇓_ : Env → Exp → Value → Set where
-  E-Int : ∀ {ε z}
-          → ε ⊢ i z ⇓ i z
-  E-Bool : ∀ {ε v}
-           → ε ⊢ b v ⇓ b v
-  E-Var : ∀ {ε x v}
-          → ε ⟦ x ⟧ ≡ v → ε ⊢ var x ⇓ v
-  E-Plus : ∀ {ε e₁ i₁ e₂ i₂ i₃}
-           → ε ⊢ e₁ ⇓ i₁
-           → ε ⊢ e₂ ⇓ i₂
-           → i₁ plus i₂ is i₃
-           → ε ⊢ e₁ ⊕ e₂ ⇓ i₃
-  E-Minus : ∀ {ε e₁ i₁ e₂ i₂ i₃}
-            → ε ⊢ e₁ ⇓ i₁
-            → ε ⊢ e₂ ⇓ i₂
-            → i₁ minus i₂ is i₃
-            → ε ⊢ e₁ ⊝ e₂ ⇓ i₃
-  E-Times : ∀ {ε e₁ i₁ e₂ i₂ i₃}
-            → ε ⊢ e₁ ⇓ i₁
-            → ε ⊢ e₂ ⇓ i₂
-            → i₁ times i₂ is i₃
-            → ε ⊢ e₁ ⊛ e₂ ⇓ i₃
-  E-Lt : ∀ {ε e₁ i₁ e₂ i₂ b₃}
-         → ε ⊢ e₁ ⇓ i₁
-         → ε ⊢ e₂ ⇓ i₂
-         → i₁ less-than i₂ is b₃
-         → ε ⊢ e₁ ≺ e₂ ⇓ b₃
-  E-IfT : ∀ {ε e₁ e₂ e₃ v}
-          → ε ⊢ e₁ ⇓ b true
-          → ε ⊢ e₂ ⇓ v
-          → ε ⊢ if e₁ then e₂ else e₃ ⇓ v
-  E-IfF : ∀ {ε e₁ e₂ e₃ v}
-          → ε ⊢ e₁ ⇓ b false
-          → ε ⊢ e₃ ⇓ v
-          → ε ⊢ if e₁ then e₂ else e₃ ⇓ v
-  E-Let : ∀ {ε x e₁ e₂ v v₁}
-          → ε ⊢ e₁ ⇓ v₁
-          → ε ⊱ (x , v₁) ⊢ e₂ ⇓ v
-          → ε ⊢ ℓet x ≔ e₁ ιn e₂ ⇓ v
-  E-LetRec : ∀ {ε x y e₁ e₂ v}
-             → ε ⊱ (x , ⟨ ε ⟩[rec x ≔fun y ⇒ e₁ ]) ⊢ e₂ ⇓ v
-             → ε ⊢ ℓetrec x ≔fun y ⇒ e₁ ιn e₂ ⇓ v
-  E-Fun : ∀ {ε x e}
-          → ε ⊢ fun x ⇒ e ⇓ ⟨ ε ⟩[fun x ⇒ e ]
-  E-App : ∀ {ε ε₂ e₀ e₁ e₂ x v v₂}
-          → ε ⊢ e₁ ⇓ ⟨ ε₂ ⟩[fun x ⇒ e₀ ]
-          → ε ⊢ e₂ ⇓ v₂ → ε₂ ⊱ (x , v₂) ⊢ e₀ ⇓ v
-          → ε ⊢ app e₁ e₂ ⇓ v
-  E-AppRec : ∀ {ε ε₂ e₀ e₁ e₂ x y v v₂} →
-             ε ⊢ e₁ ⇓ ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ]
-             → ε ⊢ e₂ ⇓ v₂
-             → ε₂ ⊱ (x , ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ]) ⊱ (y , v₂) ⊢ e₀ ⇓ v
-             → ε ⊢ app e₁ e₂ ⇓ v
+data _⇒_⇓_ : Value → Cont → Value → Set
+data _⊢_≫_⇓_ : Env → Exp → Cont → Value → Set
 
-  E-Nil : ∀ {ε} → ε ⊢ [] ⇓ []
-  E-Cons : ∀ {ε e₁ e₂ v₁ v₂}
-           → ε ⊢ e₁ ⇓ v₁
-           → ε ⊢ e₂ ⇓ v₂
-           → ε ⊢ e₁ ∷ e₂ ⇓ v₁ ∷ v₂
-  E-MatchNil : ∀ {ε e₁ e₂ e₃ x y v}
-               → ε ⊢ e₁ ⇓ []
-               → ε ⊢ e₂ ⇓ v
-               → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ v
-  E-MatchCons : ∀ {ε e₁ e₂ e₃ x y v₁ v₂ v}
-                → ε ⊢ e₁ ⇓ v₁ ∷ v₂
-                → ε ⊱ (x , v₁) ⊱ (y , v₂) ⊢ e₃ ⇓ v
-                → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ v
+data _⇒_⇓_ where
+
+data _⊢_≫_⇓_ where
