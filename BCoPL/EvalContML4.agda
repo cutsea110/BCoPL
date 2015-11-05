@@ -52,6 +52,12 @@ data Section : Set where
   _⊢_<$_ : Env → Prim → Exp → Section
   _$>_ : Value → Prim → Section
   _⊢if⋆then_else_ : Env → Exp → Exp → Section
+  _⊢let_≔⋆in_ : Env → Var → Exp → Section
+  _⊢app⋆_ : Env → Exp → Section
+  _⊢app_⋆ : Env → Value → Section
+  _⊢⋆∷_ : Env → Exp → Section
+  _⊢_∷⋆ : Env → Value → Section
+  _⊢match⋆with[]⇒_∣_∷_⇒_ : Env → Exp → Var → Var → Exp → Section
 
 _⊢⋆⊕_ : Env → Exp → Section
 ε ⊢⋆⊕ e = ε ⊢ prim⊕ <$ e
@@ -78,7 +84,6 @@ _≺_ = op prim≺
 data Cont where
   ⋆ : Cont
   ⟦_⟧≫_ : Section → Cont → Cont
-  
 
 infixl 20 _⊱_
 
@@ -88,6 +93,7 @@ infix 8 _≺_
 infixr 7 _∷_
 infix 6 if_then_else_ ℓet_≔_ιn_ fun_⇒_ ℓetrec_≔fun_⇒_ιn_ match_with[]⇒_∣_∷_⇒_
 infixr 6 ⟦_⟧≫_
+infix 6 _⊢_<$_ _$>_ _⊢if⋆then_else_ _⊢let_≔⋆in_ _⊢app⋆_ _⊢app_⋆ _⊢⋆∷_ _⊢_∷⋆ _⊢match⋆with[]⇒_∣_∷_⇒_
 infixl 5 _⊢_⇓_
 
 private
