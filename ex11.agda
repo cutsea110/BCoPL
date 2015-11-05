@@ -16,3 +16,7 @@ q127 = E-BinOp (E-BinOp (E-Int (C-EvalR (E-Int (C-Plus (B-Plus refl) (C-EvalR (E
 
 q128 : if i (+ 4) ≺ i (+ 5) then i (+ 2) ⊕ i (+ 3) else i (+ 8) ⊛ i (+ 8) ≫ ⋆ ⇓ i (+ 5)
 q128 = E-If (E-BinOp (E-Int (C-EvalR (E-Int (C-Lt (B-Lt refl) (C-IfT (E-BinOp (E-Int (C-EvalR (E-Int (C-Plus (B-Plus refl) C-Ret)))))))))))
+
+q129 : i (+ 3) ⊕ (if i -[1+ 2 ] ≺ i -[1+ 1 ] ⊛ i (+ 8) then i (+ 8) else i (+ 2)) ⊕ i (+ 4) ≫ ⋆ ⇓ i (+ 9)
+q129 = E-BinOp (E-BinOp (E-Int (C-EvalR (E-If (E-BinOp (E-Int (C-EvalR (E-BinOp (E-Int (C-EvalR (E-Int (C-Times (B-Times refl) (C-Lt (B-Lt refl) (C-IfF (E-Int (C-Plus (B-Plus refl) (C-EvalR (E-Int (C-Plus (B-Plus refl) C-Ret)))))))))))))))))))
+
