@@ -12,6 +12,7 @@ open import Relation.Binary.PropositionalEquality using (refl;_≡_) public
 Var = String
 data Value : Set
 BindedValue = Var × Value
+data Cont : Set
 
 data Prim : Set where
   prim⊕ : Prim
@@ -48,24 +49,24 @@ data Value where
   _∷_ : Value → Value → Value
 
 data Section : Set where
-  _<$_ : Prim → Exp → Section
+  _⊢_<$_ : Env → Prim → Exp → Section
   _$>_ : Value → Prim → Section
-  if⋆then_else_ : Exp → Exp → Section
+  _⊢if⋆then_else_ : Env → Exp → Exp → Section
 
-⋆⊕_ : Exp → Section
-⋆⊕ e = prim⊕ <$ e
+_⊢⋆⊕_ : Env → Exp → Section
+ε ⊢⋆⊕ e = ε ⊢ prim⊕ <$ e
 _⊕⋆ : Value → Section
 v ⊕⋆ = v $> prim⊕
-⋆⊝_ : Exp → Section
-⋆⊝ e = prim⊝ <$ e
+_⊢⋆⊝_ : Env → Exp → Section
+ε ⊢⋆⊝ e = ε ⊢ prim⊝ <$ e
 _⊝⋆ : Value → Section
 v ⊝⋆ = v $> prim⊝
-⋆⊛_ : Exp → Section
-⋆⊛ e = prim⊛ <$ e
+_⊢⋆⊛_ : Env → Exp → Section
+ε ⊢⋆⊛ e = ε ⊢ prim⊛ <$ e
 _⊛⋆ : Value → Section
 v ⊛⋆ = v $> prim⊛
-⋆≺_ : Exp → Section
-⋆≺ e = prim≺ <$ e
+_⊢⋆≺_ : Env → Exp → Section
+ε ⊢⋆≺ e = ε ⊢ prim≺ <$ e
 _≺⋆ : Value → Section
 v ≺⋆ = v $> prim≺
 
@@ -74,6 +75,11 @@ _⊝_ = op prim⊝
 _⊛_ = op prim⊛
 _≺_ = op prim≺
 
+data Cont where
+  ⋆ : Cont
+  ⟦_⟧≫_ : Section → Cont → Cont
+  
+
 infixl 20 _⊱_
 
 infixl 10 _⊛_
@@ -81,6 +87,7 @@ infixl 9 _⊕_ _⊝_
 infix 8 _≺_
 infixr 7 _∷_
 infix 6 if_then_else_ ℓet_≔_ιn_ fun_⇒_ ℓetrec_≔fun_⇒_ιn_ match_with[]⇒_∣_∷_⇒_
+infixr 6 ⟦_⟧≫_
 infixl 5 _⊢_⇓_
 
 private
