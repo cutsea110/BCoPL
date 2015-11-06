@@ -74,13 +74,13 @@ showPrim prim≺ = " < "
 
 showSection : Section → String
 showSection (ε ⊢ ⊗ <$ e) = showEnv ε ++ " |- _ " ++ showPrim ⊗ ++ " " ++ showExp e
-showSection (v $> ⊗) = showValue v ++ showPrim ⊗ ++ " _"
+showSection (v $> ⊗) = " " ++ showValue v ++ showPrim ⊗ ++ " _"
 showSection (ε ⊢if⋆then e₁ else e₂) = showEnv ε ++ " |- if _ then " ++ showExp e₁ ++ " else " ++ showExp e₂
 showSection (ε ⊢let x ≔⋆in e) = showEnv ε ++ " |- let " ++ x ++ " = _ in " ++ showExp e
 showSection (ε ⊢app⋆ e) = showEnv ε ++ " |- _ " ++ showExp e
 showSection (v ⋆ppa) = showValue v ++ " _"
 showSection (ε ⊢⋆∷ y) = showEnv ε ++ " |- _ :: " ++ showExp y
-showSection (x ∷⋆) = showValue x ++ " :: _"
+showSection (x ∷⋆) = " " ++ showValue x ++ " :: _"
 showSection (ε ⊢match⋆with[]⇒ e₁ ∣ x ∷ y ⇒ e₂) = showEnv ε ++ " |- match _ with [] -> " ++ showExp e₁ ++ " | " ++ x ++ "::" ++ y ++ " -> " ++ showExp e₂
 
 showCont ⋆ = "_"
