@@ -141,11 +141,11 @@ data _╱_⊢_⇓_╱_ : Store → Env → Exp → Value → Store → Set where
            → S₂ ╱ ε ⊢ e₂ ⇓ i₂ ╱ S₃
            → i₁ times i₂ is i₃
            → S₁ ╱ ε ⊢ e₁ ⊛ e₂ ⇓ i₃ ╱ S₃
-  E-Lt : ∀ {S₁ S₂ S₃ ε i₁ i₂ i₃ e₁ e₂}
+  E-Lt : ∀ {S₁ S₂ S₃ ε i₁ i₂ b₃ e₁ e₂}
          → S₁ ╱ ε ⊢ e₁ ⇓ i₁ ╱ S₂
          → S₂ ╱ ε ⊢ e₂ ⇓ i₂ ╱ S₃
-         → i₁ less-than i₂ is i₃
-         → S₁ ╱ ε ⊢ e₁ ≺ e₂ ⇓ i₃ ╱ S₃
+         → i₁ less-than i₂ is b₃
+         → S₁ ╱ ε ⊢ e₁ ≺ e₂ ⇓ b₃ ╱ S₃
   E-Var : ∀ {S ε x v}
           → ε ⟦ x ⟧ ≡ v
           → S ╱ ε ⊢ var x ⇓ v ╱ S
