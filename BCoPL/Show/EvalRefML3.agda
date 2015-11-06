@@ -4,9 +4,10 @@ open import Data.String
 open import Data.Nat.Show renaming (show to showℕ)
 open import Data.Integer renaming (show to showℤ)
 open import Data.Bool.Show renaming (show to show𝔹)
-open import BCoPL.EvalML3
+open import BCoPL.EvalRefML3 hiding (_++_)
 
-showDerivation⇓ : ∀ {ε e v} → ε ⊢ e ⇓ v → String
+showDerivation⇓ : ∀ {S₁ ε e v S₂} → S₁ ╱ ε ⊢ e ⇓ v ╱ S₂ → String
+showStore : Store → String
 showEnv : Env → String
 showExp : Exp → String
 showValue : Value → String
@@ -14,9 +15,16 @@ showValue : Value → String
 showBinding : BindedValue → String
 showBinding (x , v) = x ++ " = " ++ showValue v
 
+showStoring : StoredValue → String
+showStoring (l , v) = l ++ " = " ++ showValue v
+
 showEnv ● = ""
 showEnv (● ⊱ x) = showBinding x
 showEnv (ε ⊱ x) = showEnv ε ++ "," ++ showBinding x
+
+showStore ● = ""
+showStore (● ⊱ x) = showStoring x
+showStore (s ⊱ x) = showStore s ++ "," ++ showStoring x
 
 showExp (i n) = showℤ n
 showExp (b v) = show𝔹 v
@@ -30,13 +38,18 @@ showExp (ℓet x ≔ e₁ ιn e₂) = "let " ++ x ++ " = " ++ showExp e₁ ++ " 
 showExp (ℓetrec f ≔fun x ⇒ e₁ ιn e₂) = "let rec " ++ f ++ " = fun " ++ x ++ " -> " ++ showExp e₁ ++ " in " ++ showExp e₂
 showExp (fun x ⇒ e) = "(fun " ++ x ++ " -> " ++ showExp e ++ ")"
 showExp (app e₁ e₂) = showExp e₁ ++ "(" ++ showExp e₂ ++ ")"
+showExp (ref e) = "(ref " ++ showExp e ++ ")"
+showExp (! e) = "(! " ++ showExp e ++ ")"
+showExp (e₁ ≔ e₂) = "(" ++ showExp e₁ ++ " := " ++ showExp e₂ ++ ")"
 
+showValue error = "*** Error occured by illegal Value ***"
 showValue (i n) = showℤ n
 showValue (b v) = show𝔹 v
 showValue (⟨ ε ⟩[fun x ⇒ e ])
   = "(" ++ showEnv ε ++ ")[fun " ++ x ++ " -> " ++ showExp e ++ "]"
 showValue (⟨ ε ⟩[rec f ≔fun x ⇒ e₁ ])
   = "(" ++ showEnv ε ++ ")[rec " ++ f ++ " = fun " ++ x ++ " -> " ++ showExp e₁ ++ "]"
+showValue (ℓ l) = l
 
 showDerivationPlus : ∀ {i₁ i₂ i₃} → i₁ plus i₂ is i₃ → String
 showDerivationPlus {i₁} {i₂} {i₃} p
@@ -51,24 +64,36 @@ showDerivationLessThan : ∀ {i₁ i₂ b} → i₁ less-than i₂ is b → Stri
 showDerivationLessThan {i₁} {i₂} {v} p
   = showValue i₁ ++ " less than " ++ showValue i₂ ++ " is " ++ showValue v ++ " by B-Lt {};"
 
-showJudge⇓ : ∀ {ε e v} → ε ⊢ e ⇓ v → String
+showJudge⇓ : ∀ {S₁ ε e v S₂} → S₁ ╱ ε ⊢ e ⇓ v ╱ S₂ → String
 showJudge⇓ E-Int = "E-Int {};"
 showJudge⇓ E-Bool = "E-Bool {};"
-showJudge⇓ E-Var1 = "E-Var1 {};"
-showJudge⇓ (E-Var2 y≢x e₁) = "E-Var2 {" ++ showDerivation⇓ e₁ ++ "};"
-showJudge⇓ (E-IfT e₁ e₂) = "E-IfT {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ "};"
-showJudge⇓ (E-IfF e₁ e₂) = "E-IfF {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ "};"
-showJudge⇓ (E-Plus e₁ e₂ p) = "E-Plus {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ showDerivationPlus p ++ "};"
-showJudge⇓ (E-Minus e₁ e₂ p) = "E-Minus {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ showDerivationMinus p ++ "};"
-showJudge⇓ (E-Times e₁ e₂ p) = "E-Times {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ showDerivationTimes p ++ "};"
-showJudge⇓ (E-Lt e₁ e₂ p) = "E-Lt {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ showDerivationLessThan p ++ "};"
-showJudge⇓ (E-Let e₁ e₂) = "E-Let {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ "};"
-showJudge⇓ (E-LetRec e₁) = "E-LetRec {" ++ showDerivation⇓ e₁ ++ "};"
+showJudge⇓ (E-IfT d₁ d₂)
+  = "E-IfT {" ++ showDerivation⇓ d₁ ++ showDerivation⇓ d₂ ++ "};"
+showJudge⇓ (E-IfF d₁ d₂)
+  = "E-IfF {" ++ showDerivation⇓ d₁ ++ showDerivation⇓ d₂ ++ "};"
+showJudge⇓ (E-Plus d₁ d₂ p)
+  = "E-Plus {" ++ showDerivation⇓ d₁ ++ showDerivation⇓ d₂ ++ showDerivationPlus p ++ "};"
+showJudge⇓ (E-Minus d₁ d₂ p)
+  = "E-Minus {" ++ showDerivation⇓ d₁ ++ showDerivation⇓ d₂ ++ showDerivationMinus p ++ "};"
+showJudge⇓ (E-Mult d₁ d₂ p)
+  = "E-Mult {" ++ showDerivation⇓ d₁ ++ showDerivation⇓ d₂ ++ showDerivationTimes p ++ "};"
+showJudge⇓ (E-Lt d₁ d₂ p)
+  = "E-Lt {" ++ showDerivation⇓ d₁ ++ showDerivation⇓ d₂ ++ showDerivationLessThan p ++ "};"
+showJudge⇓ (E-Var prf) = "E-Var {};"
+showJudge⇓ (E-Let d₁ d₂)
+  = "E-Let {" ++ showDerivation⇓ d₁ ++ showDerivation⇓ d₂ ++ "};"
 showJudge⇓ E-Fun = "E-Fun {};"
-showJudge⇓ (E-App e₁ e₂ e₃)
-  = "E-App {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ showDerivation⇓ e₃ ++ "};"
-showJudge⇓ (E-AppRec e₁ e₂ e₃)
-  = "E-AppRec {" ++ showDerivation⇓ e₁ ++ showDerivation⇓ e₂ ++ showDerivation⇓ e₃ ++ "};"
+showJudge⇓ (E-App d₁ d₂ d₃)
+  = "E-App {" ++ showDerivation⇓ d₁ ++ showDerivation⇓ d₂ ++ showDerivation⇓ d₃ ++ "};"
+showJudge⇓ (E-LetRec d)
+  = "E-LetRec {" ++ showDerivation⇓ d ++ "};"
+showJudge⇓ (E-AppRec d₁ d₂ d₃)
+  = "E-AppRec {" ++ showDerivation⇓ d₁ ++ showDerivation⇓ d₂ ++ showDerivation⇓ d₃ ++ "};"
+showJudge⇓ (E-Ref d prf)
+  = "E-LetRec {" ++ showDerivation⇓ d ++ "};"
+showJudge⇓ (E-Deref d prf)
+  = "E-Deref {" ++ showDerivation⇓ d ++ "};"
+showJudge⇓ (E-Assign d₁ d₂ prf)
+  = "E-Assign {" ++ showDerivation⇓ d₁ ++ showDerivation⇓ d₂ ++ "};"
 
-
-showDerivation⇓ {ε} {e} {v} p = showEnv ε ++ " |- " ++ showExp e ++ " evalto " ++ showValue v ++ " by " ++ showJudge⇓ p
+showDerivation⇓ {S₁} {ε} {e} {v} {S₂} p = showStore S₁ ++ " / " ++ showEnv ε ++ " |- " ++ showExp e ++ " evalto " ++ showValue v ++ " / " ++ showStore S₂ ++ " by " ++ showJudge⇓ p
