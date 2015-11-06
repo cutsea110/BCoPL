@@ -50,7 +50,7 @@ showJudgeTypes (T-Mult τ₁ τ₂)
   = "T-Mult {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"
 showJudgeTypes (T-Lt τ₁ τ₂)
   = "T-Lt {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"
-showJudgeTypes (T-Var x σ Γ〖τ〗 σ≽τ) = "T-Var {};"
+showJudgeTypes (T-Var Γ〖τ〗 σ≽τ) = "T-Var {};"
 showJudgeTypes (T-Let τ₁ τ₂ prf) = "T-Let {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"
 showJudgeTypes (T-Abs τ) = "T-Abs {" ++ showDerivationTypes τ ++ "};"
 showJudgeTypes (T-App τ₁ τ₂) = "T-App {" ++ showDerivationTypes τ₁ ++ showDerivationTypes τ₂ ++ "};"

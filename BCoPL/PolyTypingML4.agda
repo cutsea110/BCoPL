@@ -141,7 +141,7 @@ data _⊢_∶_ : TEnv → Exp → Types → Set where
          → Γ ⊢ e₁ ∶ int
          → Γ ⊢ e₂ ∶ int
          → Γ ⊢ e₁ ≺ e₂ ∶ bool
-  T-Var : ∀ {Γ τ} x σ
+  T-Var : ∀ {Γ x σ τ}
           → Γ 〖 x 〗 ≡ σ
           → σ ≽ τ
           → Γ ⊢ var x ∶ τ

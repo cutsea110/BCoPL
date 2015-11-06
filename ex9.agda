@@ -4,7 +4,7 @@ open import BCoPL.PolyTypingML4
 open import BCoPL.Show.PolyTypingML4
 
 q107 : ● ⊢ fun "x" ⇒ var "x" ∶ ′ "a" ⇀ ′ "a"
-q107 = T-Abs (T-Var "x" (t (′ "a")) refl raw)
+q107 = T-Abs (T-Var refl raw)
 {-
 |- (fun x -> x) : ('a) -> 'a by T-Abs {
   x:'a |- x : 'a by T-Var {};
@@ -12,7 +12,7 @@ q107 = T-Abs (T-Var "x" (t (′ "a")) refl raw)
 -}
 
 ex-9-1-1 : ● ⊱ ("f" , [ "a" ] ̣ ′ "a" ⇀ ′ "a") ⊢ app (var "f") (i (+ 3)) ∶ int
-ex-9-1-1 = T-App (T-Var "f" ([ "a" ] ̣ ′ "a" ⇀ ′ "a") refl (concretion ([ int ] , refl))) T-Int
+ex-9-1-1 = T-App (T-Var refl (concretion ([ int ] , refl))) T-Int
 {-
 f:'a .('a) -> 'a |- f(3) : int by T-App {
   f:'a .('a) -> 'a |- f : (int) -> int by T-Var {};
@@ -21,8 +21,8 @@ f:'a .('a) -> 'a |- f(3) : int by T-App {
 -}
 
 ex-9-1-2 : ● ⊱ ("f" , [ "a" ] ̣ ′ "a" ⇀ ′ "a") ⊢ app (var "f") (fun "x" ⇒ var "x" ⊕ i (+ 3)) ∶ int ⇀ int
-ex-9-1-2 = T-App (T-Var "f" ([ "a" ] ̣ ′ "a" ⇀ ′ "a") refl (concretion ([ int ⇀ int ] , refl)))
-                 (T-Abs (T-Plus (T-Var "x" (t int) refl raw) T-Int))
+ex-9-1-2 = T-App (T-Var refl (concretion ([ int ⇀ int ] , refl)))
+                 (T-Abs (T-Plus (T-Var refl raw) T-Int))
 {-
 f:'a .('a) -> 'a |- f((fun x -> (x + 3))) : (int) -> int by T-App {
   f:'a .('a) -> 'a |- f : ((int) -> int) -> (int) -> int by T-Var {};
@@ -37,9 +37,9 @@ f:'a .('a) -> 'a |- f((fun x -> (x + 3))) : (int) -> int by T-App {
 
 ex-9-1-3 : ● ⊢ ℓet "id" ≔ fun "x" ⇒ var "x" ιn app (var "id") (var "id") ∶ bool ⇀ bool
 ex-9-1-3 = T-Let
-                 (T-Abs (T-Var "x" (t (′ "a")) refl raw))
-                 (T-App (T-Var "id" ([ "a" ] ̣ ′ "a" ⇀ ′ "a") refl (concretion ([ bool ⇀ bool ] , refl)))
-                        (T-Var "id" ([ "a" ] ̣ ′ "a" ⇀ ′ "a") refl (concretion ([ bool ] , refl))))
+                 (T-Abs (T-Var refl raw))
+                 (T-App (T-Var {σ = [ "a" ] ̣ ′ "a" ⇀ ′ "a"} refl (concretion ([ bool ⇀ bool ] , refl)))
+                        (T-Var {σ = [ "a" ] ̣ ′ "a" ⇀ ′ "a"} refl (concretion ([ bool ] , refl))))
                  (refl , refl)
 {-
 |- let id = (fun x -> x) in id(id) : (bool) -> bool by T-Let {
@@ -55,12 +55,10 @@ ex-9-1-3 = T-Let
 
 q111 : ● ⊱ ("f" , ("a" ◂ [ "b" ]) ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a" ) ⊢
        app (app (var "f") (i (+ 3))) (b true) ⊕ app (app (var "f") (i (+ 2))) (i (+ 4)) ∶ int
-q111 = T-Plus (T-App (T-App (T-Var "f"
-                                   (("a" ◂ [ "b" ]) ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")
+q111 = T-Plus (T-App (T-App (T-Var {σ = ("a" ◂ [ "b" ] ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")}
                                    refl
                                    (concretion ((int ◂ [ bool ]) , refl))) T-Int) T-Bool)
-              (T-App (T-App (T-Var "f"
-                                   (("a" ◂ [ "b" ]) ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")
+              (T-App (T-App (T-Var {σ = ("a" ◂ [ "b" ] ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")}
                                    refl
                                    (concretion ((int ◂ [ int ]) , refl))) T-Int) T-Int)
 {-
@@ -86,14 +84,14 @@ ex-9-1-4 : ● ⊢ ℓet "k" ≔ fun "x" ⇒ fun "y" ⇒ var "x" ιn
                    (app (app (var "k") (i (+ 3))) (b true)) ∷ (app (app (var "k") ((i (+ 1)) ∷ [])) (i (+ 3)))
                 ∶ int list
 ex-9-1-4 = T-Let
-                 (T-Abs (T-Abs (T-Var "x" (t (′ "a")) refl raw)))
-                 (T-Cons (T-App (T-App (T-Var "k"
-                                              (("a" ◂ [ "b" ]) ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")
+                 (T-Abs (T-Abs (T-Var {x = "x"} {σ = t (′ "a")} refl raw)))
+                 (T-Cons (T-App (T-App (T-Var {x = "k"}
+                                              {σ = ("a" ◂ [ "b" ] ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")}
                                               refl
                                               (concretion ((int ◂ [ bool ]) , refl)))
                                        T-Int) T-Bool)
-                         (T-App (T-App (T-Var "k"
-                                              (("a" ◂ [ "b" ]) ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")
+                         (T-App (T-App (T-Var {x = "k"}
+                                              {σ = ("a" ◂ [ "b" ] ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")}
                                               refl (concretion ((int list) ◂ [ int ] , refl)))
                                        (T-Cons T-Int T-Nil))
                                 T-Int))
@@ -135,24 +133,24 @@ ex-9-1-5 : ● ⊢ ℓet "compose" ≔ fun "f" ⇒ fun "g" ⇒ fun "x" ⇒ app (
                                    (var "f")))
                     (b true) ∶ int
 ex-9-1-5 = T-Let {αs = "a" ◂ ("b" ◂ [ "c" ])}
-                 (T-Abs (T-Abs (T-Abs (T-App (T-Var "f" (t (′ "b" ⇀ ′ "c")) refl raw)
-                                             (T-App (T-Var "g" (t (′ "a" ⇀ ′ "b")) refl raw)
-                                                    (T-Var "x" (t (′ "a")) refl raw))))))
+                 (T-Abs (T-Abs (T-Abs (T-App (T-Var {x = "f"} {σ = t (′ "b" ⇀ ′ "c")} refl raw)
+                                             (T-App (T-Var {x = "g"} {σ = t (′ "a" ⇀ ′ "b")} refl raw)
+                                                    (T-Var {x = "x"} {σ = t (′ "a")} refl raw))))))
                  (T-Let 
-                        (T-Abs (T-If (T-Var "x" (t bool) refl raw)
+                        (T-Abs (T-If (T-Var {x = "x"} {σ = t bool} refl raw)
                                      T-Int
                                      T-Int))
                         (T-Let
-                               (T-Abs (T-Lt (T-Var "x" (t int) refl raw)
+                               (T-Abs (T-Lt (T-Var {x = "x"} {σ = t int} refl raw)
                                             T-Int))
-                               (T-App (T-App (T-App (T-Var "compose" ("a" ◂ ("b" ◂ [ "c" ]) ̣ (′ "b" ⇀ ′ "c") ⇀ (′ "a" ⇀ ′ "b") ⇀ ′ "a" ⇀ ′ "c") refl (concretion (bool ◂ (bool ◂ [ int ]) , refl)))
-                                                    (T-Var "f" (("b" ◂ [ "c" ]) ̣ bool ⇀ int)
+                               (T-App (T-App (T-App (T-Var {x = "compose"} {σ = ("a" ◂ ("b" ◂ [ "c" ]) ̣ (′ "b" ⇀ ′ "c") ⇀ (′ "a" ⇀ ′ "b") ⇀ ′ "a" ⇀ ′ "c")} refl (concretion (bool ◂ (bool ◂ [ int ]) , refl)))
+                                                    (T-Var {x = "f"} {σ = ("b" ◂ [ "c" ] ̣ bool ⇀ int)}
                                                            refl (concretion ((bool ◂ [ int ]) , refl))))
-                                             (T-App (T-App (T-Var "compose" ("a" ◂ ("b" ◂ [ "c" ]) ̣ (′ "b" ⇀ ′ "c") ⇀ (′ "a" ⇀ ′ "b") ⇀ ′ "a" ⇀ ′ "c")
+                                             (T-App (T-App (T-Var {x = "compose"} {σ = ("a" ◂ ("b" ◂ [ "c" ]) ̣ (′ "b" ⇀ ′ "c") ⇀ (′ "a" ⇀ ′ "b") ⇀ ′ "a" ⇀ ′ "c")}
                                                                             refl (concretion (bool ◂ (int ◂ [ bool ]) , refl)))
-                                                           (T-Var "g" (("a" ◂ [ "b" ]) ̣ int ⇀ bool)
+                                                           (T-Var {x = "g"} {σ = ("a" ◂ [ "b" ] ̣ int ⇀ bool)}
                                                                   refl (concretion ((int ◂ [ bool ]) , refl))))
-                                                    (T-Var "f" (("b" ◂ [ "c" ]) ̣ bool ⇀ int)
+                                                    (T-Var {x = "f"} {σ = ("b" ◂ [ "c" ] ̣ bool ⇀ int)}
                                                            refl (concretion ((bool ◂ [ int ]) , refl)))))
                                       T-Bool)
                                (refl , refl))
@@ -213,11 +211,11 @@ ex-9-1-5 = T-Let {αs = "a" ◂ ("b" ◂ [ "c" ])}
 ex-9-1-6 : ● ⊢ ℓet "twice" ≔ fun "f" ⇒ fun "x" ⇒ app (var "f") (app (var "f") (var "x")) ιn
                 app (app (var "twice") (fun "x" ⇒ var "x" ⊕ i (+ 4))) (i (+ 5)) ∶ int
 ex-9-1-6 = T-Let
-                 (T-Abs (T-Abs (T-App (T-Var "f" (t (′ "a" ⇀ ′ "a")) refl raw)
-                                      (T-App (T-Var "f" (t (′ "a" ⇀ ′ "a")) refl raw)
-                                             (T-Var "x" (t (′ "a")) refl raw)))))
-                 (T-App (T-App (T-Var "twice" ([ "a" ] ̣ (′ "a" ⇀ ′ "a") ⇀ ′ "a" ⇀ ′ "a") refl (concretion ([ int ] , refl)))
-                               (T-Abs (T-Plus (T-Var "x" (t int) refl raw) T-Int)))
+                 (T-Abs (T-Abs (T-App (T-Var {x = "f"} {σ = t (′ "a" ⇀ ′ "a")} refl raw)
+                                      (T-App (T-Var {x = "f"} {σ = t (′ "a" ⇀ ′ "a")} refl raw)
+                                             (T-Var {x = "x"} {σ = t (′ "a")} refl raw)))))
+                 (T-App (T-App (T-Var {x = "twice"} {σ = ([ "a" ] ̣ (′ "a" ⇀ ′ "a") ⇀ ′ "a" ⇀ ′ "a")} refl (concretion ([ int ] , refl)))
+                               (T-Abs (T-Plus (T-Var {x = "x"} {σ = t int} refl raw) T-Int)))
                         T-Int)
                  (refl , refl)
 {-
@@ -251,14 +249,14 @@ ex-9-1-6 = T-Let
 ex-9-1-7 : ● ⊢ ℓet "twice" ≔ fun "f" ⇒ fun "x" ⇒ app (var "f") (app (var "f") (var "x")) ιn
                 app (app (app (var "twice") (var "twice")) (fun "x" ⇒ var "x" ⊕ i (+ 4))) (i (+ 5)) ∶ int
 ex-9-1-7 = T-Let
-                 (T-Abs (T-Abs (T-App (T-Var "f" (t (′ "a" ⇀ ′ "a")) refl raw)
-                                      (T-App (T-Var "f" (t (′ "a" ⇀ ′ "a")) refl raw)
-                                             (T-Var "x" (t (′ "a")) refl raw)))))
-                 (T-App (T-App (T-App (T-Var "twice" ([ "a" ] ̣ (′ "a" ⇀ ′ "a") ⇀ ′ "a" ⇀ ′ "a")
+                 (T-Abs (T-Abs (T-App (T-Var {x = "f"} {σ = t (′ "a" ⇀ ′ "a")} refl raw)
+                                      (T-App (T-Var {x = "f"} {σ = t (′ "a" ⇀ ′ "a")} refl raw)
+                                             (T-Var {x = "x"} {σ = t (′ "a")} refl raw)))))
+                 (T-App (T-App (T-App (T-Var {x = "twice"} {σ = ([ "a" ] ̣ (′ "a" ⇀ ′ "a") ⇀ ′ "a" ⇀ ′ "a")}
                                              refl (concretion ([ int ⇀ int ] , refl)))
-                                      (T-Var "twice" ([ "a" ] ̣ (′ "a" ⇀ ′ "a") ⇀ ′ "a" ⇀ ′ "a")
+                                      (T-Var {x = "twice"} {σ = ([ "a" ] ̣ (′ "a" ⇀ ′ "a") ⇀ ′ "a" ⇀ ′ "a")}
                                              refl (concretion ([ int ] , refl))))
-                               (T-Abs (T-Plus (T-Var "x" (t int) refl raw) T-Int)))
+                               (T-Abs (T-Plus (T-Var {x = "x"} {σ = t int} refl raw) T-Int)))
                         T-Int)
                  (refl , refl)
 {-
@@ -296,18 +294,18 @@ q116 : ● ⊢ ℓet "s" ≔ fun "f" ⇒ fun "g" ⇒ fun "x" ⇒ app (app (var "
             ℓet "k" ≔ fun "x" ⇒ fun "y" ⇒ var "x" ιn
             app (app (var "s") (var "k")) (var "k") ∶ ′ "a" ⇀ ′ "a"
 q116 = T-Let {αs = "a" ◂ ("b" ◂ [ "c" ])}
-             (T-Abs (T-Abs (T-Abs (T-App (T-App (T-Var "f" (t (′ "a" ⇀ ′ "b" ⇀ ′ "c")) refl raw)
-                                                (T-Var "x" (t (′ "a")) refl raw))
-                                         (T-App (T-Var "g" (t (′ "a" ⇀ ′ "b")) refl raw)
-                                                (T-Var "x" (t (′ "a")) refl raw))))))
+             (T-Abs (T-Abs (T-Abs (T-App (T-App (T-Var {x = "f"} {σ = t (′ "a" ⇀ ′ "b" ⇀ ′ "c")} refl raw)
+                                                (T-Var {x = "x"} {σ = t (′ "a")} refl raw))
+                                         (T-App (T-Var {x = "g"} {σ = t (′ "a" ⇀ ′ "b")} refl raw)
+                                                (T-Var {x = "x"} {σ = t (′ "a")} refl raw))))))
              (T-Let
-                    (T-Abs (T-Abs (T-Var "x" (t (′ "a")) refl raw)))
-                    (T-App (T-App (T-Var "s" ("a" ◂ ("b" ◂ [ "c" ]) ̣
-                                             (′ "a" ⇀ ′ "b" ⇀ ′ "c") ⇀ (′ "a" ⇀ ′ "b") ⇀ ′ "a" ⇀ ′ "c")
+                    (T-Abs (T-Abs (T-Var {x = "x"} {σ = t (′ "a")} refl raw)))
+                    (T-App (T-App (T-Var {x = "s"} {σ = ("a" ◂ ("b" ◂ [ "c" ]) ̣
+                                             (′ "a" ⇀ ′ "b" ⇀ ′ "c") ⇀ (′ "a" ⇀ ′ "b") ⇀ ′ "a" ⇀ ′ "c")}
                                              refl (concretion (′ "a" ◂ ((′ "b" ⇀ ′ "a") ◂ [ ′ "a" ]) , refl)))
-                                  (T-Var "k" (("a" ◂ [ "b" ]) ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")
+                                  (T-Var {x = "k"} {σ = ("a" ◂ [ "b" ] ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")}
                                          refl (concretion ((′ "a" ◂ [ ′ "b" ⇀ ′ "a" ]) , refl))))
-                           (T-Var "k" (("a" ◂ [ "b" ]) ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")
+                           (T-Var {x = "k"} {σ = ("a" ◂ [ "b" ] ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")}
                                   refl (concretion ((′ "a" ◂ [ ′ "b" ]) , refl))))
                     (refl , refl))
              (refl , refl)
@@ -351,8 +349,8 @@ ex-9-1-8 : ● ⊢ ℓet "x" ≔ [] ιn
                 b true ∷ var "x" ∶ bool list
 ex-9-1-8 = T-Let T-Nil
                  (T-Let {αs = [ "a" ]}
-                        (T-Cons T-Int (T-Var "x" ([ "a" ] ̣ ′ "a" list) refl (concretion ([ int ] , refl))))
-                        (T-Cons T-Bool (T-Var "x" ([ "a" ] ̣ ′ "a" list) refl (concretion ([ bool ] , refl))))
+                        (T-Cons T-Int (T-Var {x = "x"} {σ = ([ "a" ] ̣ ′ "a" list)} refl (concretion ([ int ] , refl))))
+                        (T-Cons T-Bool (T-Var {x = "x"} {σ = ([ "a" ] ̣ ′ "a" list)} refl (concretion ([ bool ] , refl))))
                         (refl , refl))
                  (refl , refl)
 {-
@@ -375,12 +373,12 @@ ex-9-1-9 : ● ⊢ ℓet "l" ≔ (fun "x" ⇒ var "x") ∷ [] ιn
                 ℓet "l1" ≔ (fun "y" ⇒ var "y" ⊕ i (+ 1)) ∷ var "l" ιn
                 (fun "z" ⇒ if var "z" then b false else b true) ∷ var "l" ∶ (bool ⇀ bool) list
 ex-9-1-9 = T-Let
-                 (T-Cons (T-Abs (T-Var "x" (t (′ "a")) refl raw)) T-Nil)
+                 (T-Cons (T-Abs (T-Var {x = "x"} {σ = t (′ "a")} refl raw)) T-Nil)
                  (T-Let {αs = [ "a" ]}
-                        (T-Cons (T-Abs (T-Plus (T-Var "y" (t int) refl raw) T-Int))
-                                (T-Var "l" ([ "a" ] ̣ (′ "a" ⇀ ′ "a") list) refl (concretion ([ int ] , refl))))
-                        (T-Cons (T-Abs (T-If (T-Var "z" (t bool) refl raw) T-Bool T-Bool))
-                                (T-Var "l" ([ "a" ] ̣ (′ "a" ⇀ ′ "a") list) refl (concretion ([ bool ] , refl))))
+                        (T-Cons (T-Abs (T-Plus (T-Var {x = "y"} {σ = t int} refl raw) T-Int))
+                                (T-Var {x = "l"} {σ = ([ "a" ] ̣ (′ "a" ⇀ ′ "a") list)} refl (concretion ([ int ] , refl))))
+                        (T-Cons (T-Abs (T-If (T-Var {x = "z"} {σ = t bool} refl raw) T-Bool T-Bool))
+                                (T-Var {x = "l"} {σ = ([ "a" ] ̣ (′ "a" ⇀ ′ "a") list)} refl (concretion ([ bool ] , refl))))
                         (refl , refl))
                  (refl , refl)
 {-
@@ -419,13 +417,13 @@ ex-9-1-10 : ● ⊢ ℓetrec "length" ≔fun "l" ⇒
                        match var "l" with[]⇒ i (+ 0)
                                ∣ "x" ∷ "y" ⇒ i (+ 1) ⊕ app (var "length") (var "y") ιn
                  app (var "length") (i (+ 3) ∷ i (+ 2) ∷ []) ⊕ app (var "length") ((i (+ 1) ∷ []) ∷ []) ∶ int
-ex-9-1-10 = T-LetRec (T-Match (T-Var "l" (t (′ "a" list)) refl raw)
+ex-9-1-10 = T-LetRec (T-Match (T-Var {x = "l"} {σ = t (′ "a" list)} refl raw)
                               T-Int
-                              (T-Plus T-Int (T-App (T-Var "length" (t (′ "a" list ⇀ int)) refl raw)
-                                                   (T-Var "y" (t (′ "a" list)) refl raw))))
-                     (T-Plus (T-App (T-Var "length" ([ "a" ] ̣ ′ "a" list ⇀ int) refl (concretion ([ int ] , refl)))
+                              (T-Plus T-Int (T-App (T-Var {x = "length"} {σ = t (′ "a" list ⇀ int)} refl raw)
+                                                   (T-Var {x = "y"} {σ = t (′ "a" list)} refl raw))))
+                     (T-Plus (T-App (T-Var {x = "length"} {σ = ([ "a" ] ̣ ′ "a" list ⇀ int)} refl (concretion ([ int ] , refl)))
                                     (T-Cons T-Int (T-Cons T-Int T-Nil)))
-                             (T-App (T-Var "length" ([ "a" ] ̣ ′ "a" list ⇀ int) refl (concretion ([ int list ] , refl)))
+                             (T-App (T-Var {x = "length"} {σ = ([ "a" ] ̣ ′ "a" list ⇀ int)} refl (concretion ([ int list ] , refl)))
                                     (T-Cons (T-Cons T-Int T-Nil) T-Nil)))
                      (refl , refl)
 {-
@@ -472,18 +470,18 @@ q120 : ● ⊢ ℓetrec "map" ≔fun "f" ⇒ fun "l" ⇒
             app (app (var "map") (fun "x" ⇒ var "x" ≺ i (+ 3)))
                 (app (app (var "map") (fun "x" ⇒ var "x" ⊛ i (+ 2)))
                      (i (+ 4) ∷ i (+ 5) ∷ i (+ 1) ∷ [])) ∶ bool list
-q120 = T-LetRec (T-Abs (T-Match (T-Var "l" (t (′ "a" list)) refl raw)
+q120 = T-LetRec (T-Abs (T-Match (T-Var {x = "l"} {σ = t (′ "a" list)} refl raw)
                                 T-Nil
-                                (T-Cons (T-App (T-Var "f" (t (′ "a" ⇀ ′ "b")) refl raw)
-                                               (T-Var "x" (t (′ "a")) refl raw))
-                                        (T-App (T-App (T-Var "map" (t ((′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)) refl raw)
-                                                      (T-Var "f" (t (′ "a" ⇀ ′ "b")) refl raw))
-                                               (T-Var "y" (t (′ "a" list)) refl raw)))))
-                (T-App (T-App (T-Var "map" (("a" ◂ [ "b" ]) ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list) refl (concretion ((int ◂ [ bool ]) , refl)))
-                              (T-Abs (T-Lt (T-Var "x" (t int) refl raw) T-Int)))
-                       (T-App (T-App (T-Var "map" ("a" ◂ [ "b" ] ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)
+                                (T-Cons (T-App (T-Var {x = "f"} {σ = t (′ "a" ⇀ ′ "b")} refl raw)
+                                               (T-Var {x = "x"} {σ = t (′ "a")} refl raw))
+                                        (T-App (T-App (T-Var {x = "map"} {σ = t ((′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)} refl raw)
+                                                      (T-Var {x = "f"} {σ = t (′ "a" ⇀ ′ "b")} refl raw))
+                                               (T-Var {x = "y"} {σ = t (′ "a" list)} refl raw)))))
+                (T-App (T-App (T-Var {x = "map"} {σ = ("a" ◂ [ "b" ] ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)} refl (concretion ((int ◂ [ bool ]) , refl)))
+                              (T-Abs (T-Lt (T-Var {x = "x"} {σ = t int} refl raw) T-Int)))
+                       (T-App (T-App (T-Var {x = "map"} {σ = ("a" ◂ [ "b" ] ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)}
                                             refl (concretion (int ◂ [ int ] , refl)))
-                                     (T-Abs (T-Mult (T-Var "x" (t int) refl raw) T-Int)))
+                                     (T-Abs (T-Mult (T-Var {x = "x"} {σ = t int} refl raw) T-Int)))
                               (T-Cons T-Int (T-Cons T-Int (T-Cons T-Int T-Nil)))))
                 (refl , refl)
 {-
@@ -549,22 +547,22 @@ q121 : ● ⊢ ℓetrec "map" ≔fun "f" ⇒ fun "l" ⇒
             ℓet "f" ≔ app (var "map") (fun "x" ⇒ var "x") ιn
             ℓet "a" ≔ app (var "f") (i (+ 3) ∷ []) ιn
             app (var "f") (b true ∷ []) ∶ bool list
-q121 = T-LetRec (T-Abs (T-Match (T-Var "l" (t (′ "a" list)) refl raw)
+q121 = T-LetRec (T-Abs (T-Match (T-Var {x = "l"} {σ = t (′ "a" list)} refl raw)
                                 T-Nil
-                                (T-Cons (T-App (T-Var "f" (t (′ "a" ⇀ ′ "b")) refl raw)
-                                               (T-Var "x" (t (′ "a")) refl raw))
-                                        (T-App (T-App (T-Var "map" (t ((′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)) refl raw)
-                                                      (T-Var "f" (t (′ "a" ⇀ ′ "b")) refl raw))
-                                               (T-Var "y" (t (′ "a" list)) refl raw)))))
+                                (T-Cons (T-App (T-Var {x = "f"} {σ = t (′ "a" ⇀ ′ "b")} refl raw)
+                                               (T-Var {x = "x"} {σ = t (′ "a")} refl raw))
+                                        (T-App (T-App (T-Var {x = "map"} {σ = t ((′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)} refl raw)
+                                                      (T-Var {x = "f"} {σ = t (′ "a" ⇀ ′ "b")} refl raw))
+                                               (T-Var {x = "y"} {σ = t (′ "a" list)} refl raw)))))
                 (T-Let
-                       (T-App (T-Var "map" (("a" ◂ [ "b" ]) ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)
+                       (T-App (T-Var {x = "map"} {σ = ("a" ◂ [ "b" ] ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)}
                                      refl (concretion ((′ "a" ◂ [ ′ "a" ]) , refl)))
-                              (T-Abs (T-Var "x" (t (′ "a")) refl raw)))
+                              (T-Abs (T-Var {x = "x"} {σ = t (′ "a")} refl raw)))
                        (T-Let {αs = [ "a" ]}
-                              (T-App (T-Var "f" ([ "a" ] ̣ ′ "a" list ⇀ ′ "a" list)
+                              (T-App (T-Var {x = "f"} {σ = ([ "a" ] ̣ ′ "a" list ⇀ ′ "a" list)}
                                             refl (concretion ([ int ] , refl)))
                                      (T-Cons T-Int T-Nil))
-                              (T-App (T-Var "f" ([ "a" ] ̣ ′ "a" list ⇀ ′ "a" list)
+                              (T-App (T-Var {x = "f"} {σ = ([ "a" ] ̣ ′ "a" list ⇀ ′ "a" list)}
                                             refl (concretion ([ bool ] , refl)))
                                      (T-Cons T-Bool T-Nil))
                               (refl , refl))
@@ -625,17 +623,17 @@ q122 : ● ⊢ ℓet "f" ≔ fun "x" ⇒
                                             ∣ "x" ∷ "y" ⇒ [] ∶ bool list
 q122 = T-Let
              (T-Abs (T-Let
-                           (T-Abs (T-Cons (T-Var "x" (t (′ "a")) refl raw) T-Nil))
-                           (T-If T-Bool (T-App (T-Var "g" ([ "b" ] ̣ ′ "b" ⇀ ′ "a" list)
+                           (T-Abs (T-Cons (T-Var {x = "x"} {σ = t (′ "a")} refl raw) T-Nil))
+                           (T-If T-Bool (T-App (T-Var {x = "g"} {σ = ([ "b" ] ̣ ′ "b" ⇀ ′ "a" list)}
                                                       refl (concretion ([ int ] , refl)))
                                                T-Int)
-                                        (T-App (T-Var "g" ([ "b" ] ̣ ′ "b" ⇀ ′ "a" list)
+                                        (T-App (T-Var {x = "g"} {σ = ([ "b" ] ̣ ′ "b" ⇀ ′ "a" list)}
                                                       refl (concretion ([ bool ] , refl)))
                                                T-Bool))
                            (refl , refl)))
-             (T-Match (T-App (T-Var "f" ([ "a" ] ̣ ′ "a" ⇀ ′ "a" list) refl (concretion ([ int ] , refl)))
+             (T-Match (T-App (T-Var {x = "f"} {σ = ([ "a" ] ̣ ′ "a" ⇀ ′ "a" list)} refl (concretion ([ int ] , refl)))
                              T-Int)
-                      (T-App (T-Var "f" ([ "a" ] ̣ ′ "a" ⇀ ′ "a" list) refl (concretion ([ bool ] , refl)))
+                      (T-App (T-Var {x = "f"} {σ = ([ "a" ] ̣ ′ "a" ⇀ ′ "a" list)} refl (concretion ([ bool ] , refl)))
                              T-Bool)
                       T-Nil)
              (refl , refl)
@@ -684,17 +682,17 @@ q123 : ● ⊢ ℓet "f" ≔ fun "x" ⇒
                           ∣ "x" ∷ "y" ⇒ app (var "f") (var "x") ∶ int list
 q123 = T-Let
              (T-Abs (T-Let
-                           (T-Abs (T-Cons (T-App (T-Var "y" (t (′ "a" ⇀ ′ "b")) refl raw)
-                                                 (T-Var "x" (t (′ "a")) refl raw))
+                           (T-Abs (T-Cons (T-App (T-Var {x = "y"} {σ = t (′ "a" ⇀ ′ "b")} refl raw)
+                                                 (T-Var {x = "x"} {σ = t (′ "a")} refl raw))
                                           T-Nil))
-                           (T-App (T-Var "g" ([ "b" ] ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "b" list) refl (concretion ([ int ] , refl)))
+                           (T-App (T-Var {x = "g"} {σ = ([ "b" ] ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "b" list)} refl (concretion ([ int ] , refl)))
                                   (T-Abs T-Int))
                            (refl , refl)))
-             (T-Match (T-App (T-Var "f" ([ "a" ] ̣ ′ "a" ⇀ int list) refl (concretion ([ bool ] , refl)))
+             (T-Match (T-App (T-Var {x = "f"} {σ = ([ "a" ] ̣ ′ "a" ⇀ int list)} refl (concretion ([ bool ] , refl)))
                              T-Bool)
                       (T-Cons T-Int T-Nil)
-                      (T-App (T-Var "f" ([ "a" ] ̣ ′ "a" ⇀ int list) refl (concretion ([ int ] , refl)))
-                             (T-Var "x" (t int) refl raw)))
+                      (T-App (T-Var {x = "f"} {σ = ([ "a" ] ̣ ′ "a" ⇀ int list)} refl (concretion ([ int ] , refl)))
+                             (T-Var {x = "x"} {σ = t int} refl raw)))
              (refl , refl)
 {-
 |- let f = (fun x -> let g = (fun y -> (y(x) :: [])) in g((fun z -> 4))) in match f(true) with [] -> (3 :: []) | x :: y -> f(x) : ((int) list) by T-Let {
