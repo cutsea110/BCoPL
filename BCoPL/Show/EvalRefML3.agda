@@ -22,6 +22,13 @@ showEnv ● = ""
 showEnv (● ⊱ x) = showBinding x
 showEnv (ε ⊱ x) = showEnv ε ++ "," ++ showBinding x
 
+showStoreBefore : Store → String
+showStoreBefore ● = ""
+showStoreBefore s = showStore s ++ " / "
+showStoreAfter : Store → String
+showStoreAfter ● = ""
+showStoreAfter s = " / " ++ showStore s
+
 showStore ● = ""
 showStore (● ⊱ x) = showStoring x
 showStore (s ⊱ x) = showStore s ++ "," ++ showStoring x
@@ -90,10 +97,10 @@ showJudge⇓ (E-LetRec d)
 showJudge⇓ (E-AppRec d₁ d₂ d₃)
   = "E-AppRec {" ++ showDerivation⇓ d₁ ++ showDerivation⇓ d₂ ++ showDerivation⇓ d₃ ++ "};"
 showJudge⇓ (E-Ref d prf)
-  = "E-LetRec {" ++ showDerivation⇓ d ++ "};"
+  = "E-Ref {" ++ showDerivation⇓ d ++ "};"
 showJudge⇓ (E-Deref d prf)
   = "E-Deref {" ++ showDerivation⇓ d ++ "};"
 showJudge⇓ (E-Assign d₁ d₂ prf)
   = "E-Assign {" ++ showDerivation⇓ d₁ ++ showDerivation⇓ d₂ ++ "};"
 
-showDerivation⇓ {S₁} {ε} {e} {v} {S₂} p = showStore S₁ ++ " / " ++ showEnv ε ++ " |- " ++ showExp e ++ " evalto " ++ showValue v ++ " / " ++ showStore S₂ ++ " by " ++ showJudge⇓ p
+showDerivation⇓ {S₁} {ε} {e} {v} {S₂} p = showStoreBefore S₁ ++ showEnv ε ++ " |- " ++ showExp e ++ " evalto " ++ showValue v ++ showStoreAfter S₂ ++ " by " ++ showJudge⇓ p
