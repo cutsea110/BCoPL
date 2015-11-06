@@ -145,7 +145,7 @@ data _⊢_∶_ : TEnv → Exp → Types → Set where
           → Γ 〖 x 〗 ≡ σ
           → σ ≽ τ
           → Γ ⊢ var x ∶ τ
-  T-Let : ∀ {Γ e₁ e₂ τ₁ τ₂ x σ} αs
+  T-Let : ∀ {Γ e₁ e₂ τ₁ τ₂ x σ αs}
           → Γ ⊢ e₁ ∶ τ₁
           → Γ ⊱ (x , σ) ⊢ e₂ ∶ τ₂
           → σ ≡ αs ̣ τ₁ × αs ∩ FTVΓ Γ ≡ ø
