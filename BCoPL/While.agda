@@ -3,34 +3,77 @@ module BCoPL.While where
 open import Data.Integer public
 open import Data.Bool using (Bool; true; false) public
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
+open import Data.Product using (_×_) public
+open import Data.String using (String) public
 open import Relation.Binary.PropositionalEquality using (refl;_≡_) public
 
-data Value : Set where
-  i : ℤ → Value
-  b : Bool → Value
+Var = String
+data Store : Set
+data IValue : Set
+data BValue : Set
+data Prim : Set
+data LOp : Set
+data Comp : Set
+BindedValue = Var × IValue
 
-data Prim : Set where
+data IValue where
+  i : ℤ → IValue
+
+data BValue where
+  b : Bool → BValue
+
+data Store where
+  ● : Store
+  _⊱_ : Store → BindedValue → Store
+
+data AExp : Set where
+  i : ℤ → AExp
+  var : Var → AExp
+  aop : Prim → AExp → AExp → AExp
+
+data Prim where
   prim⊕ : Prim
   prim⊝ : Prim
   prim⊛ : Prim
-  prim≺ : Prim
 
-data Exp : Set where
-  i : ℤ → Exp
-  b : Bool → Exp
-  op : Prim → Exp → Exp → Exp
-  if_then_else_ : Exp → Exp → Exp → Exp
+data BExp : Set where
+  b : Bool → BExp
+  ! : BExp → BExp
+  lop : LOp → BExp → BExp → BExp
+  comp : Comp → AExp → AExp → BExp
 
-_⊕_ = op prim⊕
-_⊝_ = op prim⊝
-_⊛_ = op prim⊛
-_≺_ = op prim≺
+data LOp where
+  prim&& : LOp
+  prim|| : LOp
+
+data Comp where
+  prim≺ : Comp
+  prim≈ : Comp
+  prim≼ : Comp
+
+data Com : Set where
+  skip : Com
+  _≔_ : Var → AExp → Com
+  _>>_ : Com → Com → Com
+  if_then_else_ : BExp → Com → Com → Com
+  while_do_ : BExp → Com → Com
+
+_⊕_ = aop prim⊕
+_⊝_ = aop prim⊝
+_⊛_ = aop prim⊛
+_≺_ = comp prim≺
+_≈_ = comp prim≈
+_≼_ = comp prim≼
+_&&_ = lop prim&&
+_||_ = lop prim||
 
 infixl 9 _⊛_
 infixl 8 _⊕_ _⊝_
-infix 7 _≺_
+infix 7 _≺_ _≈_ _≼_
+infixl 7 _&&_ _≔_
+infixl 6 _||_
 infix 6 if_then_else_
-infixl 5 _⇓_
+infixr 5 _>>_
 
 
 private
@@ -48,24 +91,15 @@ private
   + m < -[1+ n ] = false
   + m < + n = m <ℕ n
 
-data _plus_is_ : Value → Value → Value → Set where
+data _plus_is_ : IValue → IValue → IValue → Set where
   B-Plus : ∀ {i₁ i₂ i₃} → i₁ + i₂ ≡ i₃ → i i₁ plus i i₂ is i i₃
 
-data _minus_is_ : Value → Value → Value → Set where
+data _minus_is_ : IValue → IValue → IValue → Set where
   B-Minus : ∀ {i₁ i₂ i₃} → i₁ - i₂ ≡ i₃ → i i₁ minus i i₂ is i i₃
 
-data _times_is_ : Value → Value → Value → Set where
+data _times_is_ : IValue → IValue → IValue → Set where
   B-Times : ∀ {i₁ i₂ i₃} → i₁ * i₂ ≡ i₃ → i i₁ times i i₂ is i i₃
 
-data _less-than_is_ : Value → Value → Value → Set where
+data _less-than_is_ : IValue → IValue → BValue → Set where
   B-Lt : ∀ {i₁ i₂ v} → i₁ < i₂ ≡ v → i i₁ less-than i i₂ is b v
 
-data _⇓_ : Exp → Value → Set where
-  E-Int : ∀ {z} → i z ⇓ i z
-  E-Bool : ∀ {v} → b v ⇓ b v
-  E-IfT : ∀ {e₁ e₂ e₃ v} → e₁ ⇓ b true → e₂ ⇓ v → if e₁ then e₂ else e₃ ⇓ v
-  E-IfF : ∀ {e₁ e₂ e₃ v} → e₁ ⇓ b false → e₃ ⇓ v → if e₁ then e₂ else e₃ ⇓ v
-  E-Plus : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ plus i₂ is i₃ → e₁ ⊕ e₂ ⇓ i₃
-  E-Minus : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ minus i₂ is i₃ → e₁ ⊝ e₂ ⇓ i₃
-  E-Times : ∀ {e₁ i₁ e₂ i₂ i₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ times i₂ is i₃ → e₁ ⊛ e₂ ⇓ i₃
-  E-Lt : ∀ {e₁ i₁ e₂ i₂ b₃} → e₁ ⇓ i₁ → e₂ ⇓ i₂ → i₁ less-than i₂ is b₃ → e₁ ≺ e₂ ⇓ b₃
