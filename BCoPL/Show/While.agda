@@ -27,6 +27,7 @@ showBExp (comp prim≈ a₁ a₂) = "(" ++ showAExp a₁ ++ " == " ++ showAExp a
 showBExp (comp prim≼ a₁ a₂) = "(" ++ showAExp a₁ ++ " <= " ++ showAExp a₂ ++ ")"
 
 showIValue : IValue → String
+showIValue error = "*** Error occured! ***"
 showIValue (i n) = showℤ n
 
 showBValue : BValue → String

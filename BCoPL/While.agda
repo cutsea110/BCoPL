@@ -17,6 +17,7 @@ data Comp : Set
 BindedValue = Var × IValue
 
 data IValue where
+  error : IValue
   i : ℤ → IValue
 
 data BValue where
@@ -66,6 +67,8 @@ _≈_ = comp prim≈
 _≼_ = comp prim≼
 _&&_ = lop prim&&
 _||_ = lop prim||
+
+infixl 20 _⊱_
 
 infixl 9 _⊛_
 infixl 8 _⊕_ _⊝_
@@ -128,7 +131,8 @@ private
   ¬ false = true
 
 _〖_〗 : Store → Var → IValue
-σ 〖 x 〗 = i -[1+ Z ]
+● 〖 x 〗 = error
+(σ ⊱ (y , v)) 〖 x 〗 = x ==S y ¿ v ∶ σ 〖 x 〗
 
 _〖_╱_〗 : Store → IValue → Var → Store
 ● 〖 iv ╱ x 〗 = ● ⊱ (x , iv)
