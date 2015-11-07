@@ -66,7 +66,7 @@ showDerivationMinus {i₁} {i₂} {i₃} p
   = showValue i₁ ++ " minus " ++ showValue i₂ ++ " is " ++ showValue i₃ ++ " by B-Minus {};"
 showDerivationTimes : ∀ {i₁ i₂ i₃} → i₁ times i₂ is i₃ → String
 showDerivationTimes {i₁} {i₂} {i₃} p
-  = showValue i₁ ++ " times " ++ showValue i₂ ++ " is " ++ showValue i₃ ++ " by B-Times {};"
+  = showValue i₁ ++ " times " ++ showValue i₂ ++ " is " ++ showValue i₃ ++ " by B-Mult {};"
 showDerivationLessThan : ∀ {i₁ i₂ b} → i₁ less-than i₂ is b → String
 showDerivationLessThan {i₁} {i₂} {v} p
   = showValue i₁ ++ " less than " ++ showValue i₂ ++ " is " ++ showValue v ++ " by B-Lt {};"
