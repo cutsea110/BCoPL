@@ -192,7 +192,34 @@ k = [{3 +  _} >> _] |- (1 + k(2)) >> _ evalto 5 by E-BinOp {
 q134 : ● ⊢ i (+ 3) ⊕ letcc "k" ιn (i (+ 1) ⊕ app (var "k") (i (+ 2))) ≫ ⋆ ⇓ i (+ 5)
 q134 = E-BinOp (E-Int (C-EvalR (E-LetCc (E-BinOp (E-Int (C-EvalR (E-App (E-Var refl (C-EvalArg (E-Int (C-EvalFunC (C-Plus (B-Plus refl) C-Ret))))))))))))
 {-
-|- (3 + letcc k in (1 + k(2))) >> _ evalto 5 by E-BinOp { |- 3 >> { |- _  +  letcc k in (1 + k(2))} >> _ evalto 5 by E-Int {3 => { |- _  +  letcc k in (1 + k(2))} >> _ evalto 5 by C-EvalR { |- letcc k in (1 + k(2)) >> {3 +  _} >> _ evalto 5 by E-LetCc {k = [{3 +  _} >> _] |- (1 + k(2)) >> {3 +  _} >> _ evalto 5 by E-BinOp {k = [{3 +  _} >> _] |- 1 >> {k = [{3 +  _} >> _] |- _  +  k(2)} >> {3 +  _} >> _ evalto 5 by E-Int {1 => {k = [{3 +  _} >> _] |- _  +  k(2)} >> {3 +  _} >> _ evalto 5 by C-EvalR {k = [{3 +  _} >> _] |- k(2) >> {1 +  _} >> {3 +  _} >> _ evalto 5 by E-App {k = [{3 +  _} >> _] |- k >> {k = [{3 +  _} >> _] |- _ 2} >> {1 +  _} >> {3 +  _} >> _ evalto 5 by E-Var {[{3 +  _} >> _] => {k = [{3 +  _} >> _] |- _ 2} >> {1 +  _} >> {3 +  _} >> _ evalto 5 by C-EvalArg {k = [{3 +  _} >> _] |- 2 >> {[{3 +  _} >> _] _} >> {1 +  _} >> {3 +  _} >> _ evalto 5 by E-Int {2 => {[{3 +  _} >> _] _} >> {1 +  _} >> {3 +  _} >> _ evalto 5 by C-EvalFunC {2 => {3 +  _} >> _ evalto 5 by C-Plus {3 plus 2 is 5 by B-Plus {};5 => _ evalto 5 by C-Ret {};};};};};};};};};};};};};};
+|- (3 + letcc k in (1 + k(2))) >> _ evalto 5 by E-BinOp {
+  |- 3 >> { |- _  +  letcc k in (1 + k(2))} >> _ evalto 5 by E-Int {
+    3 => { |- _  +  letcc k in (1 + k(2))} >> _ evalto 5 by C-EvalR {
+      |- letcc k in (1 + k(2)) >> {3 +  _} >> _ evalto 5 by E-LetCc {
+        k = [{3 +  _} >> _] |- (1 + k(2)) >> {3 +  _} >> _ evalto 5 by E-BinOp {
+          k = [{3 +  _} >> _] |- 1 >> {k = [{3 +  _} >> _] |- _  +  k(2)} >> {3 +  _} >> _ evalto 5 by E-Int {
+            1 => {k = [{3 +  _} >> _] |- _  +  k(2)} >> {3 +  _} >> _ evalto 5 by C-EvalR {
+              k = [{3 +  _} >> _] |- k(2) >> {1 +  _} >> {3 +  _} >> _ evalto 5 by E-App {
+                k = [{3 +  _} >> _] |- k >> {k = [{3 +  _} >> _] |- _ 2} >> {1 +  _} >> {3 +  _} >> _ evalto 5 by E-Var {
+                  [{3 +  _} >> _] => {k = [{3 +  _} >> _] |- _ 2} >> {1 +  _} >> {3 +  _} >> _ evalto 5 by C-EvalArg {
+                    k = [{3 +  _} >> _] |- 2 >> {[{3 +  _} >> _] _} >> {1 +  _} >> {3 +  _} >> _ evalto 5 by E-Int {
+                      2 => {[{3 +  _} >> _] _} >> {1 +  _} >> {3 +  _} >> _ evalto 5 by C-EvalFunC {
+                        2 => {3 +  _} >> _ evalto 5 by C-Plus {
+                          3 plus 2 is 5 by B-Plus {};
+                          5 => _ evalto 5 by C-Ret {};
+                        };
+                      };
+                    };
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+};
 -}
 
 q135 : ● ⊢ ℓetrec "fact" ≔fun "n" ⇒
@@ -200,14 +227,75 @@ q135 : ● ⊢ ℓetrec "fact" ≔fun "n" ⇒
             i (+ 3) ⊕ letcc "k" ιn (i (+ 1) ⊕ app (var "k") (i (+ 2)) ⊕ app (var "fact") (i (+ 7))) ≫ ⋆ ⇓ i (+ 5)
 q135 = E-LetRec (E-BinOp (E-Int (C-EvalR (E-LetCc (E-BinOp (E-BinOp (E-Int (C-EvalR (E-App (E-Var refl (C-EvalArg (E-Int (C-EvalFunC (C-Plus (B-Plus refl) C-Ret))))))))))))))
 {-
-|- let rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1))) in (3 + letcc k in ((1 + k(2)) + fact(100))) >> _ evalto 5 by E-LetRec {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- (3 + letcc k in ((1 + k(2)) + fact(100))) >> _ evalto 5 by E-BinOp {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- 3 >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- _  +  letcc k in ((1 + k(2)) + fact(100))} >> _ evalto 5 by E-Int {3 => {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- _  +  letcc k in ((1 + k(2)) + fact(100))} >> _ evalto 5 by C-EvalR {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- letcc k in ((1 + k(2)) + fact(100)) >> {3 +  _} >> _ evalto 5 by E-LetCc {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- ((1 + k(2)) + fact(100)) >> {3 +  _} >> _ evalto 5 by E-BinOp {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- (1 + k(2)) >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by E-BinOp {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- 1 >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  k(2)} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by E-Int {1 => {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  k(2)} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by C-EvalR {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- k(2) >> {1 +  _} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by E-App {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- k >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _ 2} >> {1 +  _} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by E-Var {[{3 +  _} >> _] => {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _ 2} >> {1 +  _} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by C-EvalArg {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- 2 >> {[{3 +  _} >> _] _} >> {1 +  _} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by E-Int {2 => {[{3 +  _} >> _] _} >> {1 +  _} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by C-EvalFunC {2 => {3 +  _} >> _ evalto 5 by C-Plus {3 plus 2 is 5 by B-Plus {};5 => _ evalto 5 by C-Ret {};};};};};};};};};};};};};};};};
+|- let rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1))) in (3 + letcc k in ((1 + k(2)) + fact(100))) >> _ evalto 5 by E-LetRec {
+  fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- (3 + letcc k in ((1 + k(2)) + fact(100))) >> _ evalto 5 by E-BinOp {
+    fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- 3 >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- _  +  letcc k in ((1 + k(2)) + fact(100))} >> _ evalto 5 by E-Int {
+      3 => {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- _  +  letcc k in ((1 + k(2)) + fact(100))} >> _ evalto 5 by C-EvalR {
+        fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))] |- letcc k in ((1 + k(2)) + fact(100)) >> {3 +  _} >> _ evalto 5 by E-LetCc {
+          fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- ((1 + k(2)) + fact(100)) >> {3 +  _} >> _ evalto 5 by E-BinOp {
+            fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- (1 + k(2)) >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by E-BinOp {
+              fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- 1 >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  k(2)} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by E-Int {
+                1 => {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  k(2)} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by C-EvalR {
+                  fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- k(2) >> {1 +  _} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by E-App {
+                    fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- k >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _ 2} >> {1 +  _} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by E-Var {
+                      [{3 +  _} >> _] => {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _ 2} >> {1 +  _} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by C-EvalArg {
+                        fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- 2 >> {[{3 +  _} >> _] _} >> {1 +  _} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by E-Int {
+                          2 => {[{3 +  _} >> _] _} >> {1 +  _} >> {fact = ()[rec fact = fun n -> if (n < 2) then 1 else (n * fact((n - 1)))],k = [{3 +  _} >> _] |- _  +  fact(100)} >> {3 +  _} >> _ evalto 5 by C-EvalFunC {
+                            2 => {3 +  _} >> _ evalto 5 by C-Plus {
+                              3 plus 2 is 5 by B-Plus {};
+                              5 => _ evalto 5 by C-Ret {};
+                            };
+                          };
+                        };
+                      };
+                    };
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+};
 -}
 
 q136 : ● ⊢ ℓet "sm" ≔ fun "f" ⇒ app (var "f") (i (+ 3)) ⊕ app (var "f") (i (+ 4)) ιn
             letcc "k" ιn app (var "sm") (var "k") ≫ ⋆ ⇓ i (+ 3)
 q136 = E-Let (E-Fun (C-LetBody (E-LetCc (E-App (E-Var refl (C-EvalArg (E-Var refl (C-EvalFun (E-BinOp (E-App (E-Var refl (C-EvalArg (E-Int (C-EvalFunC C-Ret))))))))))))))
 {-
-|- let sm = (fun f -> (f(3) + f(4))) in letcc k in sm(k) >> _ evalto 3 by E-Let { |- (fun f -> (f(3) + f(4))) >> { |- let sm = _ in letcc k in sm(k)} >> _ evalto 3 by E-Fun {()[fun f -> (f(3) + f(4))] => { |- let sm = _ in letcc k in sm(k)} >> _ evalto 3 by C-LetBody {sm = ()[fun f -> (f(3) + f(4))] |- letcc k in sm(k) >> _ evalto 3 by E-LetCc {sm = ()[fun f -> (f(3) + f(4))],k = [_] |- sm(k) >> _ evalto 3 by E-App {sm = ()[fun f -> (f(3) + f(4))],k = [_] |- sm >> {sm = ()[fun f -> (f(3) + f(4))],k = [_] |- _ k} >> _ evalto 3 by E-Var {()[fun f -> (f(3) + f(4))] => {sm = ()[fun f -> (f(3) + f(4))],k = [_] |- _ k} >> _ evalto 3 by C-EvalArg {sm = ()[fun f -> (f(3) + f(4))],k = [_] |- k >> {()[fun f -> (f(3) + f(4))] _} >> _ evalto 3 by E-Var {[_] => {()[fun f -> (f(3) + f(4))] _} >> _ evalto 3 by C-EvalFun {f = [_] |- (f(3) + f(4)) >> _ evalto 3 by E-BinOp {f = [_] |- f(3) >> {f = [_] |- _  +  f(4)} >> _ evalto 3 by E-App {f = [_] |- f >> {f = [_] |- _ 3} >> {f = [_] |- _  +  f(4)} >> _ evalto 3 by E-Var {[_] => {f = [_] |- _ 3} >> {f = [_] |- _  +  f(4)} >> _ evalto 3 by C-EvalArg {f = [_] |- 3 >> {[_] _} >> {f = [_] |- _  +  f(4)} >> _ evalto 3 by E-Int {3 => {[_] _} >> {f = [_] |- _  +  f(4)} >> _ evalto 3 by C-EvalFunC {3 => _ evalto 3 by C-Ret {};};};};};};};};};};};};};};};};
+|- let sm = (fun f -> (f(3) + f(4))) in letcc k in sm(k) >> _ evalto 3 by E-Let {
+  |- (fun f -> (f(3) + f(4))) >> { |- let sm = _ in letcc k in sm(k)} >> _ evalto 3 by E-Fun {
+    ()[fun f -> (f(3) + f(4))] => { |- let sm = _ in letcc k in sm(k)} >> _ evalto 3 by C-LetBody {
+      sm = ()[fun f -> (f(3) + f(4))] |- letcc k in sm(k) >> _ evalto 3 by E-LetCc {
+        sm = ()[fun f -> (f(3) + f(4))],k = [_] |- sm(k) >> _ evalto 3 by E-App {
+          sm = ()[fun f -> (f(3) + f(4))],k = [_] |- sm >> {sm = ()[fun f -> (f(3) + f(4))],k = [_] |- _ k} >> _ evalto 3 by E-Var {
+            ()[fun f -> (f(3) + f(4))] => {sm = ()[fun f -> (f(3) + f(4))],k = [_] |- _ k} >> _ evalto 3 by C-EvalArg {
+              sm = ()[fun f -> (f(3) + f(4))],k = [_] |- k >> {()[fun f -> (f(3) + f(4))] _} >> _ evalto 3 by E-Var {
+                [_] => {()[fun f -> (f(3) + f(4))] _} >> _ evalto 3 by C-EvalFun {
+                  f = [_] |- (f(3) + f(4)) >> _ evalto 3 by E-BinOp {
+                    f = [_] |- f(3) >> {f = [_] |- _  +  f(4)} >> _ evalto 3 by E-App {
+                      f = [_] |- f >> {f = [_] |- _ 3} >> {f = [_] |- _  +  f(4)} >> _ evalto 3 by E-Var {
+                        [_] => {f = [_] |- _ 3} >> {f = [_] |- _  +  f(4)} >> _ evalto 3 by C-EvalArg {
+                          f = [_] |- 3 >> {[_] _} >> {f = [_] |- _  +  f(4)} >> _ evalto 3 by E-Int {
+                            3 => {[_] _} >> {f = [_] |- _  +  f(4)} >> _ evalto 3 by C-EvalFunC {
+                              3 => _ evalto 3 by C-Ret {};
+                            };
+                          };
+                        };
+                      };
+                    };
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+};
 -}
 
 q137 : ● ⊢ ℓet "f" ≔ fun "x" ⇒ fun "k1" ⇒ fun "k2" ⇒
