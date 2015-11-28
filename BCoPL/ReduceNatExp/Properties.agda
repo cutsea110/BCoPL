@@ -10,7 +10,7 @@ open import BCoPL.EvalNatExp.Properties
 open import BCoPL.ReduceNatExp
 open import Data.Unit using (⊤; tt)
 open import Data.Empty using (⊥; ⊥-elim)
-open import Relation.Nullary.Core using (¬_)
+open import Relation.Nullary using (¬_)
 
 notPeano : (e : Exp) → Set
 notPeano (Nat n) = ⊥
