@@ -51,10 +51,48 @@ confluent {e₁ ⊕ e₂} {Nat x} {e₃ ⊕ e₄} (() , proj₂) (proj₃ , proj
 confluent {e₁ ⊕ e₂} {Nat x} {e₃ ⊛ e₄} (() , proj₂) (proj₃ , proj₄)
 confluent {e₁ ⊕ e₂} {e₃ ⊕ e₄} {Nat x} (proj₁ , ()) (proj₃ , proj₄)
 
-confluent {e₁ ⊕ e₂} {e₃ ⊕ .e₂} {e₅ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL proj₃ , R-PlusL proj₄) = {!!}
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-Plus x) , R-PlusL (R-Plus x₁)) with uniqueness-plus (x , x₁)
+... | refl = {!!}
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-Plus x) , R-PlusL (R-PlusL ()))
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-Plus x) , R-PlusL (R-PlusR ()))
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-Times x) , R-PlusL (R-Times x₁)) with uniqueness-times (x , x₁)
+... | refl = {!!}
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-Times x) , R-PlusL (R-TimesL ()))
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-Times x) , R-PlusL (R-TimesR ()))
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-PlusL ()) , R-PlusL (R-Plus x))
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-PlusL proj₃) , R-PlusL (R-PlusL proj₄)) = {!!}
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-PlusL proj₃) , R-PlusL (R-PlusR proj₄)) = {!!}
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-PlusR ()) , R-PlusL (R-Plus x))
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-PlusR proj₃) , R-PlusL (R-PlusL proj₄)) = {!!}
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-PlusR proj₃) , R-PlusL (R-PlusR proj₄)) = {!!}
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-TimesL ()) , R-PlusL (R-Times x))
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-TimesL proj₃) , R-PlusL (R-TimesL proj₄)) = {!!}
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-TimesL proj₃) , R-PlusL (R-TimesR proj₄)) = {!!}
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-TimesR ()) , R-PlusL (R-Times x))
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-TimesR proj₃) , R-PlusL (R-TimesL proj₄)) = {!!}
+confluent {._ ⊕ e₂} {._ ⊕ .e₂} {._ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL (R-TimesR proj₃) , R-PlusL (R-TimesR proj₄)) = {!!}
 confluent {e₁ ⊕ e₂} {e₃ ⊕ .e₂} {.e₁ ⊕ e₆} (proj₁ , proj₂) (R-PlusL proj₃ , R-PlusR proj₄) = (e₃ ⊕ e₆) , (R-PlusR proj₄ , R-PlusL proj₃)
 confluent {e₁ ⊕ e₂} {.e₁ ⊕ e₄} {e₅ ⊕ .e₂} (proj₁ , proj₂) (R-PlusR proj₃ , R-PlusL proj₄) = (e₅ ⊕ e₄) , (R-PlusL proj₄ , R-PlusR proj₃)
-confluent {e₁ ⊕ e₂} {.e₁ ⊕ e₄} {.e₁ ⊕ e₆} (proj₁ , proj₂) (R-PlusR proj₃ , R-PlusR proj₄) = {!!}
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-Plus x) , R-PlusR (R-Plus x₁)) with uniqueness-plus (x , x₁)
+... | refl = {!!}
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-Plus x) , R-PlusR (R-PlusL ()))
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-Plus x) , R-PlusR (R-PlusR ()))
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-Times x) , R-PlusR (R-Times x₁)) with uniqueness-times (x , x₁)
+... | refl = {!!}
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-Times x) , R-PlusR (R-TimesL ()))
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-Times x) , R-PlusR (R-TimesR ()))
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-PlusL ()) , R-PlusR (R-Plus x))
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-PlusL proj₃) , R-PlusR (R-PlusL proj₄)) = {!!}
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-PlusL proj₃) , R-PlusR (R-PlusR proj₄)) = {!!}
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-PlusR ()) , R-PlusR (R-Plus x))
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-PlusR proj₃) , R-PlusR (R-PlusL proj₄)) = {!!}
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-PlusR proj₃) , R-PlusR (R-PlusR proj₄)) = {!!}
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-TimesL ()) , R-PlusR (R-Times x))
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-TimesL proj₃) , R-PlusR (R-TimesL proj₄)) = {!!}
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-TimesL proj₃) , R-PlusR (R-TimesR proj₄)) = {!!}
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-TimesR ()) , R-PlusR (R-Times x))
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-TimesR proj₃) , R-PlusR (R-TimesL proj₄)) = {!!}
+confluent {e₁ ⊕ ._} {.e₁ ⊕ ._} {.e₁ ⊕ ._} (proj₁ , proj₂) (R-PlusR (R-TimesR proj₃) , R-PlusR (R-TimesR proj₄)) = {!!}
 
 confluent {e₁ ⊕ e₂} {e₃ ⊕ .e₂} {e₅ ⊛ e₆} (proj₁ , proj₂) (R-PlusL proj₃ , ())
 confluent {e₁ ⊕ e₂} {.e₁ ⊕ e₄} {e₅ ⊛ e₆} (proj₁ , proj₂) (R-PlusR proj₃ , ())
@@ -73,10 +111,48 @@ confluent {e₁ ⊛ e₂} {e₃ ⊛ e₄} {Nat x} (proj₁ , ()) (proj₃ , proj
 confluent {e₁ ⊛ e₂} {e₃ ⊛ .e₂} {e₅ ⊕ e₆} (proj₁ , proj₂) (R-TimesL proj₃ , ())
 confluent {e₁ ⊛ e₂} {.e₁ ⊛ e₄} {e₅ ⊕ e₆} (proj₁ , proj₂) (R-TimesR proj₃ , ())
 
-confluent {e₁ ⊛ e₂} {e₃ ⊛ .e₂} {e₅ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL proj₃ , R-TimesL proj₄) = {!!}
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-Plus x) , R-TimesL (R-Plus x₁)) with uniqueness-plus (x , x₁)
+... | refl = {!!}
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-Plus x) , R-TimesL (R-PlusL ()))
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-Plus x) , R-TimesL (R-PlusR ()))
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-Times x) , R-TimesL (R-Times x₁)) with uniqueness-times (x , x₁)
+... | refl = {!!}
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-Times x) , R-TimesL (R-TimesL ()))
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-Times x) , R-TimesL (R-TimesR ()))
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-PlusL ()) , R-TimesL (R-Plus x))
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-PlusL proj₃) , R-TimesL (R-PlusL proj₄)) = {!!}
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-PlusL proj₃) , R-TimesL (R-PlusR proj₄)) = {!!}
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-PlusR ()) , R-TimesL (R-Plus x))
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-PlusR proj₃) , R-TimesL (R-PlusL proj₄)) = {!!}
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-PlusR proj₃) , R-TimesL (R-PlusR proj₄)) = {!!}
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-TimesL ()) , R-TimesL (R-Times x))
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-TimesL proj₃) , R-TimesL (R-TimesL proj₄)) = {!!}
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-TimesL proj₃) , R-TimesL (R-TimesR proj₄)) = {!!}
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-TimesR ()) , R-TimesL (R-Times x))
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-TimesR proj₃) , R-TimesL (R-TimesL proj₄)) = {!!}
+confluent {._ ⊛ e₂} {._ ⊛ .e₂} {._ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL (R-TimesR proj₃) , R-TimesL (R-TimesR proj₄)) = {!!}
 confluent {e₁ ⊛ e₂} {e₃ ⊛ .e₂} {.e₁ ⊛ e₆} (proj₁ , proj₂) (R-TimesL proj₃ , R-TimesR proj₄) = (e₃ ⊛ e₆) , (R-TimesR proj₄ , R-TimesL proj₃)
 confluent {e₁ ⊛ e₂} {.e₁ ⊛ e₄} {e₅ ⊛ .e₂} (proj₁ , proj₂) (R-TimesR proj₃ , R-TimesL proj₄) = (e₅ ⊛ e₄) , (R-TimesL proj₄ , R-TimesR proj₃)
-confluent {e₁ ⊛ e₂} {.e₁ ⊛ e₄} {.e₁ ⊛ e₆} (proj₁ , proj₂) (R-TimesR proj₃ , R-TimesR proj₄) = {!!}
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-Plus x) , R-TimesR (R-Plus x₁)) with uniqueness-plus (x , x₁)
+... | refl = {!!}
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-Plus x) , R-TimesR (R-PlusL ()))
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-Plus x) , R-TimesR (R-PlusR ()))
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-Times x) , R-TimesR (R-Times x₁)) with uniqueness-times (x , x₁)
+... | refl = {!!}
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-Times x) , R-TimesR (R-TimesL ()))
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-Times x) , R-TimesR (R-TimesR ()))
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-PlusL ()) , R-TimesR (R-Plus x))
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-PlusL proj₃) , R-TimesR (R-PlusL proj₄)) = {!!}
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-PlusL proj₃) , R-TimesR (R-PlusR proj₄)) = {!!}
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-PlusR ()) , R-TimesR (R-Plus x))
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-PlusR proj₃) , R-TimesR (R-PlusL proj₄)) = {!!}
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-PlusR proj₃) , R-TimesR (R-PlusR proj₄)) = {!!}
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-TimesL ()) , R-TimesR (R-Times x))
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-TimesL proj₃) , R-TimesR (R-TimesL proj₄)) = {!!}
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-TimesL proj₃) , R-TimesR (R-TimesR proj₄)) = {!!}
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-TimesR ()) , R-TimesR (R-Times x))
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-TimesR proj₃) , R-TimesR (R-TimesL proj₄)) = {!!}
+confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-TimesR proj₃) , R-TimesR (R-TimesR proj₄)) = {!!}
 
 
 -- theorem 2.23
