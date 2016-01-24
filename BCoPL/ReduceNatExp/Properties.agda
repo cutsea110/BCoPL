@@ -50,21 +50,33 @@ confluent {e₁ ⊕ e₂} {Nat x} {Nat x₁} (() , proj₂) (proj₃ , proj₄)
 confluent {e₁ ⊕ e₂} {Nat x} {e₃ ⊕ e₄} (() , proj₂) (proj₃ , proj₄)
 confluent {e₁ ⊕ e₂} {Nat x} {e₃ ⊛ e₄} (() , proj₂) (proj₃ , proj₄)
 confluent {e₁ ⊕ e₂} {e₃ ⊕ e₄} {Nat x} (proj₁ , ()) (proj₃ , proj₄)
-confluent {e₁ ⊕ e₂} {e₃ ⊕ e₄} {e₅ ⊕ e₆} (proj₁ , proj₂) (proj₃ , proj₄) = {!!}
-confluent {e₁ ⊕ e₂} {e₃ ⊕ e₄} {e₅ ⊛ e₆} (proj₁ , proj₂) (proj₃ , proj₄) = {!!}
+
+confluent {e₁ ⊕ e₂} {e₃ ⊕ .e₂} {e₅ ⊕ .e₂} (proj₁ , proj₂) (R-PlusL proj₃ , R-PlusL proj₄) = {!!}
+confluent {e₁ ⊕ e₂} {e₃ ⊕ .e₂} {.e₁ ⊕ e₆} (proj₁ , proj₂) (R-PlusL proj₃ , R-PlusR proj₄) = {!!}
+confluent {e₁ ⊕ e₂} {.e₁ ⊕ e₄} {e₅ ⊕ .e₂} (proj₁ , proj₂) (R-PlusR proj₃ , R-PlusL proj₄) = {!!}
+confluent {e₁ ⊕ e₂} {.e₁ ⊕ e₄} {.e₁ ⊕ e₆} (proj₁ , proj₂) (R-PlusR proj₃ , R-PlusR proj₄) = {!!}
+
+confluent {e₁ ⊕ e₂} {e₃ ⊕ .e₂} {e₅ ⊛ e₆} (proj₁ , proj₂) (R-PlusL proj₃ , ())
+confluent {e₁ ⊕ e₂} {.e₁ ⊕ e₄} {e₅ ⊛ e₆} (proj₁ , proj₂) (R-PlusR proj₃ , ())
+
 confluent {e₁ ⊕ e₂} {e₃ ⊛ e₄} {Nat x} (proj₁ , ()) (proj₃ , proj₄)
-confluent {e₁ ⊕ e₂} {e₃ ⊛ e₄} {e₅ ⊕ e₆} (proj₁ , proj₂) (proj₃ , proj₄) = {!!}
-confluent {e₁ ⊕ e₂} {e₃ ⊛ e₄} {e₅ ⊛ e₆} (proj₁ , proj₂) (proj₃ , proj₄) = {!!}
+confluent {e₁ ⊕ e₂} {e₃ ⊛ e₄} {e₅ ⊕ e₆} (proj₁ , proj₂) (() , proj₄)
+confluent {e₁ ⊕ e₂} {e₃ ⊛ e₄} {e₅ ⊛ e₆} (proj₁ , proj₂) (() , proj₄)
 
 confluent {e₁ ⊛ e₂} {Nat x} {Nat x₁} (() , proj₂) (proj₃ , proj₄)
 confluent {e₁ ⊛ e₂} {Nat x} {e₃ ⊕ e₄} (() , proj₂) (proj₃ , proj₄)
 confluent {e₁ ⊛ e₂} {Nat x} {e₃ ⊛ e₄} (() , proj₂) (proj₃ , proj₄)
 confluent {e₁ ⊛ e₂} {e₃ ⊕ e₄} {Nat x} (proj₁ , ()) (proj₃ , proj₄)
-confluent {e₁ ⊛ e₂} {e₃ ⊕ e₄} {e₅ ⊕ e₆} (proj₁ , proj₂) (proj₃ , proj₄) = {!!}
-confluent {e₁ ⊛ e₂} {e₃ ⊕ e₄} {e₅ ⊛ e₆} (proj₁ , proj₂) (proj₃ , proj₄) = {!!}
+confluent {e₁ ⊛ e₂} {e₃ ⊕ e₄} {e₅ ⊕ e₆} (proj₁ , proj₂) (() , proj₄)
+confluent {e₁ ⊛ e₂} {e₃ ⊕ e₄} {e₅ ⊛ e₆} (proj₁ , proj₂) (() , proj₄)
 confluent {e₁ ⊛ e₂} {e₃ ⊛ e₄} {Nat x} (proj₁ , ()) (proj₃ , proj₄)
-confluent {e₁ ⊛ e₂} {e₃ ⊛ e₄} {e₅ ⊕ e₆} (proj₁ , proj₂) (proj₃ , proj₄) = {!!}
-confluent {e₁ ⊛ e₂} {e₃ ⊛ e₄} {e₅ ⊛ e₆} (proj₁ , proj₂) (proj₃ , proj₄) = {!!}
+confluent {e₁ ⊛ e₂} {e₃ ⊛ .e₂} {e₅ ⊕ e₆} (proj₁ , proj₂) (R-TimesL proj₃ , ())
+confluent {e₁ ⊛ e₂} {.e₁ ⊛ e₄} {e₅ ⊕ e₆} (proj₁ , proj₂) (R-TimesR proj₃ , ())
+
+confluent {e₁ ⊛ e₂} {e₃ ⊛ .e₂} {e₅ ⊛ .e₂} (proj₁ , proj₂) (R-TimesL proj₃ , R-TimesL proj₄) = {!!}
+confluent {e₁ ⊛ e₂} {e₃ ⊛ .e₂} {.e₁ ⊛ e₆} (proj₁ , proj₂) (R-TimesL proj₃ , R-TimesR proj₄) = {!!}
+confluent {e₁ ⊛ e₂} {.e₁ ⊛ e₄} {e₅ ⊛ .e₂} (proj₁ , proj₂) (R-TimesR proj₃ , R-TimesL proj₄) = {!!}
+confluent {e₁ ⊛ e₂} {.e₁ ⊛ e₄} {.e₁ ⊛ e₆} (proj₁ , proj₂) (R-TimesR proj₃ , R-TimesR proj₄) = {!!}
 
 
 -- theorem 2.23
