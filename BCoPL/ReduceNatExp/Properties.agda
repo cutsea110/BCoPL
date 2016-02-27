@@ -43,6 +43,24 @@ reduceability-⟶ ((e₁ ⊛ e₂) ⊛ e₃) tt with reduceability-⟶ (e₁ ⊛
 ... | proj₁ , proj₂ = proj₁ ⊛ e₃ , R-TimesL proj₂
 
 -- theorem 2.22
+confluent : ∀ {e₁ e₂ e₃} → e₁ ⟶ e₂ × notPeano e₂ → e₁ ⟶ e₃ × notPeano e₃ → ∃ λ e₄ → e₂ ⟶ e₄ × e₃ ⟶ e₄
+confluent {e₂ = Nat x} (proj₁ , ()) (proj₃ , proj₄)
+confluent {e₂ = e₂ ⊕ e₃} {Nat x} (proj₁ , tt) (proj₃ , ())
+
+confluent {e₂ = e₂ₗ ⊕ e₃ᵣ} {e₃ₗ ⊕ .e₃ᵣ} (R-PlusL proj₁ , tt) (R-PlusL proj₃ , tt) = {!!}
+confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {e₃ₗ ⊕ e₃ᵣ} (R-PlusL proj₁ , tt) (R-PlusR proj₃ , tt) = (e₂ₗ ⊕ e₃ᵣ) , (R-PlusR proj₃ , R-PlusL proj₁)
+confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {e₃ₗ ⊕ e₃ᵣ} (R-PlusR proj₁ , tt) (R-PlusL proj₃ , tt) = (e₃ₗ ⊕ e₂ᵣ) , ((R-PlusL proj₃) , (R-PlusR proj₁))
+confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {.e₂ₗ ⊕ e₃ᵣ} (R-PlusR proj₁ , tt) (R-PlusR proj₃ , tt) = {!!}
+
+confluent {e₁} {e₂ₗ ⊕ e₂ᵣ} {e₃ₗ ⊛ e₃ᵣ} (proj₁ , tt) (proj₃ , tt) = {!!}
+confluent {e₁} {e₂ₗ ⊛ e₂ᵣ} {Nat x} (proj₁ , tt) (proj₃ , ())
+confluent {e₁} {e₂ₗ ⊛ e₂ᵣ} {e₃ₗ ⊕ e₃ᵣ} (proj₁ , tt) (proj₃ , tt) = {!!}
+
+confluent {e₂ = e₂ₗ ⊛ e₃ᵣ} {e₃ₗ ⊛ .e₃ᵣ} (R-TimesL proj₁ , tt) (R-TimesL proj₃ , tt) = {!!}
+confluent {e₂ = e₂ₗ ⊛ e₂ᵣ} {e₃ₗ ⊛ e₃ᵣ} (R-TimesL proj₁ , tt) (R-TimesR proj₃ , tt) = (e₂ₗ ⊛ e₃ᵣ) , ((R-TimesR proj₃) , R-TimesL proj₁)
+confluent {e₂ = e₂ₗ ⊛ e₂ᵣ} {e₃ₗ ⊛ e₃ᵣ} (R-TimesR proj₁ , tt) (R-TimesL proj₃ , tt) = (e₃ₗ ⊛ e₂ᵣ) , ((R-TimesL proj₃) , (R-TimesR proj₁))
+confluent {e₂ = e₂ₗ ⊛ e₂ᵣ} {.e₂ₗ ⊛ e₃ᵣ} (R-TimesR proj₁ , tt) (R-TimesR proj₃ , tt) = {!!}
+{-
 confluent : ∀ {e₁ e₂ e₃} → notPeano e₂ × notPeano e₃ →
             e₁ ⟶ e₂ × e₁ ⟶ e₃ → ∃ λ e₄ → e₂ ⟶ e₄ × e₃ ⟶ e₄
 confluent {Nat x} (proj₁ , proj₂) (() , proj₄)
@@ -153,7 +171,7 @@ confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-Tim
 confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-TimesR ()) , R-TimesR (R-Times x))
 confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-TimesR proj₃) , R-TimesR (R-TimesL proj₄)) = {!!}
 confluent {e₁ ⊛ ._} {.e₁ ⊛ ._} {.e₁ ⊛ ._} (proj₁ , proj₂) (R-TimesR (R-TimesR proj₃) , R-TimesR (R-TimesR proj₄)) = {!!}
-
+-}
 
 -- theorem 2.23
 uniqueness--d-> : ∀ {e e′ e″} → e -d-> e′ × e -d-> e″ → e′ ≡ e″
