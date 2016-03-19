@@ -990,11 +990,13 @@ theorem-5-2 prf = induction-EvalML3 help-a help-b help-c help-d help-e help-f he
     help-f : ∀ ε e₁ e₂ i₁ i₂ i₃ →
              (∀ v' → ε ⊢ e₁ ⇓ v' → i i₁ ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → i i₂ ≡ v') × (i i₁ minus i i₂ is i i₃) →
              (∀ v' → ε ⊢ (e₁ ⊝ e₂) ⇓ v' → i i₃ ≡ v')
-    help-f = {!!}
+    help-f ε e₁ e₂ i₁ i₂ .(i₁ + - i₂) (proj₁ , proj₂ , B-Minus refl) ._ (E-Minus x₁ x₂ (B-Minus refl)) with proj₁ _ x₁ | proj₂ _ x₂
+    ... | refl | refl = refl
     help-g : ∀ ε e₁ e₂ i₁ i₂ i₃ →
              (∀ v' → ε ⊢ e₁ ⇓ v' → i i₁ ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → i i₂ ≡ v') × (i i₁ times i i₂ is i i₃) →
              (∀ v' → ε ⊢ (e₁ ⊛ e₂) ⇓ v' → i i₃ ≡ v')
-    help-g = {!!}
+    help-g ε e₁ e₂ i₁ i₂ i₃ (proj₁ , proj₂ , B-Times x) ._ (E-Times x₁ x₂ (B-Times refl)) with proj₁ _ x₁ | proj₂ _ x₂
+    ... | refl | refl = cong i (sym x)
     help-h : ∀ ε e₁ e₂ i₁ i₂ v₁ →
              (∀ v' → ε ⊢ e₁ ⇓ v' → i i₁ ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → i i₂ ≡ v') × (i i₁ less-than i i₂ is b v₁) →
              (∀ v' → ε ⊢ (e₁ ≺ e₂) ⇓ v' → b v₁ ≡ v')
