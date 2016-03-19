@@ -964,6 +964,7 @@ q53 = E-Let E-Fun (E-App (E-App E-Var1 E-Var1 E-Fun) E-Int (E-IfF (E-Lt E-Var1 E
 };
 -}
 
+open import BCoPL.EvalML3 using (_<ℤ_)
 open import BCoPL.Induction3
 open import Data.Empty using (⊥-elim)
 
@@ -1000,7 +1001,8 @@ theorem-5-2 prf = induction-EvalML3 help-a help-b help-c help-d help-e help-f he
     help-h : ∀ ε e₁ e₂ i₁ i₂ v₁ →
              (∀ v' → ε ⊢ e₁ ⇓ v' → i i₁ ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → i i₂ ≡ v') × (i i₁ less-than i i₂ is b v₁) →
              (∀ v' → ε ⊢ (e₁ ≺ e₂) ⇓ v' → b v₁ ≡ v')
-    help-h = {!!}
+    help-h ε e₁ e₂ i₁ i₂ .(i₁ <ℤ i₂) (proj₁ , proj₂ , B-Lt refl) ._ (E-Lt x₁ x₂ (B-Lt refl)) with proj₁ _ x₁ | proj₂ _ x₂
+    ... | refl | refl = cong b refl
     help-i : ∀ ε e₁ e₂ e₃ v₁ →
              (∀ v' → ε ⊢ e₁ ⇓ v' → b true ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → v₁ ≡ v') →
              (∀ v' → ε ⊢ if e₁ then e₂ else e₃ ⇓ v' → v₁ ≡ v')

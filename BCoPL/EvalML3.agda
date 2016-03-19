@@ -68,6 +68,9 @@ private
   + m < -[1+ n ] = false
   + m < + n = m <ℕ n
 
+_<ℤ_ : ℤ → ℤ → Bool
+_<ℤ_ = _<_
+
 data _plus_is_ : Value → Value → Value → Set where
   B-Plus : ∀ {i₁ i₂ i₃} → i₁ + i₂ ≡ i₃ → i i₁ plus i i₂ is i i₃
 
