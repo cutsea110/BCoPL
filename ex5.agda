@@ -985,7 +985,8 @@ theorem-5-2 prf = induction-EvalML3 help-a help-b help-c help-d help-e help-f he
     help-e : ∀ ε e₁ e₂ i₁ i₂ i₃ →
              (∀ v' → ε ⊢ e₁ ⇓ v' → i i₁ ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → i i₂ ≡ v') × (i i₁ plus i i₂ is i i₃) →
              (∀ v' → ε ⊢ (e₁ ⊕ e₂) ⇓ v' → i i₃ ≡ v')
-    help-e = {!!}
+    help-e ε e₁ e₂ i₁ i₂ .(i₁ + i₂) (proj₁ , proj₂ , B-Plus refl) ._ (E-Plus x₁ x₂ (B-Plus refl)) with proj₁ _ x₁ | proj₂ _ x₂
+    ... | refl | refl = refl
     help-f : ∀ ε e₁ e₂ i₁ i₂ i₃ →
              (∀ v' → ε ⊢ e₁ ⇓ v' → i i₁ ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → i i₂ ≡ v') × (i i₁ minus i i₂ is i i₃) →
              (∀ v' → ε ⊢ (e₁ ⊝ e₂) ⇓ v' → i i₃ ≡ v')
