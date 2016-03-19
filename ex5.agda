@@ -963,3 +963,65 @@ q53 = E-Let E-Fun (E-App (E-App E-Var1 E-Var1 E-Fun) E-Int (E-IfF (E-Lt E-Var1 E
   };
 };
 -}
+
+open import BCoPL.Induction3
+open import Data.Empty using (⊥-elim)
+
+theorem-5-2 : ∀ {ε e v} → ε ⊢ e ⇓ v → (∀ {v'} → ε ⊢ e ⇓ v' → v ≡ v')
+theorem-5-2 prf = induction-EvalML3 help-a help-b help-c help-d help-e help-f help-g help-h {!help-i!} {!help-j!} {!help-k!} help-l {!help-m!} help-n {!help-o!} prf
+  where
+    help-a : ∀ ε n → ∀ v' → ε ⊢ i n ⇓ v' → i n ≡ v'
+    help-a ε n .(i n) E-Int = refl
+    help-b : ∀ ε v → ∀ v' → ε ⊢ b v ⇓ v' → b v ≡ v'
+    help-b ε v .(b v) E-Bool = refl
+    help-c : ∀ ε x v → ∀ v' → ε ⊱ (x , v) ⊢ var x ⇓ v' → v ≡ v'
+    help-c ε x v .v E-Var1 = refl
+    help-c ε x v v'' (E-Var2 p prf₁) = ⊥-elim (p refl)
+    help-d : ∀ ε x y v₁ v₂ → (p : x ≢ y) →
+             (∀ v' → ε ⊢ var x ⇓ v' → v₂ ≡ v') →
+             (∀ v' → ε ⊱ (y , v₁) ⊢ var x ⇓ v' → v₂ ≡ v')
+    help-d ε x .x v₁ v₂ p prf₁ .v₁ E-Var1 = ⊥-elim (p refl)
+    help-d ε x y v₁ v₂ p prf₁ v'' (E-Var2 p₁ prf₂) = prf₁ _ prf₂
+    help-e : ∀ ε e₁ e₂ i₁ i₂ i₃ →
+             (∀ v' → ε ⊢ e₁ ⇓ v' → i i₁ ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → i i₂ ≡ v') × (i i₁ plus i i₂ is i i₃) →
+             (∀ v' → ε ⊢ (e₁ ⊕ e₂) ⇓ v' → i i₃ ≡ v')
+    help-e = {!!}
+    help-f : ∀ ε e₁ e₂ i₁ i₂ i₃ →
+             (∀ v' → ε ⊢ e₁ ⇓ v' → i i₁ ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → i i₂ ≡ v') × (i i₁ minus i i₂ is i i₃) →
+             (∀ v' → ε ⊢ (e₁ ⊝ e₂) ⇓ v' → i i₃ ≡ v')
+    help-f = {!!}
+    help-g : ∀ ε e₁ e₂ i₁ i₂ i₃ →
+             (∀ v' → ε ⊢ e₁ ⇓ v' → i i₁ ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → i i₂ ≡ v') × (i i₁ times i i₂ is i i₃) →
+             (∀ v' → ε ⊢ (e₁ ⊛ e₂) ⇓ v' → i i₃ ≡ v')
+    help-g = {!!}
+    help-h : ∀ ε e₁ e₂ i₁ i₂ v₁ →
+             (∀ v' → ε ⊢ e₁ ⇓ v' → i i₁ ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → i i₂ ≡ v') × (i i₁ less-than i i₂ is b v₁) →
+             (∀ v' → ε ⊢ (e₁ ≺ e₂) ⇓ v' → b v₁ ≡ v')
+    help-h = {!!}
+    help-i : ∀ ε e₁ e₂ e₃ v₁ →
+             (∀ v' → ε ⊢ e₁ ⇓ v' → b true ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → v₁ ≡ v') →
+             (∀ v' → ε ⊢ if e₁ then e₂ else e₃ ⇓ v' → v₁ ≡ v')
+    help-i = {!!}
+    help-j : ∀ ε e₁ e₂ e₃ v₁ →
+             (∀ v' → ε ⊢ e₁ ⇓ v' → b false ≡ v') × (∀ v' → ε ⊢ e₃ ⇓ v' → v₁ ≡ v') →
+             (∀ v' → ε ⊢ if e₁ then e₂ else e₃ ⇓ v' → v₁ ≡ v')
+    help-j = {!!}
+    help-k : ∀ ε e₁ e₂ x v₁ v₂ →
+             (∀ v' → ε ⊢ e₁ ⇓ v' → v₂ ≡ v') × (∀ v' → ε ⊱ (x , v₂) ⊢ e₂ ⇓ v' → v₁ ≡ v') →
+             (∀ v' → ε ⊢ ℓet x ≔ e₁ ιn e₂ ⇓ v' → v₁ ≡ v')
+    help-k = {!!}
+    help-l : ∀ ε x e₁ → (∀ v' → ε ⊢ fun x ⇒ e₁ ⇓ v' → ⟨ ε ⟩[fun x ⇒ e₁ ] ≡ v')
+    help-l = {!!}
+    help-m : ∀ ε₁ ε₂ e₀ e₁ e₂ x v₁ v₂ →
+             (∀ v' → ε₁ ⊢ e₁ ⇓ v' → ⟨ ε₂ ⟩[fun x ⇒ e₀ ] ≡ v') × (∀ v' → ε₁ ⊢ e₂ ⇓ v' → v₂ ≡ v') × (∀ v' → ε₂ ⊱ (x , v₂) ⊢ e₀ ⇓ v' → v₁ ≡ v') →
+             (∀ v' → ε₁ ⊢ app e₁ e₂ ⇓ v' → v₁ ≡ v')
+    help-m = {!!}
+    help-n : ∀ ε₁ e₁ e₂ x y v₁ →
+             (∀ v' → ε₁ ⊱ (x , ⟨ ε₁ ⟩[rec x ≔fun y ⇒ e₁ ]) ⊢ e₂ ⇓ v' → v₁ ≡ v') →
+             (∀ v' → ε₁ ⊢ ℓetrec x ≔fun y ⇒ e₁ ιn e₂ ⇓ v' → v₁ ≡ v')
+    help-n = {!!}
+    help-o : ∀ ε₁ ε₂ e₀ e₁ e₂ x y v₁ v₂ →
+             (∀ v' → ε₁ ⊢ e₁ ⇓ v' → ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ] ≡ v') × (∀ v' → ε₁ ⊢ e₂ ⇓ v' → v₂ ≡ v') × (∀ v' → ε₂ ⊱ (x , ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ]) ⊱ (y , v₂) ⊢ e₀ ⇓ v' → v₁ ≡ v') →
+             (∀ v' → ε₁ ⊢ app e₁ e₂ ⇓ v' → v₁ ≡ v')
+    help-o = {!!}
+
