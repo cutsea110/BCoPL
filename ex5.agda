@@ -1003,30 +1003,46 @@ theorem-5-2 prf = induction-EvalML3 help-a help-b help-c help-d help-e help-f he
              (∀ v' → ε ⊢ (e₁ ≺ e₂) ⇓ v' → b v₁ ≡ v')
     help-h ε e₁ e₂ i₁ i₂ .(i₁ <ℤ i₂) (proj₁ , proj₂ , B-Lt refl) ._ (E-Lt x₁ x₂ (B-Lt refl)) with proj₁ _ x₁ | proj₂ _ x₂
     ... | refl | refl = cong b refl
-    help-i : ∀ ε e₁ e₂ e₃ v₁ →
-             (∀ v' → ε ⊢ e₁ ⇓ v' → b true ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → v₁ ≡ v') →
-             (∀ v' → ε ⊢ if e₁ then e₂ else e₃ ⇓ v' → v₁ ≡ v')
-    help-i = {!!}
+    help-i : ∀ ε e₁ e₂ e₃ v →
+             (∀ v' → ε ⊢ e₁ ⇓ v' → b true ≡ v') × (∀ v' → ε ⊢ e₂ ⇓ v' → v ≡ v') →
+             (∀ v' → ε ⊢ if e₁ then e₂ else e₃ ⇓ v' → v ≡ v')
+    help-i ε e₁ e₂ e₃ v₁ (proj₁ , proj₂) v'' (E-IfT prf₁ prf₂) with proj₁ _ prf₁ | proj₂ _ prf₂
+    help-i ε e₁ e₂ e₃ v₁ (proj₁ , proj₂) .v₁ (E-IfT prf₁ prf₂) | refl | refl = refl
+    help-i ε e₁ e₂ e₃ v₁ (proj₁ , proj₂) v'' (E-IfF prf₁ prf₂) with proj₁ _ prf₁
+    ... | ()
     help-j : ∀ ε e₁ e₂ e₃ v₁ →
              (∀ v' → ε ⊢ e₁ ⇓ v' → b false ≡ v') × (∀ v' → ε ⊢ e₃ ⇓ v' → v₁ ≡ v') →
              (∀ v' → ε ⊢ if e₁ then e₂ else e₃ ⇓ v' → v₁ ≡ v')
-    help-j = {!!}
+    help-j ε e₁ e₂ e₃ v₁ (proj₁ , proj₂) v'' (E-IfT prf₁ prf₂) with proj₁ _ prf₁
+    ... | ()
+    help-j ε e₁ e₂ e₃ v₁ (proj₁ , proj₂) v'' (E-IfF prf₁ prf₂) with proj₁ _ prf₁ | proj₂ _ prf₂
+    help-j ε e₁ e₂ e₃ v₁ (proj₁ , proj₂) .v₁ (E-IfF prf₁ prf₂) | refl | refl = refl
     help-k : ∀ ε e₁ e₂ x v₁ v₂ →
              (∀ v' → ε ⊢ e₁ ⇓ v' → v₂ ≡ v') × (∀ v' → ε ⊱ (x , v₂) ⊢ e₂ ⇓ v' → v₁ ≡ v') →
              (∀ v' → ε ⊢ ℓet x ≔ e₁ ιn e₂ ⇓ v' → v₁ ≡ v')
-    help-k = {!!}
+    help-k ε e₁ e₂ x v₁ v₂ (proj₁ , proj₂) v'' (E-Let prf₁ prf₂) with proj₁ _ prf₁
+    ... | refl with proj₂ _ prf₂
+    help-k ε e₁ e₂ x v₁ v₂ (proj₁ , proj₂) .v₁ (E-Let prf₁ prf₂) | refl | refl = refl
     help-l : ∀ ε x e₁ → (∀ v' → ε ⊢ fun x ⇒ e₁ ⇓ v' → ⟨ ε ⟩[fun x ⇒ e₁ ] ≡ v')
-    help-l = {!!}
+    help-l ε x e₁ .(⟨ ε ⟩[fun x ⇒ e₁ ]) E-Fun = refl
     help-m : ∀ ε₁ ε₂ e₀ e₁ e₂ x v₁ v₂ →
              (∀ v' → ε₁ ⊢ e₁ ⇓ v' → ⟨ ε₂ ⟩[fun x ⇒ e₀ ] ≡ v') × (∀ v' → ε₁ ⊢ e₂ ⇓ v' → v₂ ≡ v') × (∀ v' → ε₂ ⊱ (x , v₂) ⊢ e₀ ⇓ v' → v₁ ≡ v') →
              (∀ v' → ε₁ ⊢ app e₁ e₂ ⇓ v' → v₁ ≡ v')
-    help-m = {!!}
+    help-m ε₁ ε₂ e₀ e₁ e₂ x v₁ v₂ (proj₁ , proj₂ , proj₃) v'' (E-App prf₁ prf₂ prf₃) with proj₁ _ prf₁ | proj₂ _ prf₂
+    ... | refl | refl with proj₃ _ prf₃
+    help-m ε₁ ε₂ e₀ e₁ e₂ x v₁ v₂ (proj₁ , proj₂ , proj₃) .v₁ (E-App prf₁ prf₂ prf₃) | refl | refl | refl = refl
+    help-m ε₁ ε₂ e₀ e₁ e₂ x v₁ v₂ (proj₁ , proj₂ , proj₃) v'' (E-AppRec prf₁ prf₂ prf₃) with proj₁ _ prf₁
+    help-m ε₁ ε₂ e₀ e₂ e₃ x v₁ v₂ (proj₁ , proj₂ , proj₃) v'' (E-AppRec prf₁ prf₂ prf₃) | ()
     help-n : ∀ ε₁ e₁ e₂ x y v₁ →
              (∀ v' → ε₁ ⊱ (x , ⟨ ε₁ ⟩[rec x ≔fun y ⇒ e₁ ]) ⊢ e₂ ⇓ v' → v₁ ≡ v') →
              (∀ v' → ε₁ ⊢ ℓetrec x ≔fun y ⇒ e₁ ιn e₂ ⇓ v' → v₁ ≡ v')
-    help-n = {!!}
+    help-n ε₁ e₁ e₂ x y v₁ proj v'' (E-LetRec prf₁) with proj _ prf₁
+    help-n ε₁ e₁ e₂ x y v₁ proj .v₁ (E-LetRec prf₁) | refl = refl
     help-o : ∀ ε₁ ε₂ e₀ e₁ e₂ x y v₁ v₂ →
              (∀ v' → ε₁ ⊢ e₁ ⇓ v' → ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ] ≡ v') × (∀ v' → ε₁ ⊢ e₂ ⇓ v' → v₂ ≡ v') × (∀ v' → ε₂ ⊱ (x , ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ]) ⊱ (y , v₂) ⊢ e₀ ⇓ v' → v₁ ≡ v') →
              (∀ v' → ε₁ ⊢ app e₁ e₂ ⇓ v' → v₁ ≡ v')
-    help-o = {!!}
-
+    help-o ε₁ ε₂ e₀ e₁ e₂ x y v₁ v₂ (proj₁ , proj₂ , proj₃) v'' (E-App prf₁ prf₂ prf₃) with proj₁ _ prf₁
+    help-o ε₁ ε₂ e₀ e₂ e₃ x y v₁ v₂ (proj₁ , proj₂ , proj₃) v'' (E-App prf₁ prf₂ prf₃) | ()
+    help-o ε₁ ε₂ e₀ e₁ e₂ x y v₁ v₂ (proj₁ , proj₂ , proj₃) v'' (E-AppRec prf₁ prf₂ prf₃) with proj₁ _ prf₁ | proj₂ _ prf₂
+    ... | refl | refl with proj₃ _ prf₃
+    help-o ε₁ ε₂ e₀ e₁ e₂ x y v₁ v₂ (proj₁ , proj₂ , proj₃) .v₁ (E-AppRec prf₁ prf₂ prf₃) | refl | refl | refl = refl
