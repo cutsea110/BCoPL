@@ -46,3 +46,4 @@ induction-EvalML3 a b' c d e' f g h i' j k l m n o (E-App prf prf₁ prf₂)
   = m _ _ _ _ _ _ _ _ (induction-EvalML3 a b' c d e' f g h i' j k l m n o prf , induction-EvalML3 a b' c d e' f g h i' j k l m n o prf₁ , induction-EvalML3 a b' c d e' f g h i' j k l m n o prf₂)
 induction-EvalML3 a b' c d e' f g h i' j k l m n o (E-AppRec prf prf₁ prf₂)
   = o _ _ _ _ _ _ _ _ _ (induction-EvalML3 a b' c d e' f g h i' j k l m n o prf , induction-EvalML3 a b' c d e' f g h i' j k l m n o prf₁ , induction-EvalML3 a b' c d e' f g h i' j k l m n o prf₂)
+
