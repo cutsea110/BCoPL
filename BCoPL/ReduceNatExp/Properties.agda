@@ -20,27 +20,27 @@ notPeano (e₁ ⊛ e₂) = ⊤
 --
 -- notPeanoじゃなくRedex -- 簡約可能を使う方がかっこいい.
 --
-
-reduceability-⟶ : (e : Exp) → notPeano e → ∃ λ e′ → e ⟶ e′
-reduceability-⟶ (Nat n) ()
-reduceability-⟶ (Nat n₁ ⊕ Nat n₂) tt = Nat (n₁ + n₂) , R-Plus (eval-plus n₁ n₂)
-reduceability-⟶ (Nat n₁ ⊕ (e₂ ⊕ e₃)) tt with reduceability-⟶ (e₂ ⊕ e₃) tt
-... | proj₁ , proj₂ = (Nat n₁ ⊕ proj₁) , R-PlusR proj₂
-reduceability-⟶ (Nat n₁ ⊕ (e₂ ⊛ e₃)) tt with reduceability-⟶ (e₂ ⊛ e₃) tt
-... | proj₁ , proj₂ = (Nat n₁ ⊕ proj₁) , R-PlusR proj₂
-reduceability-⟶ ((e₁ ⊕ e₂) ⊕ e₃) tt with reduceability-⟶ (e₁ ⊕ e₂) tt
-... | proj₁ , proj₂ = (proj₁ ⊕ e₃) , R-PlusL proj₂
-reduceability-⟶ ((e₁ ⊛ e₂) ⊕ e₃) tt with reduceability-⟶ (e₁ ⊛ e₂) tt
-... | proj₁ , proj₂ = (proj₁ ⊕ e₃) , R-PlusL proj₂
-reduceability-⟶ (Nat n₁ ⊛ Nat n₂) tt = (Nat (n₁ * n₂)) , (R-Times (eval-times n₁ n₂))
-reduceability-⟶ (Nat n₁ ⊛ (e₂ ⊕ e₃)) tt with reduceability-⟶ (e₂ ⊕ e₃) tt
-... | proj₁ , proj₂ = Nat n₁ ⊛ proj₁ , R-TimesR proj₂
-reduceability-⟶ (Nat n₁ ⊛ (e₂ ⊛ e₃)) tt with reduceability-⟶ (e₂ ⊛ e₃) tt
-... | proj₁ , proj₂ = Nat n₁ ⊛ proj₁ , R-TimesR proj₂
-reduceability-⟶ ((e₁ ⊕ e₂) ⊛ e₃) tt with reduceability-⟶ (e₁ ⊕ e₂) tt
-... | proj₁ , proj₂ = proj₁ ⊛ e₃ , R-TimesL proj₂
-reduceability-⟶ ((e₁ ⊛ e₂) ⊛ e₃) tt with reduceability-⟶ (e₁ ⊛ e₂) tt
-... | proj₁ , proj₂ = proj₁ ⊛ e₃ , R-TimesL proj₂
+private 
+  reduceability-⟶ : (e : Exp) → notPeano e → ∃ λ e′ → e ⟶ e′
+  reduceability-⟶ (Nat n) ()
+  reduceability-⟶ (Nat n₁ ⊕ Nat n₂) tt = Nat (n₁ + n₂) , R-Plus (eval-plus n₁ n₂)
+  reduceability-⟶ (Nat n₁ ⊕ (e₂ ⊕ e₃)) tt with reduceability-⟶ (e₂ ⊕ e₃) tt
+  ... | proj₁ , proj₂ = (Nat n₁ ⊕ proj₁) , R-PlusR proj₂
+  reduceability-⟶ (Nat n₁ ⊕ (e₂ ⊛ e₃)) tt with reduceability-⟶ (e₂ ⊛ e₃) tt
+  ... | proj₁ , proj₂ = (Nat n₁ ⊕ proj₁) , R-PlusR proj₂
+  reduceability-⟶ ((e₁ ⊕ e₂) ⊕ e₃) tt with reduceability-⟶ (e₁ ⊕ e₂) tt
+  ... | proj₁ , proj₂ = (proj₁ ⊕ e₃) , R-PlusL proj₂
+  reduceability-⟶ ((e₁ ⊛ e₂) ⊕ e₃) tt with reduceability-⟶ (e₁ ⊛ e₂) tt
+  ... | proj₁ , proj₂ = (proj₁ ⊕ e₃) , R-PlusL proj₂
+  reduceability-⟶ (Nat n₁ ⊛ Nat n₂) tt = (Nat (n₁ * n₂)) , (R-Times (eval-times n₁ n₂))
+  reduceability-⟶ (Nat n₁ ⊛ (e₂ ⊕ e₃)) tt with reduceability-⟶ (e₂ ⊕ e₃) tt
+  ... | proj₁ , proj₂ = Nat n₁ ⊛ proj₁ , R-TimesR proj₂
+  reduceability-⟶ (Nat n₁ ⊛ (e₂ ⊛ e₃)) tt with reduceability-⟶ (e₂ ⊛ e₃) tt
+  ... | proj₁ , proj₂ = Nat n₁ ⊛ proj₁ , R-TimesR proj₂
+  reduceability-⟶ ((e₁ ⊕ e₂) ⊛ e₃) tt with reduceability-⟶ (e₁ ⊕ e₂) tt
+  ... | proj₁ , proj₂ = proj₁ ⊛ e₃ , R-TimesL proj₂
+  reduceability-⟶ ((e₁ ⊛ e₂) ⊛ e₃) tt with reduceability-⟶ (e₁ ⊛ e₂) tt
+  ... | proj₁ , proj₂ = proj₁ ⊛ e₃ , R-TimesL proj₂
 
 -- theorem 2.22
 confluent : ∀ {e₁ e₂ e₃} → e₁ ⟶ e₂ × notPeano e₂ → e₁ ⟶ e₃ × notPeano e₃ → ∃ λ e₄ → e₂ ⟶ e₄ × e₃ ⟶ e₄
@@ -52,9 +52,11 @@ confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {e₃ₗ ⊕ e₃ᵣ} (R-PlusL proj₁ , 
 confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {e₃ₗ ⊕ e₃ᵣ} (R-PlusR proj₁ , tt) (R-PlusL proj₃ , tt) = (e₃ₗ ⊕ e₂ᵣ) , ((R-PlusL proj₃) , (R-PlusR proj₁))
 confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {.e₂ₗ ⊕ e₃ᵣ} (R-PlusR proj₁ , tt) (R-PlusR proj₃ , tt) = {!!}
 
-confluent {e₁} {e₂ₗ ⊕ e₂ᵣ} {e₃ₗ ⊛ e₃ᵣ} (proj₁ , tt) (proj₃ , tt) = {!!}
+confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {e₃ₗ ⊛ e₃ᵣ} (R-PlusL proj₁ , tt) (() , tt)
+confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {e₃ₗ ⊛ e₃ᵣ} (R-PlusR proj₁ , tt) (() , tt)
 confluent {e₁} {e₂ₗ ⊛ e₂ᵣ} {Nat x} (proj₁ , tt) (proj₃ , ())
-confluent {e₁} {e₂ₗ ⊛ e₂ᵣ} {e₃ₗ ⊕ e₃ᵣ} (proj₁ , tt) (proj₃ , tt) = {!!}
+confluent {e₂ = e₂ₗ ⊛ e₂ᵣ} {e₃ₗ ⊕ e₃ᵣ} (R-TimesL proj₁ , tt) (() , tt)
+confluent {e₂ = e₂ₗ ⊛ e₂ᵣ} {e₃ₗ ⊕ e₃ᵣ} (R-TimesR proj₁ , tt) (() , tt)
 
 confluent {e₂ = e₂ₗ ⊛ e₃ᵣ} {e₃ₗ ⊛ .e₃ᵣ} (R-TimesL proj₁ , tt) (R-TimesL proj₃ , tt) = {!!}
 confluent {e₂ = e₂ₗ ⊛ e₂ᵣ} {e₃ₗ ⊛ e₃ᵣ} (R-TimesL proj₁ , tt) (R-TimesR proj₃ , tt) = (e₂ₗ ⊛ e₃ᵣ) , ((R-TimesR proj₃) , R-TimesL proj₁)
