@@ -47,10 +47,12 @@ confluent : ∀ {e₁ e₂ e₃} → e₁ ⟶ e₂ × notPeano e₂ → e₁ ⟶
 confluent {e₂ = Nat x} (proj₁ , ()) (proj₃ , proj₄)
 confluent {e₂ = e₂ ⊕ e₃} {Nat x} (proj₁ , tt) (proj₃ , ())
 
-confluent {e₂ = e₂ₗ ⊕ e₃ᵣ} {e₃ₗ ⊕ .e₃ᵣ} (R-PlusL proj₁ , tt) (R-PlusL proj₃ , tt) = {!!}
+confluent {e₂ = e₂ₗ ⊕ e₃ᵣ} {e₃ₗ ⊕ .e₃ᵣ} (R-PlusL proj₁ , tt) (R-PlusL proj₃ , tt) with confluent (proj₁ , _) (proj₃ , _)
+confluent {._} {e₂ₗ ⊕ e₃ᵣ} {e₃ₗ ⊕ .e₃ᵣ} (R-PlusL proj₄ , tt) (R-PlusL proj₅ , tt) | proj₁ , proj₂ , proj₃ = (proj₁ ⊕ e₃ᵣ) , ((R-PlusL proj₂) , (R-PlusL proj₃))
 confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {e₃ₗ ⊕ e₃ᵣ} (R-PlusL proj₁ , tt) (R-PlusR proj₃ , tt) = (e₂ₗ ⊕ e₃ᵣ) , (R-PlusR proj₃ , R-PlusL proj₁)
 confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {e₃ₗ ⊕ e₃ᵣ} (R-PlusR proj₁ , tt) (R-PlusL proj₃ , tt) = (e₃ₗ ⊕ e₂ᵣ) , ((R-PlusL proj₃) , (R-PlusR proj₁))
-confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {.e₂ₗ ⊕ e₃ᵣ} (R-PlusR proj₁ , tt) (R-PlusR proj₃ , tt) = {!!}
+confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {.e₂ₗ ⊕ e₃ᵣ} (R-PlusR proj₁ , tt) (R-PlusR proj₃ , tt) with confluent (proj₁ , _) (proj₃ , _)
+confluent {._} {e₂ₗ ⊕ e₂ᵣ} {.e₂ₗ ⊕ e₃ᵣ} (R-PlusR proj₄ , tt) (R-PlusR proj₅ , tt) | proj₁ , proj₂ , proj₃ = (e₂ₗ ⊕ proj₁) , ((R-PlusR proj₂) , (R-PlusR proj₃))
 
 confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {e₃ₗ ⊛ e₃ᵣ} (R-PlusL proj₁ , tt) (() , tt)
 confluent {e₂ = e₂ₗ ⊕ e₂ᵣ} {e₃ₗ ⊛ e₃ᵣ} (R-PlusR proj₁ , tt) (() , tt)
@@ -58,10 +60,12 @@ confluent {e₁} {e₂ₗ ⊛ e₂ᵣ} {Nat x} (proj₁ , tt) (proj₃ , ())
 confluent {e₂ = e₂ₗ ⊛ e₂ᵣ} {e₃ₗ ⊕ e₃ᵣ} (R-TimesL proj₁ , tt) (() , tt)
 confluent {e₂ = e₂ₗ ⊛ e₂ᵣ} {e₃ₗ ⊕ e₃ᵣ} (R-TimesR proj₁ , tt) (() , tt)
 
-confluent {e₂ = e₂ₗ ⊛ e₃ᵣ} {e₃ₗ ⊛ .e₃ᵣ} (R-TimesL proj₁ , tt) (R-TimesL proj₃ , tt) = {!!}
+confluent {e₂ = e₂ₗ ⊛ e₃ᵣ} {e₃ₗ ⊛ .e₃ᵣ} (R-TimesL proj₁ , tt) (R-TimesL proj₃ , tt) with confluent (proj₁ , _) (proj₃ , _)
+confluent {._} {e₂ₗ ⊛ e₃ᵣ} {e₃ₗ ⊛ .e₃ᵣ} (R-TimesL proj₄ , tt) (R-TimesL proj₅ , tt) | proj₁ , proj₂ , proj₃ = (proj₁ ⊛ e₃ᵣ) , ((R-TimesL proj₂) , (R-TimesL proj₃))
 confluent {e₂ = e₂ₗ ⊛ e₂ᵣ} {e₃ₗ ⊛ e₃ᵣ} (R-TimesL proj₁ , tt) (R-TimesR proj₃ , tt) = (e₂ₗ ⊛ e₃ᵣ) , ((R-TimesR proj₃) , R-TimesL proj₁)
 confluent {e₂ = e₂ₗ ⊛ e₂ᵣ} {e₃ₗ ⊛ e₃ᵣ} (R-TimesR proj₁ , tt) (R-TimesL proj₃ , tt) = (e₃ₗ ⊛ e₂ᵣ) , ((R-TimesL proj₃) , (R-TimesR proj₁))
-confluent {e₂ = e₂ₗ ⊛ e₂ᵣ} {.e₂ₗ ⊛ e₃ᵣ} (R-TimesR proj₁ , tt) (R-TimesR proj₃ , tt) = {!!}
+confluent {e₂ = e₂ₗ ⊛ e₂ᵣ} {.e₂ₗ ⊛ e₃ᵣ} (R-TimesR proj₁ , tt) (R-TimesR proj₃ , tt) with confluent (proj₁ , _) (proj₃ , _)
+confluent {._} {e₂ₗ ⊛ e₂ᵣ} {.e₂ₗ ⊛ e₃ᵣ} (R-TimesR proj₄ , tt) (R-TimesR proj₅ , tt) | proj₁ , proj₂ , proj₃ = (e₂ₗ ⊛ proj₁) , ((R-TimesR proj₂) , (R-TimesR proj₃))
 {-
 confluent : ∀ {e₁ e₂ e₃} → notPeano e₂ × notPeano e₃ →
             e₁ ⟶ e₂ × e₁ ⟶ e₃ → ∃ λ e₄ → e₂ ⟶ e₄ × e₃ ⟶ e₄
