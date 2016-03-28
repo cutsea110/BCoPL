@@ -191,27 +191,30 @@ open import Data.Nat.Properties using (_+-mono_)
 
 size : Exp → ℕ
 size (Nat x) = 0
-size (e₁ ⊕ e₂) = size e₁ + size e₂
-size (e₁ ⊛ e₂) = size e₁ + size e₂
+size (e₁ ⊕ e₂) = 1 + size e₁ + size e₂
+size (e₁ ⊛ e₂) = 1 + size e₁ + size e₂
 
 size-is-more-than-0 : (e : Exp) → size e ≥ 0
 size-is-more-than-0 e = z≤n
 
 ≡⇒≤ : ∀ {n m} → n ≡ m → n ≤ m
-≡⇒≤ {Z} .{0} refl = z≤n
+≡⇒≤ {Z} .{Z} refl = z≤n
 ≡⇒≤ {(S n)} .{(S n)} refl = s≤s (≡⇒≤ refl)
 
-⟶-reduce-size : ∀ {e₁ e₂} → e₁ ⟶ e₂ → size e₁ ≥ size e₂
-⟶-reduce-size (R-Plus x) = z≤n
-⟶-reduce-size (R-Times x) = z≤n
-⟶-reduce-size (R-PlusL p) with ⟶-reduce-size p
-... | prf = prf +-mono ≡⇒≤ refl
-⟶-reduce-size (R-PlusR p) with ⟶-reduce-size p
-... | prf = (≡⇒≤ refl) +-mono prf
-⟶-reduce-size (R-TimesL p) with ⟶-reduce-size p
-... | prf = prf +-mono ≡⇒≤ refl
-⟶-reduce-size (R-TimesR p) with ⟶-reduce-size p
-... | prf = (≡⇒≤ refl) +-mono prf
+⟶-reduce-size : ∀ {e₁ e₂} → e₁ ⟶ e₂ → size e₂ < size e₁
+⟶-reduce-size {Nat x} {e₂} ()
+⟶-reduce-size {e₁ ⊕ e₂} {Nat x} prf = s≤s z≤n
+⟶-reduce-size {e₁ ⊕ e₂} {e₃ ⊕ .e₂} (R-PlusL prf) with ⟶-reduce-size prf
+... | p = s≤s (p +-mono (≡⇒≤ refl))
+⟶-reduce-size {e₁ ⊕ e₂} {.e₁ ⊕ e₄} (R-PlusR prf) with ⟶-reduce-size prf
+... | p = s≤s ((≡⇒≤ refl) +-mono p)
+⟶-reduce-size {e₁ ⊕ e₂} {e₃ ⊛ e₄} ()
+⟶-reduce-size {e₁ ⊛ e₂} {Nat x} prf = s≤s z≤n
+⟶-reduce-size {e₁ ⊛ e₂} {e₃ ⊕ e₄} ()
+⟶-reduce-size {e₁ ⊛ e₂} {e₃ ⊛ .e₂} (R-TimesL prf) with ⟶-reduce-size prf
+... | p = s≤s (p +-mono (≡⇒≤ refl))
+⟶-reduce-size {e₁ ⊛ e₂} {.e₁ ⊛ e₄} (R-TimesR prf) with ⟶-reduce-size prf
+... | p = s≤s ((≡⇒≤ refl) +-mono p)
 
 strong-normarization : (e : Exp) → ¬ (∃ λ (e′ : ℕ → Exp) → (e ≡ e′ 1) × (∀ i → ((e′ i ⟶ e′ (S i)) × notPeano (e′ (S i)))))
 strong-normarization e (e′ , p , prf) = {!!}
