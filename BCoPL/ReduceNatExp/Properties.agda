@@ -101,10 +101,6 @@ uniqueness--d-> (DR-TimesR x₁ , DR-TimesR x₂) rewrite uniqueness--d-> (x₁ 
 -d->→⟶ (DR-TimesR p) with -d->→⟶ p
 ... | prf = R-TimesR prf
 
--- theorem 2.26
--- size? p42?
-
-
 -- theorem 2.27
 left-reduction-⊕ : ∀ {e₁ e₁′ e₂} → e₁ -*-> e₁′ → e₁ ⊕ e₂ -*-> e₁′ ⊕ e₂
 left-reduction-⊕ MR-Zero = MR-Zero
@@ -189,6 +185,36 @@ weak-normalization (e₁ ⊕ e₂) with weak-normalization e₁ | weak-normaliza
 weak-normalization (e₁ ⊛ e₂) with weak-normalization e₁ | weak-normalization e₂
 ... | n₁ , e₁-*->n₁ | n₂ , e₂-*->n₂
   = (n₁ * n₂) , MR-Multi (both-reduction-⊛ e₁-*->n₁ e₂-*->n₂) (MR-One (R-Times (x-times-y-is-x*y n₁ n₂)))
+
+-- theorem 2.26
+open import Data.Nat.Properties using (_+-mono_)
+
+size : Exp → ℕ
+size (Nat x) = 0
+size (e₁ ⊕ e₂) = size e₁ + size e₂
+size (e₁ ⊛ e₂) = size e₁ + size e₂
+
+size-is-more-than-0 : (e : Exp) → size e ≥ 0
+size-is-more-than-0 e = z≤n
+
+≡⇒≤ : ∀ {n m} → n ≡ m → n ≤ m
+≡⇒≤ {Z} .{0} refl = z≤n
+≡⇒≤ {(S n)} .{(S n)} refl = s≤s (≡⇒≤ refl)
+
+⟶-reduce-size : ∀ {e₁ e₂} → e₁ ⟶ e₂ → size e₁ ≥ size e₂
+⟶-reduce-size (R-Plus x) = z≤n
+⟶-reduce-size (R-Times x) = z≤n
+⟶-reduce-size (R-PlusL p) with ⟶-reduce-size p
+... | prf = prf +-mono ≡⇒≤ refl
+⟶-reduce-size (R-PlusR p) with ⟶-reduce-size p
+... | prf = (≡⇒≤ refl) +-mono prf
+⟶-reduce-size (R-TimesL p) with ⟶-reduce-size p
+... | prf = prf +-mono ≡⇒≤ refl
+⟶-reduce-size (R-TimesR p) with ⟶-reduce-size p
+... | prf = (≡⇒≤ refl) +-mono prf
+
+strong-normarization : (e : Exp) → ¬ (∃ λ (e′ : ℕ → Exp) → (e ≡ e′ 1) × (∀ i → ((e′ i ⟶ e′ (S i)) × notPeano (e′ (S i)))))
+strong-normarization e (e′ , p , prf) = {!!}
 
 -- theorem 2.28
 n-*->e→e≡n : ∀ {e n} → Nat n -*-> e → e ≡ Nat n
