@@ -54,7 +54,7 @@ ex-9-1-3 = T-Let (T-Abs (T-Var refl raw))
 
 q111 : ● ⊱ ("f" , ("a" ◂ [ "b" ]) ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a" ) ⊢
        app (app (var "f") (i (+ 3))) (b true) ⊕ app (app (var "f") (i (+ 2))) (i (+ 4)) ∶ int
-q111 = T-Plus (T-App (T-App (T-Var {σ = ("a" ◂ [ "b" ] ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")}
+q111 = T-Plus (T-App (T-App (T-Var {σ = (("a" ◂ [ "b" ]) ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")}
                                    refl
                                    (concretion ((int ◂ [ bool ]) , refl))) T-Int) T-Bool)
               (T-App (T-App (T-Var refl
@@ -82,7 +82,7 @@ ex-9-1-4 : ● ⊢ ℓet "k" ≔ fun "x" ⇒ fun "y" ⇒ var "x" ιn
                    (app (app (var "k") (i (+ 3))) (b true)) ∷ (app (app (var "k") ((i (+ 1)) ∷ [])) (i (+ 3)))
                 ∶ int list
 ex-9-1-4 = T-Let (T-Abs (T-Abs (T-Var refl raw)))
-                 (T-Cons (T-App (T-App (T-Var {σ = ("a" ◂ [ "b" ] ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")}
+                 (T-Cons (T-App (T-App (T-Var {σ = (("a" ◂ [ "b" ]) ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")}
                                               refl
                                               (concretion ((int ◂ [ bool ]) , refl)))
                                        T-Int) T-Bool)
@@ -138,11 +138,11 @@ ex-9-1-5 = T-Let {αs = "a" ◂ ("b" ◂ [ "c" ])}
                                (T-App (T-App (T-App (T-Var refl (concretion (bool ◂ (bool ◂ [ int ]) , refl)))
                                                     (T-Var
                                                            refl (concretion ((bool ◂ [ int ]) , refl))))
-                                             (T-App (T-App (T-Var {σ = ("a" ◂ ("b" ◂ [ "c" ]) ̣ (′ "b" ⇀ ′ "c") ⇀ (′ "a" ⇀ ′ "b") ⇀ ′ "a" ⇀ ′ "c")}
+                                             (T-App (T-App (T-Var {σ = (("a" ◂ ("b" ◂ [ "c" ])) ̣ (′ "b" ⇀ ′ "c") ⇀ (′ "a" ⇀ ′ "b") ⇀ ′ "a" ⇀ ′ "c")}
                                                                   refl (concretion (bool ◂ (int ◂ [ bool ]) , refl)))
-                                                           (T-Var {σ = ("a" ◂ [ "b" ] ̣ int ⇀ bool)}
+                                                           (T-Var {σ = (("a" ◂ [ "b" ]) ̣ int ⇀ bool)}
                                                                   refl (concretion ((int ◂ [ bool ]) , refl))))
-                                                    (T-Var {σ = ("b" ◂ [ "c" ] ̣ bool ⇀ int)}
+                                                    (T-Var {σ = (("b" ◂ [ "c" ]) ̣ bool ⇀ int)}
                                                            refl (concretion ((bool ◂ [ int ]) , refl)))))
                                       T-Bool)
                                (refl , refl))
@@ -287,11 +287,11 @@ q116 = T-Let (T-Abs (T-Abs (T-Abs (T-App (T-App (T-Var refl raw)
                                          (T-App (T-Var refl raw)
                                                 (T-Var refl raw))))))
              (T-Let (T-Abs (T-Abs (T-Var refl raw)))
-                    (T-App (T-App (T-Var {σ = ("a" ◂ ("b" ◂ [ "c" ]) ̣
+                    (T-App (T-App (T-Var {σ = (("a" ◂ ("b" ◂ [ "c" ])) ̣
                                              (′ "a" ⇀ ′ "b" ⇀ ′ "c") ⇀ (′ "a" ⇀ ′ "b") ⇀ ′ "a" ⇀ ′ "c")}
                                          refl (concretion (′ "a" ◂ ((′ "b" ⇀ ′ "a") ◂ [ ′ "a" ]) , refl)))
                                   (T-Var refl (concretion ((′ "a" ◂ [ ′ "b" ⇀ ′ "a" ]) , refl))))
-                           (T-Var {σ = ("a" ◂ [ "b" ] ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")}
+                           (T-Var {σ = (("a" ◂ [ "b" ]) ̣ ′ "a" ⇀ ′ "b" ⇀ ′ "a")}
                                   refl (concretion ((′ "a" ◂ [ ′ "b" ]) , refl))))
                     (refl , refl))
              (refl , refl)
@@ -464,7 +464,7 @@ q120 = T-LetRec (T-Abs (T-Match (T-Var refl raw)
                                                (T-Var refl raw)))))
                 (T-App (T-App (T-Var refl (concretion ((int ◂ [ bool ]) , refl)))
                               (T-Abs (T-Lt (T-Var refl raw) T-Int)))
-                       (T-App (T-App (T-Var {σ = ("a" ◂ [ "b" ] ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)}
+                       (T-App (T-App (T-Var {σ = (("a" ◂ [ "b" ]) ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)}
                                             refl (concretion (int ◂ [ int ] , refl)))
                                      (T-Abs (T-Mult (T-Var refl raw) T-Int)))
                               (T-Cons T-Int (T-Cons T-Int (T-Cons T-Int T-Nil)))))
@@ -539,7 +539,7 @@ q121 = T-LetRec (T-Abs (T-Match (T-Var refl raw)
                                         (T-App (T-App (T-Var refl raw)
                                                       (T-Var refl raw))
                                                (T-Var refl raw)))))
-                (T-Let (T-App (T-Var {σ = ("a" ◂ [ "b" ] ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)}
+                (T-Let (T-App (T-Var {σ = (("a" ◂ [ "b" ]) ̣ (′ "a" ⇀ ′ "b") ⇀ ′ "a" list ⇀ ′ "b" list)}
                                      refl (concretion ((′ "a" ◂ [ ′ "a" ]) , refl)))
                               (T-Abs (T-Var {x = "x"} {σ = t (′ "a")} refl raw)))
                        (T-Let {αs = [ "a" ]}

@@ -234,6 +234,8 @@ data _⊢_⇓_ : DBValueList → DBExp → DBValue → Set where
 data _⟹_ : Value → DBValue → Set
 data _⤇_ : Env → VarList × DBValueList → Set
 
+infix 10 _⤇_
+
 data _⤇_ where
   Tre-Empty : ● ⤇ (● , ●)
   Tre-Bind : ∀ {ε χ ν x v w}
