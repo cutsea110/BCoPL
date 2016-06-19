@@ -4,6 +4,7 @@ module PigCanFly where
 -- ref. japanese wikipedia for soundness
 --
 open import Relation.Nullary using (¬_)
+import Relation.Nullary.Negation
 
 data Animal : Set where
   bird : Animal
