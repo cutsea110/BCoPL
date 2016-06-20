@@ -98,6 +98,13 @@ private
   isBool [] = ⊥
   isBool (v ∷ v₁) = ⊥
 
+  _∈_ : Var → Env → Set
+  x ∈ ● = ⊥
+  x ∈ (ε ⊱ (y , v)) = x == y ¿ ⊤ ∶ x ∈ ε
+
+  _∉_ : Var → Env → Set
+  x ∉ ε = ¬ x ∈ ε
+
 data _plus_is_ : Value → Value → Value → Set where
   B-Plus : ∀ {i₁ i₂ i₃} → i₁ + i₂ ≡ i₃ → right (i i₁) plus right (i i₂) is right (i i₃)
 
@@ -121,6 +128,9 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
            → ε ⊢ b v ⇓ right (b v)
   E-Var : ∀ {ε x v}
           → ε ⟦ x ⟧ ≡ v → ε ⊢ var x ⇓ v
+  E-VarErr : ∀ {ε x}
+             → {x∉ε : x ∉ ε}
+             → ε ⊢ var x ⇓ left (error "E-VarErr")
   E-Plus : ∀ {ε e₁ i₁ e₂ i₂ i₃}
            → ε ⊢ e₁ ⇓ i₁
            → ε ⊢ e₂ ⇓ i₂
