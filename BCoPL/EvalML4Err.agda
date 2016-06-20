@@ -211,6 +211,13 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
           → ε ⊢ e₁ ⇓ v₁
           → ε ⊱ (x , v₁) ⊢ e₂ ⇓ v
           → ε ⊢ ℓet x ≔ e₁ ιn e₂ ⇓ v
+  E-LetErr1 : ∀ {ε x e₁ e₂}
+              → ε ⊢ e₁ ⇓ left (error "e₁ is error")
+              → ε ⊢ ℓet x ≔ e₁ ιn e₂ ⇓ left (error "E-LetErr1")
+  E-LetErr2 : ∀ {ε x e₁ e₂ v₁}
+              → ε ⊢ e₁ ⇓ v₁
+              → ε ⊱ (x , v₁) ⊢ e₂ ⇓ left (error "e₂ is error")
+              → ε ⊢ ℓet x ≔ e₁ ιn e₂ ⇓ left (error "E-LetErr2")
   E-LetRec : ∀ {ε x y e₁ e₂ v}
              → ε ⊱ (x , right (⟨ ε ⟩[rec x ≔fun y ⇒ e₁ ])) ⊢ e₂ ⇓ v
              → ε ⊢ ℓetrec x ≔fun y ⇒ e₁ ιn e₂ ⇓ v
