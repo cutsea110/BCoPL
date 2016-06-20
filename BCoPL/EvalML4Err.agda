@@ -154,6 +154,15 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
             → ε ⊢ e₂ ⇓ i₂
             → i₁ times i₂ is i₃
             → ε ⊢ e₁ ⊛ e₂ ⇓ i₃
+  E-TimesErr1 : ∀ {ε e₁ e₂ r}
+                → ε ⊢ e₁ ⇓ right r
+                → ¬ isℤ r
+                → ε ⊢ e₁ ⊛ e₂ ⇓ left (error "E-TimesErr1")
+  E-TimesErr2 : ∀ {ε e₁ e₂ i₁ r}
+                → ε ⊢ e₁ ⇓ i₁
+                → ε ⊢ e₂ ⇓ right r
+                → ¬ isℤ r
+                → ε ⊢ e₁ ⊛ e₂ ⇓ left (error "E-TimesErr2")
   E-Lt : ∀ {ε e₁ i₁ e₂ i₂ b₃}
          → ε ⊢ e₁ ⇓ i₁
          → ε ⊢ e₂ ⇓ i₂
