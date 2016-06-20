@@ -140,6 +140,15 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
             → ε ⊢ e₂ ⇓ i₂
             → i₁ minus i₂ is i₃
             → ε ⊢ e₁ ⊝ e₂ ⇓ i₃
+  E-MinusErr1 : ∀ {ε e₁ e₂ r}
+                → ε ⊢ e₁ ⇓ right r
+                → ¬ isℤ r
+                → ε ⊢ e₁ ⊝ e₂ ⇓ left (error "E-MinusErr1")
+  E-MinusErr2 : ∀ {ε e₁ e₂ i₁ r}
+                → ε ⊢ e₁ ⇓ i₁
+                → ε ⊢ e₂ ⇓ right r
+                → ¬ isℤ r
+                → ε ⊢ e₁ ⊝ e₂ ⇓ left (error "E-MinusErr2")
   E-Times : ∀ {ε e₁ i₁ e₂ i₂ i₃}
             → ε ⊢ e₁ ⇓ i₁
             → ε ⊢ e₂ ⇓ i₂
