@@ -113,6 +113,14 @@ private
   isClosure [] = ⊥
   isClosure (v ∷ v₁) = ⊥
 
+  isList : Val → Set
+  isList (i x) = ⊥
+  isList (b x) = ⊥
+  isList ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊥
+  isList ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊥
+  isList [] = ⊤
+  isList (v ∷ v₁) = ⊤
+
 data _plus_is_ : Value → Value → Value → Set where
   B-Plus : ∀ {i₁ i₂ i₃} → i₁ + i₂ ≡ i₃ → right (i i₁) plus right (i i₂) is right (i i₃)
 
@@ -286,4 +294,15 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
                 → ε ⊢ e₁ ⇓ right (v₁ ∷ v₂)
                 → ε ⊱ (x , right v₁) ⊱ (y , right v₂) ⊢ e₃ ⇓ v
                 → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ v
-
+  E-MatchErr1 : ∀ {ε x y e₁ e₂ e₃ r}
+                → ε ⊢ e₁ ⇓ right r
+                → {r≢List :  ¬ isList r }
+                → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ left (error "E-MatchErr1")
+  E-MatchErr2 : ∀ {ε x y e₁ e₂ e₃}
+                → ε ⊢ e₁ ⇓ right []
+                → ε ⊢ e₂ ⇓ left (error "e₂ is error")
+                → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ left (error "E-MatchErr2")
+  E-MatchErr3 : ∀ {ε x y e₁ e₂ e₃ v₁ v₂}
+                → ε ⊢ e₁ ⇓ right (v₁ ∷ v₂)
+                → ε ⊱ (x , right v₁) ⊱ (y , right v₂) ⊢ e₃ ⇓ left (error "e₃ is error")
+                → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ left (error "E-MatchErr3")
