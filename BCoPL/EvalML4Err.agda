@@ -105,6 +105,14 @@ private
   _∉_ : Var → Env → Set
   x ∉ ε = ¬ x ∈ ε
 
+  isClosure : Val → Set
+  isClosure (i x) = ⊥
+  isClosure (b x) = ⊥
+  isClosure ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊤
+  isClosure ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊤
+  isClosure [] = ⊥
+  isClosure (v ∷ v₁) = ⊥
+
 data _plus_is_ : Value → Value → Value → Set where
   B-Plus : ∀ {i₁ i₂ i₃} → i₁ + i₂ ≡ i₃ → right (i i₁) plus right (i i₂) is right (i i₃)
 
@@ -227,6 +235,28 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
           → ε ⊢ e₁ ⇓ right (⟨ ε₂ ⟩[fun x ⇒ e₀ ])
           → ε ⊢ e₂ ⇓ v₂ → ε₂ ⊱ (x , v₂) ⊢ e₀ ⇓ v
           → ε ⊢ app e₁ e₂ ⇓ v
+  E-AppErr1 : ∀ {ε e₁ e₂ r}
+              → ε ⊢ e₁ ⇓ right r
+              → {r≢Closure : ¬ isClosure r}
+              → ε ⊢ app e₁ e₂ ⇓ left (error "E-AppErr1")
+  E-AppErr2 : ∀ {ε ε₂ x e₀ e₁ e₂}
+              → ε ⊢ e₁ ⇓ right (⟨ ε₂ ⟩[fun x ⇒ e₀ ])
+              → ε ⊢ e₂ ⇓ left (error "e₂ is error")
+              → ε ⊢ app e₁ e₂ ⇓ left (error "E-AppErr2")
+  E-AppErr3 : ∀ {ε ε₂ x y e₀ e₁ e₂}
+              → ε ⊢ e₁ ⇓ right (⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ])
+              → ε ⊢ e₂ ⇓ left (error "e₂ is error")
+              → ε ⊢ app e₁ e₂ ⇓ left (error "E-AppErr3")
+  E-AppErr4 : ∀ {ε ε₂ x e₀ e₁ e₂ v₂}
+              → ε ⊢ e₁ ⇓ right (⟨ ε₂ ⟩[fun x ⇒ e₀ ])
+              → ε ⊢ e₂ ⇓ v₂
+              → ε₂ ⊱ (x , v₂) ⊢ e₀ ⇓ left (error "e₀ is error")
+              → ε ⊢ app e₁ e₂ ⇓ left (error "E-AppErr4")
+  E-AppErr5 : ∀ {ε ε₂ x y e₀ e₁ e₂ v₂}
+              → ε ⊢ e₁ ⇓ right ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ]
+              → ε ⊢ e₂ ⇓ v₂
+              → ε₂ ⊱ (x , right ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ]) ⊱ (y , v₂) ⊢ e₀ ⇓ left (error "e₀ is error")
+              → ε ⊢ app e₁ e₂ ⇓ left (error "E-AppErr5")
   E-AppRec : ∀ {ε ε₂ e₀ e₁ e₂ x y v v₂} →
              ε ⊢ e₁ ⇓ right (⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ])
              → ε ⊢ e₂ ⇓ v₂
