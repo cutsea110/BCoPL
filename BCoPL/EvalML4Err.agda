@@ -271,6 +271,13 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
            → ε ⊢ e₁ ⇓ right v₁
            → ε ⊢ e₂ ⇓ right v₂
            → ε ⊢ e₁ ∷ e₂ ⇓ right (v₁ ∷ v₂)
+  E-ConsErr1 : ∀ {ε e₁ e₂}
+               → ε ⊢ e₁ ⇓ left (error "e₁ is error")
+               → ε ⊢ e₁ ∷ e₂ ⇓ left (error "E-ConsErr1")
+  E-ConsErr2 : ∀ {ε e₁ e₂ v₁}
+               → ε ⊢ e₁ ⇓ v₁
+               → ε ⊢ e₂ ⇓ left (error "e₂ is error")
+               → ε ⊢ e₁ ∷ e₂ ⇓ left (error "E-ConsErr2")
   E-MatchNil : ∀ {ε e₁ e₂ e₃ x y v}
                → ε ⊢ e₁ ⇓ right []
                → ε ⊢ e₂ ⇓ v
