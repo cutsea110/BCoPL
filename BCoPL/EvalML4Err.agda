@@ -168,6 +168,15 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
          → ε ⊢ e₂ ⇓ i₂
          → i₁ less-than i₂ is b₃
          → ε ⊢ e₁ ≺ e₂ ⇓ b₃
+  E-LtErr1 : ∀ {ε e₁ e₂ r}
+             → ε ⊢ e₁ ⇓ right r
+             → ¬ isℤ r
+             → ε ⊢ e₁ ≺ e₂ ⇓ left (error "E-LtErr1")
+  E-LtErr2 : ∀ {ε e₁ e₂ i₁ r}
+             → ε ⊢ e₁ ⇓ i₁
+             → ε ⊢ e₂ ⇓ right r
+             → ¬ isℤ r
+             → ε ⊢ e₁ ≺ e₂ ⇓ left (error "E-LtErr2")
   E-IfT : ∀ {ε e₁ e₂ e₃ v}
           → ε ⊢ e₁ ⇓ right (b true)
           → ε ⊢ e₂ ⇓ v
