@@ -159,8 +159,8 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
           → ε ⊢ e₃ ⇓ v
           → ε ⊢ if e₁ then e₂ else e₃ ⇓ v
   E-IfErr1 : ∀ {ε e₁ e₂ e₃ r}
-             → ¬ isBool r
              → ε ⊢ e₁ ⇓ right r
+             → ¬ isBool r
              → ε ⊢ if e₁ then e₂ else e₃ ⇓ left (error "E-IfErr1")
   E-IfErr2 : ∀ {ε e₁ e₂ e₃}
              → ε ⊢ e₁ ⇓ right (b true)
