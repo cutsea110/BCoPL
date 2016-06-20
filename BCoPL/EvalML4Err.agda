@@ -6,7 +6,10 @@ open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
 open import Data.Product using (_×_;_,_) public
 open import Data.String using (String; _==_) public
 open import Data.Sum renaming (_⊎_ to _∨_; inj₁ to left; inj₂ to right) public
+open import Data.Unit using (⊤; tt)
+open import Data.Empty using (⊥)
 
+open import Relation.Nullary using (¬_)
 open import Relation.Binary.Core public
 open import Relation.Binary.PropositionalEquality using (refl;_≡_) public
 
@@ -79,6 +82,14 @@ private
   + m < -[1+ n ] = false
   + m < + n = m <ℕ n
 
+  isBool : Val → Set
+  isBool (i x) = ⊥
+  isBool (b x) = ⊤
+  isBool ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊥
+  isBool ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊥
+  isBool [] = ⊥
+  isBool (v ∷ v₁) = ⊥
+
 data _plus_is_ : Value → Value → Value → Set where
   B-Plus : ∀ {i₁ i₂ i₃} → i₁ + i₂ ≡ i₃ → right (i i₁) plus right (i i₂) is right (i i₃)
 
@@ -130,6 +141,10 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
           → ε ⊢ e₁ ⇓ right (b false)
           → ε ⊢ e₃ ⇓ v
           → ε ⊢ if e₁ then e₂ else e₃ ⇓ v
+  E-IfErr1 : ∀ {ε e₁ e₂ e₃ r}
+          → ¬ isBool r
+          → ε ⊢ e₁ ⇓ right r
+          → ε ⊢ if e₁ then e₂ else e₃ ⇓ left (error "E-IfErr1")
   E-Let : ∀ {ε x e₁ e₂ v v₁}
           → ε ⊢ e₁ ⇓ v₁
           → ε ⊱ (x , v₁) ⊢ e₂ ⇓ v
@@ -162,3 +177,4 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
                 → ε ⊢ e₁ ⇓ right (v₁ ∷ v₂)
                 → ε ⊱ (x , right v₁) ⊱ (y , right v₂) ⊢ e₃ ⇓ v
                 → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ v
+
