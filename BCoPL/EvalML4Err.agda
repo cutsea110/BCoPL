@@ -128,12 +128,12 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
            → ε ⊢ e₁ ⊕ e₂ ⇓ i₃
   E-PlusErr1 : ∀ {ε e₁ e₂ r}
                → ε ⊢ e₁ ⇓ right r
-               → ¬ isℤ r
+               → {r≢ℤ :  ¬ isℤ r}
                → ε ⊢ e₁ ⊕ e₂ ⇓ left (error "E-PlusErr1")
   E-PlusErr2 : ∀ {ε e₁ e₂ i₁ r}
                → ε ⊢ e₁ ⇓ i₁
                → ε ⊢ e₂ ⇓ right r
-               → ¬ isℤ r
+               → {r≢ℤ : ¬ isℤ r}
                → ε ⊢ e₁ ⊕ e₂ ⇓ left (error "E-PlusErr2")
   E-Minus : ∀ {ε e₁ i₁ e₂ i₂ i₃}
             → ε ⊢ e₁ ⇓ i₁
@@ -142,12 +142,12 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
             → ε ⊢ e₁ ⊝ e₂ ⇓ i₃
   E-MinusErr1 : ∀ {ε e₁ e₂ r}
                 → ε ⊢ e₁ ⇓ right r
-                → ¬ isℤ r
+                → {r≢ℤ : ¬ isℤ r}
                 → ε ⊢ e₁ ⊝ e₂ ⇓ left (error "E-MinusErr1")
   E-MinusErr2 : ∀ {ε e₁ e₂ i₁ r}
                 → ε ⊢ e₁ ⇓ i₁
                 → ε ⊢ e₂ ⇓ right r
-                → ¬ isℤ r
+                → {r≢ℤ : ¬ isℤ r}
                 → ε ⊢ e₁ ⊝ e₂ ⇓ left (error "E-MinusErr2")
   E-Times : ∀ {ε e₁ i₁ e₂ i₂ i₃}
             → ε ⊢ e₁ ⇓ i₁
@@ -156,12 +156,12 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
             → ε ⊢ e₁ ⊛ e₂ ⇓ i₃
   E-TimesErr1 : ∀ {ε e₁ e₂ r}
                 → ε ⊢ e₁ ⇓ right r
-                → ¬ isℤ r
+                → {r≢ℤ : ¬ isℤ r}
                 → ε ⊢ e₁ ⊛ e₂ ⇓ left (error "E-TimesErr1")
   E-TimesErr2 : ∀ {ε e₁ e₂ i₁ r}
                 → ε ⊢ e₁ ⇓ i₁
                 → ε ⊢ e₂ ⇓ right r
-                → ¬ isℤ r
+                → {r≢ℤ : ¬ isℤ r}
                 → ε ⊢ e₁ ⊛ e₂ ⇓ left (error "E-TimesErr2")
   E-Lt : ∀ {ε e₁ i₁ e₂ i₂ b₃}
          → ε ⊢ e₁ ⇓ i₁
@@ -170,12 +170,12 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
          → ε ⊢ e₁ ≺ e₂ ⇓ b₃
   E-LtErr1 : ∀ {ε e₁ e₂ r}
              → ε ⊢ e₁ ⇓ right r
-             → ¬ isℤ r
+             → {r≢ℤ : ¬ isℤ r}
              → ε ⊢ e₁ ≺ e₂ ⇓ left (error "E-LtErr1")
   E-LtErr2 : ∀ {ε e₁ e₂ i₁ r}
              → ε ⊢ e₁ ⇓ i₁
              → ε ⊢ e₂ ⇓ right r
-             → ¬ isℤ r
+             → {r≢ℤ : ¬ isℤ r}
              → ε ⊢ e₁ ≺ e₂ ⇓ left (error "E-LtErr2")
   E-IfT : ∀ {ε e₁ e₂ e₃ v}
           → ε ⊢ e₁ ⇓ right (b true)
@@ -187,7 +187,7 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
           → ε ⊢ if e₁ then e₂ else e₃ ⇓ v
   E-IfErr1 : ∀ {ε e₁ e₂ e₃ r}
              → ε ⊢ e₁ ⇓ right r
-             → ¬ isBool r
+             → {r≢Bool : ¬ isBool r}
              → ε ⊢ if e₁ then e₂ else e₃ ⇓ left (error "E-IfErr1")
   E-IfErr2 : ∀ {ε e₁ e₂ e₃}
              → ε ⊢ e₁ ⇓ right (b true)
