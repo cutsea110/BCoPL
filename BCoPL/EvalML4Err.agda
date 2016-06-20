@@ -229,6 +229,9 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
   E-LetRec : ∀ {ε x y e₁ e₂ v}
              → ε ⊱ (x , right (⟨ ε ⟩[rec x ≔fun y ⇒ e₁ ])) ⊢ e₂ ⇓ v
              → ε ⊢ ℓetrec x ≔fun y ⇒ e₁ ιn e₂ ⇓ v
+  E-LetRecErr : ∀ {ε x y e₁ e₂}
+                → ε ⊱ (x , right (⟨ ε ⟩[rec x ≔fun y ⇒ e₁ ])) ⊢ e₂ ⇓ left (error "e₂ is error")
+                → ε ⊢ ℓetrec x ≔fun y ⇒ e₁ ιn e₂ ⇓ left (error "E-LetRecErr")
   E-Fun : ∀ {ε x e}
           → ε ⊢ fun x ⇒ e ⇓ right (⟨ ε ⟩[fun x ⇒ e ])
   E-App : ∀ {ε ε₂ e₀ e₁ e₂ x v v₂}
