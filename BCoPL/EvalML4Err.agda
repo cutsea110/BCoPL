@@ -82,6 +82,14 @@ private
   + m < -[1+ n ] = false
   + m < + n = m <ℕ n
 
+  isℤ : Val → Set
+  isℤ (i x) = ⊤
+  isℤ (b x) = ⊥
+  isℤ ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊥
+  isℤ ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊥
+  isℤ [] = ⊥
+  isℤ (v ∷ v₁) = ⊥
+
   isBool : Val → Set
   isBool (i x) = ⊥
   isBool (b x) = ⊤
@@ -118,6 +126,15 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
            → ε ⊢ e₂ ⇓ i₂
            → i₁ plus i₂ is i₃
            → ε ⊢ e₁ ⊕ e₂ ⇓ i₃
+  E-PlusErr1 : ∀ {ε e₁ e₂ r}
+               → ε ⊢ e₁ ⇓ right r
+               → ¬ isℤ r
+               → ε ⊢ e₁ ⊕ e₂ ⇓ left (error "E-PlusErr1")
+  E-PlusErr2 : ∀ {ε e₁ e₂ i₁ r}
+               → ε ⊢ e₁ ⇓ i₁
+               → ε ⊢ e₂ ⇓ right r
+               → ¬ isℤ r
+               → ε ⊢ e₁ ⊕ e₂ ⇓ left (error "E-PlusErr2")
   E-Minus : ∀ {ε e₁ i₁ e₂ i₂ i₃}
             → ε ⊢ e₁ ⇓ i₁
             → ε ⊢ e₂ ⇓ i₂
