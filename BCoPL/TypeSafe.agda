@@ -2,27 +2,27 @@ module BCoPL.TypeSafe where
 
 open import Data.Empty using (⊥)
 open import Data.Unit using (⊤)
-open import BCoPL.EvalML4Err
-open import BCoPL.TypingML4Err hiding (Value; Env)
+open import BCoPL.EvalML4Err public
+open import BCoPL.TypingML4Err hiding (Value; Env) public
 
-private
-  isℤ : Value → Set
-  isℤ (left x) = ⊥
-  isℤ (right (i x)) = ⊤
-  isℤ (right (b x)) = ⊥
-  isℤ (right ⟨ x ⟩[fun x₁ ⇒ x₂ ]) = ⊥
-  isℤ (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊥
-  isℤ (right []) = ⊥
-  isℤ (right (y ∷ y₁)) = ⊥
 
-  isBool : Value → Set
-  isBool (left x) = ⊥
-  isBool (right (i x)) = ⊥
-  isBool (right (b x)) = ⊤
-  isBool (right ⟨ x ⟩[fun x₁ ⇒ x₂ ]) = ⊥
-  isBool (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊥
-  isBool (right []) = ⊥
-  isBool (right (y ∷ y₁)) = ⊥
+_isℤ : Value → Set
+_isℤ (left x) = ⊥
+_isℤ (right (i x)) = ⊤
+_isℤ (right (b x)) = ⊥
+_isℤ (right ⟨ x ⟩[fun x₁ ⇒ x₂ ]) = ⊥
+_isℤ (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊥
+_isℤ (right []) = ⊥
+_isℤ (right (y ∷ y₁)) = ⊥
+
+_isBool : Value → Set
+_isBool (left x) = ⊥
+_isBool (right (i x)) = ⊥
+_isBool (right (b x)) = ⊤
+_isBool (right ⟨ x ⟩[fun x₁ ⇒ x₂ ]) = ⊥
+_isBool (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊥
+_isBool (right []) = ⊥
+_isBool (right (y ∷ y₁)) = ⊥
 
 infix 6 ⊫_∶_ ⊨_∶_
 
@@ -33,8 +33,8 @@ data ⊫_∶_ : Env → TEnv → Set where
   NONEMPTY : ∀ {ε ε′ Γ Γ′ x v τ} → ε ≡ ε′ ⊱ (x , v) × Γ ≡ Γ′ ⊱ (x , τ) × ⊫ ε′ ∶ Γ′ × ⊨ v ∶ τ → ⊫ ε ∶ Γ
 
 data ⊨_∶_ where
-  INT : ∀ {τ v} → τ ≡ int × isℤ v → ⊨ v ∶ τ
-  BOOL : ∀ {τ v} → τ ≡ bool × isBool v → ⊨ v ∶ τ
+  INT : ∀ {τ v} → τ ≡ int × v isℤ → ⊨ v ∶ τ
+  BOOL : ∀ {τ v} → τ ≡ bool × v isBool → ⊨ v ∶ τ
   CLOSURE : ∀ {τ v τ₁ τ₂ ε x e Γ} →
             τ ≡ (τ₁ ⇀ τ₂) × v ≡ right (⟨ ε ⟩[fun x ⇒ e ]) × ⊫ ε ∶ Γ → (Γ ⊱ (x , τ₁) ⊢ e ∶ τ₂) → ⊨ v ∶ τ
   RECCLOSURE : ∀ {τ v τ₁ τ₂ ε x y e Γ} →
