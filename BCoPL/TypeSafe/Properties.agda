@@ -61,7 +61,8 @@ type-safety : ∀ {Γ ε e τ r} →
                 ∃ λ v → r ≡ v × ⊨ v ∶ τ
 type-safety (T-Int , E-Int , ⊫ε∶Γ) = (right (i _)) , (refl , INT (refl , tt))
 type-safety (T-Bool , E-Bool , ⊫ε∶Γ) = (right (b _)) , (refl , BOOL (refl , tt))
-type-safety (T-Var refl , E-Var refl , ⊫ε∶Γ) = {!!}
+type-safety (T-Var refl , E-Var refl , EMPTY (refl , refl)) = (left (error _)) , (refl , ERROR (left refl))
+type-safety (T-Var {x = x} refl , E-Var {x = .x} refl , NONEMPTY {x = y} (refl , refl , proj₃ , proj₄)) = {!!}
 type-safety (T-Var refl , E-VarErr , ⊫ε∶Γ) = (left (error _)) , (refl , (ERROR (right tt)))
 
 type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-Plus ε⊢e⇓r ε⊢e⇓r₁ (B-Plus refl) , ⊫ε∶Γ) = (right (i _)) , (refl , (INT (refl , tt)))
