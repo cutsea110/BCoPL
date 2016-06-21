@@ -89,7 +89,9 @@ type-safety (Γ⊢e∶τ , E-IfErr1 ε⊢e⇓r , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-IfErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-IfErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 
-type-safety (Γ⊢e∶τ , E-Let ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
+type-safety (T-Let Γ⊢e∶τ Γ⊢e∶τ₁ , E-Let ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
+... | v₁ , refl , proj₃ with type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , NONEMPTY (refl , (refl , (⊫ε∶Γ , proj₃))))
+... | r , refl , proj₄ = r , (refl , proj₄)
 type-safety (Γ⊢e∶τ , E-LetErr1 ε⊢e⇓r , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-LetErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 
