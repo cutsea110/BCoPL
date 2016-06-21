@@ -24,6 +24,24 @@ _isBool (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊥
 _isBool (right []) = ⊥
 _isBool (right (y ∷ y₁)) = ⊥
 
+_isClosure : Value → Set
+left x isClosure = ⊥
+right (i x) isClosure = ⊥
+right (b x) isClosure = ⊥
+right ⟨ x ⟩[fun x₁ ⇒ x₂ ] isClosure = ⊤
+right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] isClosure = ⊤
+right [] isClosure = ⊥
+right (y ∷ y₁) isClosure = ⊥
+
+_isList : Value → Set
+left x isList = ⊥
+right (i x) isList = ⊥
+right (b x) isList = ⊥
+right ⟨ x ⟩[fun x₁ ⇒ x₂ ] isList = ⊥
+right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] isList = ⊥
+right [] isList = ⊤
+right (y ∷ y₁) isList = ⊤
+
 infix 6 ⊫_∶_ ⊨_∶_
 
 data ⊨_∶_ : (v : Value) → (τ : Types) → Set
