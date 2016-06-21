@@ -96,7 +96,7 @@ type-safety (Γ⊢e∶τ , E-LetErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!
 type-safety (Γ⊢e∶τ , E-LetRec ε⊢e⇓r , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-LetRecErr ε⊢e⇓r , ⊫ε∶Γ) = {!!}
 
-type-safety (Γ⊢e∶τ , E-Fun , ⊫ε∶Γ) = {!!}
+type-safety (T-Fun Γ⊢e∶τ , E-Fun , ⊫ε∶Γ) = right ⟨ _ ⟩[fun _ ⇒ _ ] , (refl , CLOSURE (refl , (refl , ⊫ε∶Γ)) Γ⊢e∶τ)
 
 type-safety (Γ⊢e∶τ , E-App ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-AppErr1 ε⊢e⇓r , ⊫ε∶Γ) = {!!}
