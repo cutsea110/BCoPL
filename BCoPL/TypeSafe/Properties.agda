@@ -113,7 +113,7 @@ type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-Cons ε⊢e⇓r ε⊢e⇓r₁
 type-safety (Γ⊢e∶τ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-ConsErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 
-type-safety (Γ⊢e∶τ , E-MatchNil ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
+type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchNil ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
 type-safety (Γ⊢e∶τ , E-MatchCons ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-MatchErr1 ε⊢e⇓r , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-MatchErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
