@@ -100,7 +100,8 @@ type-safety (Γ⊢e∶τ , E-LetRecErr ε⊢e⇓r , ⊫ε∶Γ) = {!!}
 
 type-safety (T-Fun Γ⊢e∶τ , E-Fun , ⊫ε∶Γ) = right ⟨ _ ⟩[fun _ ⇒ _ ] , (refl , CLOSURE (refl , (refl , ⊫ε∶Γ)) Γ⊢e∶τ)
 
-type-safety (Γ⊢e∶τ , E-App ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) = {!!}
+type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-App {v = v} ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
+type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-App {v = v} ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) | _ , refl , proj₃ | v₂ , refl , proj₆ = v , (refl , {!!})
 type-safety (Γ⊢e∶τ , E-AppErr1 ε⊢e⇓r , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-AppErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-AppErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
