@@ -42,6 +42,10 @@ right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] isList = ⊥
 right [] isList = ⊤
 right (y ∷ y₁) isList = ⊤
 
+_isError : Value → Set
+left x isError = ⊤
+right y isError = ⊥
+
 infix 6 ⊫_∶_ ⊨_∶_
 
 data ⊨_∶_ : (v : Value) → (τ : Types) → Set
@@ -51,6 +55,7 @@ data ⊫_∶_ : Env → TEnv → Set where
   NONEMPTY : ∀ {ε ε′ Γ Γ′ x v τ} → ε ≡ ε′ ⊱ (x , v) × Γ ≡ Γ′ ⊱ (x , τ) × ⊫ ε′ ∶ Γ′ × ⊨ v ∶ τ → ⊫ ε ∶ Γ
 
 data ⊨_∶_ where
+  ERROR : ∀ {τ v} → τ ≡ type-error ∨ v isError → ⊨ v ∶ τ
   INT : ∀ {τ v} → τ ≡ int × v isℤ → ⊨ v ∶ τ
   BOOL : ∀ {τ v} → τ ≡ bool × v isBool → ⊨ v ∶ τ
   CLOSURE : ∀ {τ v τ₁ τ₂ ε x e Γ} →
