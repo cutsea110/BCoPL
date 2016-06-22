@@ -208,7 +208,15 @@ type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-App {v = v} ε⊢e⇓r ε⊢e�
     help (RECCLOSURE (refl , () , proj₂)) p₆ p
     help (NIL (() , proj₂)) p₆ p
     help (CONS (() , proj₂)) p₆ p
-type-safety (Γ⊢e∶τ , E-AppErr1 ε⊢e⇓r , ⊫ε∶Γ) = {!!}
+type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppErr1 ε⊢e⇓r {r≢Closure = r≢Closure} , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
+... | _ , refl , ERROR (left ())
+... | _ , refl , ERROR (right ())
+... | _ , refl , INT (() , proj₂)
+... | _ , refl , BOOL (() , proj₂)
+... | _ , refl , CLOSURE (refl , refl , proj₂) x₂ = ⊥-elim (r≢Closure tt)
+... | _ , refl , RECCLOSURE (refl , refl , proj₂ , proj₃) = ⊥-elim (r≢Closure tt)
+... | _ , refl , NIL (() , proj₂)
+... | _ , refl , CONS (() , proj₂)
 type-safety (Γ⊢e∶τ , E-AppErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-AppErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-AppErr4 ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) = {!!}
