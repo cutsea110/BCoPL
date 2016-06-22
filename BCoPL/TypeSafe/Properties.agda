@@ -55,6 +55,28 @@ int ≟ (τ₂ list) = no (λ ())
     help₃ : ∀ {τ₁ τ₂} → τ₁ list ≡ τ₂ list → τ₁ ≡ τ₂
     help₃ refl = refl
 
+help-car : ∀ {v₁ v₂ τ'} →
+           ⊨ right (v₁ ∷ v₂) ∶ τ' list → ⊨ right v₁ ∶ τ'
+help-car (ERROR (left ()))
+help-car (ERROR (right ()))
+help-car (INT (() , proj₂))
+help-car (BOOL (() , proj₂))
+help-car (CLOSURE (() , proj₂) x₂)
+help-car (RECCLOSURE (() , proj₂))
+help-car (NIL (proj₁ , ()))
+help-car (CONS (refl , refl , proj₁ , proj₂)) = proj₁
+
+help-cdr : ∀ {v₁ v₂ τ'} →
+    ⊨ right (v₁ ∷ v₂) ∶ τ' list → ⊨ right v₂ ∶ τ' list
+help-cdr (ERROR (left ()))
+help-cdr (ERROR (right ()))
+help-cdr (INT (() , proj₂))
+help-cdr (BOOL (() , proj₂))
+help-cdr (CLOSURE (() , proj₂) x₂)
+help-cdr (RECCLOSURE (() , proj₂))
+help-cdr (NIL (proj₁ , ()))
+help-cdr (CONS (refl , refl , proj₁ , proj₂)) = proj₂
+
 {- Theorem 8.3 -}
 open import Data.String renaming (_≟_ to _=?=_)
 type-safety : ∀ {Γ ε e τ r} →
@@ -249,29 +271,7 @@ type-safety (Γ⊢e∶τ , E-ConsErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {
 
 type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchNil ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
 type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchCons ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
-... | _ , refl , proj₃ = type-safety (Γ⊢e∶τ₂ , ε⊢e⇓r₁ , NONEMPTY (refl , refl , (NONEMPTY (refl , (refl , (⊫ε∶Γ , help₀ proj₃))) , help₁ proj₃)))
-  where
-    help₀ : ∀ {v₁ v₂ τ'} →
-        ⊨ right (v₁ ∷ v₂) ∶ τ' list → ⊨ right v₁ ∶ τ'
-    help₀ (ERROR (left ()))
-    help₀ (ERROR (right ()))
-    help₀ (INT (() , proj₂))
-    help₀ (BOOL (() , proj₂))
-    help₀ (CLOSURE (() , proj₂) x₂)
-    help₀ (RECCLOSURE (() , proj₂))
-    help₀ (NIL (proj₁ , ()))
-    help₀ (CONS (refl , refl , proj₁ , proj₂)) = proj₁
-
-    help₁ : ∀ {v₁ v₂ τ'} →
-        ⊨ right (v₁ ∷ v₂) ∶ τ' list → ⊨ right v₂ ∶ τ' list
-    help₁ (ERROR (left ()))
-    help₁ (ERROR (right ()))
-    help₁ (INT (() , proj₂))
-    help₁ (BOOL (() , proj₂))
-    help₁ (CLOSURE (() , proj₂) x₂)
-    help₁ (RECCLOSURE (() , proj₂))
-    help₁ (NIL (proj₁ , ()))
-    help₁ (CONS (refl , refl , proj₁ , proj₂)) = proj₂
+... | _ , refl , proj₃ = type-safety (Γ⊢e∶τ₂ , ε⊢e⇓r₁ , NONEMPTY (refl , refl , (NONEMPTY (refl , (refl , (⊫ε∶Γ , help-car proj₃))) , help-cdr proj₃)))
 type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchErr1 ε⊢e⇓r {r≢List = r≢List} , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
 ... | _ , refl , ERROR (left ())
 ... | _ , refl , ERROR (right ())
@@ -284,29 +284,7 @@ type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchErr1 ε�
 type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
 ... | .(right []) , refl , proj₃ | .(left (error "E-MatchErr2")) , refl , proj₆ = (left (error _)) , (refl , proj₆)
 type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
-type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) | _ , refl , proj₃ = type-safety (Γ⊢e∶τ₂ , ε⊢e⇓r₁ , NONEMPTY (refl , (refl , ((NONEMPTY (refl , (refl , (⊫ε∶Γ , help₀ proj₃)))) , {!help₁ proj₃!}))))
-  where
-    help₀ : ∀ {v₁ v₂ τ'} →
-        ⊨ right (v₁ ∷ v₂) ∶ τ' list → ⊨ right v₁ ∶ τ'
-    help₀ (ERROR (left ()))
-    help₀ (ERROR (right ()))
-    help₀ (INT (() , proj₂))
-    help₀ (BOOL (() , proj₂))
-    help₀ (CLOSURE (() , proj₂) x₂)
-    help₀ (RECCLOSURE (() , proj₂))
-    help₀ (NIL (refl , ()))
-    help₀ (CONS (refl , refl , proj₂ , proj₄)) = proj₂
-
-    help₁ : ∀ {v₁ v₂ τ'} →
-        ⊨ right (v₁ ∷ v₂) ∶ τ' list → ⊨ right v₂ ∶ τ' list
-    help₁ (ERROR (left ()))
-    help₁ (ERROR (right ()))
-    help₁ (INT (() , proj₂))
-    help₁ (BOOL (() , proj₂))
-    help₁ (CLOSURE (() , proj₂) x₂)
-    help₁ (RECCLOSURE (() , proj₂))
-    help₁ (NIL (proj₁ , ()))
-    help₁ (CONS (refl , refl , proj₁ , proj₂)) = proj₂
+type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) | _ , refl , proj₃ = type-safety (Γ⊢e∶τ₂ , ε⊢e⇓r₁ , NONEMPTY (refl , (refl , ((NONEMPTY (refl , (refl , (⊫ε∶Γ , help-car proj₃)))) , help-cdr proj₃))))
 
 {-
 type-safety : ∀ {e τ r v τ₁ τ₂ τ′} →
