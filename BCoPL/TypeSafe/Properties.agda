@@ -158,7 +158,15 @@ type-safety (T-If Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-IfT ε⊢e⇓r �
 ... | r , refl , proj₃ = r , (refl , proj₃)
 type-safety (T-If Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-IfF ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ₂ , ε⊢e⇓r₁ , ⊫ε∶Γ)
 ... | r , refl , proj₃ = r , (refl , proj₃)
-type-safety (Γ⊢e∶τ , E-IfErr1 ε⊢e⇓r , ⊫ε∶Γ) = {!!}
+type-safety (T-If Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-IfErr1 ε⊢e⇓r {r≢Bool = r≢Bool} , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
+... | _ , refl , ERROR (left ())
+... | _ , refl , ERROR (right ())
+... | _ , refl , INT (() , proj₂)
+... | _ , refl , BOOL (refl , proj₂) = ⊥-elim (r≢Bool proj₂)
+... | _ , refl , CLOSURE (() , proj₂) x₂
+... | _ , refl , RECCLOSURE (() , proj₂)
+... | _ , refl , NIL (() , proj₂)
+... | _ , refl , CONS (() , proj₂)
 type-safety (Γ⊢e∶τ , E-IfErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-IfErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 
