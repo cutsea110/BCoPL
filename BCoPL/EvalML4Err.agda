@@ -228,17 +228,17 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
           → ε ⊱ (x , v₁) ⊢ e₂ ⇓ v
           → ε ⊢ ℓet x ≔ e₁ ιn e₂ ⇓ v
   E-LetErr1 : ∀ {ε x e₁ e₂}
-              → ε ⊢ e₁ ⇓ left (error "e₁ is error")
+              → ε ⊢ e₁ ⇓ left (error "E-LetErr1")
               → ε ⊢ ℓet x ≔ e₁ ιn e₂ ⇓ left (error "E-LetErr1")
   E-LetErr2 : ∀ {ε x e₁ e₂ v₁}
               → ε ⊢ e₁ ⇓ v₁
-              → ε ⊱ (x , v₁) ⊢ e₂ ⇓ left (error "e₂ is error")
+              → ε ⊱ (x , v₁) ⊢ e₂ ⇓ left (error "E-LetErr2")
               → ε ⊢ ℓet x ≔ e₁ ιn e₂ ⇓ left (error "E-LetErr2")
   E-LetRec : ∀ {ε x y e₁ e₂ v}
              → ε ⊱ (x , right (⟨ ε ⟩[rec x ≔fun y ⇒ e₁ ])) ⊢ e₂ ⇓ v
              → ε ⊢ ℓetrec x ≔fun y ⇒ e₁ ιn e₂ ⇓ v
   E-LetRecErr : ∀ {ε x y e₁ e₂}
-                → ε ⊱ (x , right (⟨ ε ⟩[rec x ≔fun y ⇒ e₁ ])) ⊢ e₂ ⇓ left (error "e₂ is error")
+                → ε ⊱ (x , right (⟨ ε ⟩[rec x ≔fun y ⇒ e₁ ])) ⊢ e₂ ⇓ left (error "E-LetRecErr")
                 → ε ⊢ ℓetrec x ≔fun y ⇒ e₁ ιn e₂ ⇓ left (error "E-LetRecErr")
   E-Fun : ∀ {ε x e}
           → ε ⊢ fun x ⇒ e ⇓ right (⟨ ε ⟩[fun x ⇒ e ])
@@ -252,21 +252,21 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
               → ε ⊢ app e₁ e₂ ⇓ left (error "E-AppErr1")
   E-AppErr2 : ∀ {ε ε₂ x e₀ e₁ e₂}
               → ε ⊢ e₁ ⇓ right (⟨ ε₂ ⟩[fun x ⇒ e₀ ])
-              → ε ⊢ e₂ ⇓ left (error "e₂ is error")
+              → ε ⊢ e₂ ⇓ left (error "E-AppErr2")
               → ε ⊢ app e₁ e₂ ⇓ left (error "E-AppErr2")
   E-AppErr3 : ∀ {ε ε₂ x y e₀ e₁ e₂}
               → ε ⊢ e₁ ⇓ right (⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ])
-              → ε ⊢ e₂ ⇓ left (error "e₂ is error")
+              → ε ⊢ e₂ ⇓ left (error "E-AppErr3")
               → ε ⊢ app e₁ e₂ ⇓ left (error "E-AppErr3")
   E-AppErr4 : ∀ {ε ε₂ x e₀ e₁ e₂ v₂}
               → ε ⊢ e₁ ⇓ right (⟨ ε₂ ⟩[fun x ⇒ e₀ ])
               → ε ⊢ e₂ ⇓ v₂
-              → ε₂ ⊱ (x , v₂) ⊢ e₀ ⇓ left (error "e₀ is error")
+              → ε₂ ⊱ (x , v₂) ⊢ e₀ ⇓ left (error "E-AppErr4")
               → ε ⊢ app e₁ e₂ ⇓ left (error "E-AppErr4")
   E-AppErr5 : ∀ {ε ε₂ x y e₀ e₁ e₂ v₂}
               → ε ⊢ e₁ ⇓ right ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ]
               → ε ⊢ e₂ ⇓ v₂
-              → ε₂ ⊱ (x , right ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ]) ⊱ (y , v₂) ⊢ e₀ ⇓ left (error "e₀ is error")
+              → ε₂ ⊱ (x , right ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ]) ⊱ (y , v₂) ⊢ e₀ ⇓ left (error "E-AppErr5")
               → ε ⊢ app e₁ e₂ ⇓ left (error "E-AppErr5")
   E-AppRec : ∀ {ε ε₂ e₀ e₁ e₂ x y v v₂} →
              ε ⊢ e₁ ⇓ right (⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ])
@@ -280,11 +280,11 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
            → ε ⊢ e₂ ⇓ right v₂
            → ε ⊢ e₁ ∷ e₂ ⇓ right (v₁ ∷ v₂)
   E-ConsErr1 : ∀ {ε e₁ e₂}
-               → ε ⊢ e₁ ⇓ left (error "e₁ is error")
+               → ε ⊢ e₁ ⇓ left (error "E-ConsErr1")
                → ε ⊢ e₁ ∷ e₂ ⇓ left (error "E-ConsErr1")
   E-ConsErr2 : ∀ {ε e₁ e₂ v₁}
                → ε ⊢ e₁ ⇓ v₁
-               → ε ⊢ e₂ ⇓ left (error "e₂ is error")
+               → ε ⊢ e₂ ⇓ left (error "E-ConsErr2")
                → ε ⊢ e₁ ∷ e₂ ⇓ left (error "E-ConsErr2")
   E-MatchNil : ∀ {ε e₁ e₂ e₃ x y v}
                → ε ⊢ e₁ ⇓ right []
@@ -300,9 +300,9 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
                 → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ left (error "E-MatchErr1")
   E-MatchErr2 : ∀ {ε x y e₁ e₂ e₃}
                 → ε ⊢ e₁ ⇓ right []
-                → ε ⊢ e₂ ⇓ left (error "e₂ is error")
+                → ε ⊢ e₂ ⇓ left (error "E-MatchErr2")
                 → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ left (error "E-MatchErr2")
   E-MatchErr3 : ∀ {ε x y e₁ e₂ e₃ v₁ v₂}
                 → ε ⊢ e₁ ⇓ right (v₁ ∷ v₂)
-                → ε ⊱ (x , right v₁) ⊱ (y , right v₂) ⊢ e₃ ⇓ left (error "e₃ is error")
+                → ε ⊱ (x , right v₁) ⊱ (y , right v₂) ⊢ e₃ ⇓ left (error "E-MatchErr3")
                 → ε ⊢ match e₁ with[]⇒ e₂ ∣ x ∷ y ⇒ e₃ ⇓ left (error "E-MatchErr3")
