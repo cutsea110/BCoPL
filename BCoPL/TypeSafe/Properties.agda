@@ -95,7 +95,8 @@ type-safety (T-Let Γ⊢e∶τ Γ⊢e∶τ₁ , E-Let ε⊢e⇓r ε⊢e⇓r₁ ,
 type-safety (Γ⊢e∶τ , E-LetErr1 ε⊢e⇓r , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-LetErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 
-type-safety (Γ⊢e∶τ , E-LetRec ε⊢e⇓r , ⊫ε∶Γ) = {!!}
+type-safety (T-LetRec Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetRec ε⊢e⇓r , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r , NONEMPTY (refl , (refl , (⊫ε∶Γ , RECCLOSURE (refl , (refl , (⊫ε∶Γ , Γ⊢e∶τ)))))))
+type-safety (T-LetRec Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetRec ε⊢e⇓r , ⊫ε∶Γ) | r , refl , proj₃ = r , (refl , proj₃)
 type-safety (Γ⊢e∶τ , E-LetRecErr ε⊢e⇓r , ⊫ε∶Γ) = {!!}
 
 type-safety (T-Fun Γ⊢e∶τ , E-Fun , ⊫ε∶Γ) = right ⟨ _ ⟩[fun _ ⇒ _ ] , (refl , CLOSURE (refl , (refl , ⊫ε∶Γ)) Γ⊢e∶τ)
