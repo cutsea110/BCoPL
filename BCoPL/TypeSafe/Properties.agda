@@ -188,7 +188,7 @@ type-safety (T-Let Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetErr2 ε⊢e⇓r ε⊢e⇓r�
 type-safety (T-Let Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) | v₁ , refl , proj₃ | .(left (error "E-LetErr2")) , refl , proj₆ = (left (error _)) , (refl , proj₆)
 
 type-safety (T-LetRec Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetRec ε⊢e⇓r , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r , NONEMPTY (refl , (refl , (⊫ε∶Γ , RECCLOSURE (refl , (refl , (⊫ε∶Γ , Γ⊢e∶τ)))))))
-type-safety (T-LetRec Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetRec ε⊢e⇓r , ⊫ε∶Γ) | r , refl , proj₃ = r , (refl , proj₃)
+... | r , refl , proj₃ = r , (refl , proj₃)
 type-safety (Γ⊢e∶τ , E-LetRecErr ε⊢e⇓r , ⊫ε∶Γ) = {!!}
 
 type-safety (T-Fun Γ⊢e∶τ , E-Fun , ⊫ε∶Γ) = right ⟨ _ ⟩[fun _ ⇒ _ ] , (refl , CLOSURE (refl , (refl , ⊫ε∶Γ)) Γ⊢e∶τ)
