@@ -82,14 +82,6 @@ private
   + m < -[1+ n ] = false
   + m < + n = m <ℕ n
 
-  isℤ : Val → Set
-  isℤ (i x) = ⊤
-  isℤ (b x) = ⊥
-  isℤ ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊥
-  isℤ ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊥
-  isℤ [] = ⊥
-  isℤ (v ∷ v₁) = ⊥
-
   isBool : Val → Set
   isBool (i x) = ⊥
   isBool (b x) = ⊤
@@ -120,6 +112,14 @@ private
   isList ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊥
   isList [] = ⊤
   isList (v ∷ v₁) = ⊤
+
+isℤ : Val → Set
+isℤ (i x) = ⊤
+isℤ (b x) = ⊥
+isℤ ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊥
+isℤ ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊥
+isℤ [] = ⊥
+isℤ (v ∷ v₁) = ⊥
 
 data _plus_is_ : Value → Value → Value → Set where
   B-Plus : ∀ {i₁ i₂ i₃} → i₁ + i₂ ≡ i₃ → right (i i₁) plus right (i i₂) is right (i i₃)

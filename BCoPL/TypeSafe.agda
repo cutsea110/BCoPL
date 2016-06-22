@@ -2,49 +2,43 @@ module BCoPL.TypeSafe where
 
 open import Data.Empty using (⊥)
 open import Data.Unit using (⊤)
-open import BCoPL.EvalML4Err public
-open import BCoPL.TypingML4Err hiding (Value; Env) public
+open import BCoPL.EvalML4Err renaming (isℤ to isInt) public
+open import BCoPL.TypingML4Err hiding (Value; Env; isℤ) public
 
+isℤ : Value → Set
+isℤ (left x) = ⊥
+isℤ (right v) = isInt v
 
-_isℤ : Value → Set
-_isℤ (left x) = ⊥
-_isℤ (right (i x)) = ⊤
-_isℤ (right (b x)) = ⊥
-_isℤ (right ⟨ x ⟩[fun x₁ ⇒ x₂ ]) = ⊥
-_isℤ (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊥
-_isℤ (right []) = ⊥
-_isℤ (right (y ∷ y₁)) = ⊥
+isBool : Value → Set
+isBool (left x) = ⊥
+isBool (right (i x)) = ⊥
+isBool (right (b x)) = ⊤
+isBool (right ⟨ x ⟩[fun x₁ ⇒ x₂ ]) = ⊥
+isBool (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊥
+isBool (right []) = ⊥
+isBool (right (y ∷ y₁)) = ⊥
 
-_isBool : Value → Set
-_isBool (left x) = ⊥
-_isBool (right (i x)) = ⊥
-_isBool (right (b x)) = ⊤
-_isBool (right ⟨ x ⟩[fun x₁ ⇒ x₂ ]) = ⊥
-_isBool (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊥
-_isBool (right []) = ⊥
-_isBool (right (y ∷ y₁)) = ⊥
+isClosure : Value → Set
+isClosure (left x) = ⊥
+isClosure (right (i x)) = ⊥
+isClosure (right (b x)) = ⊥
+isClosure (right ⟨ x ⟩[fun x₁ ⇒ x₂ ]) = ⊤
+isClosure (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊤
+isClosure (right []) = ⊥
+isClosure (right (y ∷ y₁)) = ⊥
 
-_isClosure : Value → Set
-left x isClosure = ⊥
-right (i x) isClosure = ⊥
-right (b x) isClosure = ⊥
-right ⟨ x ⟩[fun x₁ ⇒ x₂ ] isClosure = ⊤
-right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] isClosure = ⊤
-right [] isClosure = ⊥
-right (y ∷ y₁) isClosure = ⊥
+isList : Value → Set
+isList (left x) = ⊥
+isList (right (i x)) = ⊥
+isList (right (b x)) = ⊥
+isList (right ⟨ x ⟩[fun x₁ ⇒ x₂ ]) = ⊥
+isList (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊥
+isList (right []) = ⊤
+isList (right (y ∷ y₁)) = ⊤
 
-_isList : Value → Set
-left x isList = ⊥
-right (i x) isList = ⊥
-right (b x) isList = ⊥
-right ⟨ x ⟩[fun x₁ ⇒ x₂ ] isList = ⊥
-right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] isList = ⊥
-right [] isList = ⊤
-right (y ∷ y₁) isList = ⊤
-
-_isError : Value → Set
-left x isError = ⊤
-right y isError = ⊥
+isError : Value → Set
+isError (left x) = ⊤
+isError (right y) = ⊥
 
 infix 6 ⊫_∶_ ⊨_∶_
 
@@ -55,9 +49,9 @@ data ⊫_∶_ : Env → TEnv → Set where
   NONEMPTY : ∀ {ε ε′ Γ Γ′ x v τ} → ε ≡ ε′ ⊱ (x , v) × Γ ≡ Γ′ ⊱ (x , τ) × ⊫ ε′ ∶ Γ′ × ⊨ v ∶ τ → ⊫ ε ∶ Γ
 
 data ⊨_∶_ where
-  ERROR : ∀ {τ v} → τ ≡ type-error ∨ v isError → ⊨ v ∶ τ
-  INT : ∀ {τ v} → τ ≡ int × v isℤ → ⊨ v ∶ τ
-  BOOL : ∀ {τ v} → τ ≡ bool × v isBool → ⊨ v ∶ τ
+  ERROR : ∀ {τ v} → τ ≡ type-error ∨ isError v → ⊨ v ∶ τ
+  INT : ∀ {τ v} → τ ≡ int × isℤ v → ⊨ v ∶ τ
+  BOOL : ∀ {τ v} → τ ≡ bool × isBool v → ⊨ v ∶ τ
   CLOSURE : ∀ {τ v τ₁ τ₂ ε x e Γ} →
             τ ≡ (τ₁ ⇀ τ₂) × v ≡ right (⟨ ε ⟩[fun x ⇒ e ]) × ⊫ ε ∶ Γ → (Γ ⊱ (x , τ₁) ⊢ e ∶ τ₂) → ⊨ v ∶ τ
   RECCLOSURE : ∀ {τ v τ₁ τ₂ ε x y e Γ} →
