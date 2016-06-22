@@ -82,36 +82,12 @@ private
   + m < -[1+ n ] = false
   + m < + n = m <ℕ n
 
-  isBool : Val → Set
-  isBool (i x) = ⊥
-  isBool (b x) = ⊤
-  isBool ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊥
-  isBool ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊥
-  isBool [] = ⊥
-  isBool (v ∷ v₁) = ⊥
-
   _∈_ : Var → Env → Set
   x ∈ ● = ⊥
   x ∈ (ε ⊱ (y , v)) = x == y ¿ ⊤ ∶ x ∈ ε
 
   _∉_ : Var → Env → Set
   x ∉ ε = ¬ x ∈ ε
-
-  isClosure : Val → Set
-  isClosure (i x) = ⊥
-  isClosure (b x) = ⊥
-  isClosure ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊤
-  isClosure ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊤
-  isClosure [] = ⊥
-  isClosure (v ∷ v₁) = ⊥
-
-  isList : Val → Set
-  isList (i x) = ⊥
-  isList (b x) = ⊥
-  isList ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊥
-  isList ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊥
-  isList [] = ⊤
-  isList (v ∷ v₁) = ⊤
 
 isℤ : Val → Set
 isℤ (i x) = ⊤
@@ -120,6 +96,30 @@ isℤ ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊥
 isℤ ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊥
 isℤ [] = ⊥
 isℤ (v ∷ v₁) = ⊥
+
+isBool : Val → Set
+isBool (i x) = ⊥
+isBool (b x) = ⊤
+isBool ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊥
+isBool ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊥
+isBool [] = ⊥
+isBool (v ∷ v₁) = ⊥
+
+isClosure : Val → Set
+isClosure (i x) = ⊥
+isClosure (b x) = ⊥
+isClosure ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊤
+isClosure ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊤
+isClosure [] = ⊥
+isClosure (v ∷ v₁) = ⊥
+
+isList : Val → Set
+isList (i x) = ⊥
+isList (b x) = ⊥
+isList ⟨ x ⟩[fun x₁ ⇒ x₂ ] = ⊥
+isList ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ] = ⊥
+isList [] = ⊤
+isList (v ∷ v₁) = ⊤
 
 data _plus_is_ : Value → Value → Value → Set where
   B-Plus : ∀ {i₁ i₂ i₃} → i₁ + i₂ ≡ i₃ → right (i i₁) plus right (i i₂) is right (i i₃)

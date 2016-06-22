@@ -2,39 +2,24 @@ module BCoPL.TypeSafe where
 
 open import Data.Empty using (⊥)
 open import Data.Unit using (⊤)
-open import BCoPL.EvalML4Err renaming (isℤ to isInt) public
-open import BCoPL.TypingML4Err hiding (Value; Env; isℤ) public
+open import BCoPL.EvalML4Err renaming (isℤ to isℤ'; isBool to isBool'; isClosure to isClosure'; isList to isList') public
+open import BCoPL.TypingML4Err hiding (Value; Env; isℤ; isBool; isClosure; isList) public
 
 isℤ : Value → Set
 isℤ (left x) = ⊥
-isℤ (right v) = isInt v
+isℤ (right v) = isℤ' v
 
 isBool : Value → Set
 isBool (left x) = ⊥
-isBool (right (i x)) = ⊥
-isBool (right (b x)) = ⊤
-isBool (right ⟨ x ⟩[fun x₁ ⇒ x₂ ]) = ⊥
-isBool (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊥
-isBool (right []) = ⊥
-isBool (right (y ∷ y₁)) = ⊥
+isBool (right v) = isBool' v
 
 isClosure : Value → Set
 isClosure (left x) = ⊥
-isClosure (right (i x)) = ⊥
-isClosure (right (b x)) = ⊥
-isClosure (right ⟨ x ⟩[fun x₁ ⇒ x₂ ]) = ⊤
-isClosure (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊤
-isClosure (right []) = ⊥
-isClosure (right (y ∷ y₁)) = ⊥
+isClosure (right v) = isClosure' v
 
 isList : Value → Set
 isList (left x) = ⊥
-isList (right (i x)) = ⊥
-isList (right (b x)) = ⊥
-isList (right ⟨ x ⟩[fun x₁ ⇒ x₂ ]) = ⊥
-isList (right ⟨ x ⟩[rec x₁ ≔fun x₂ ⇒ x₃ ]) = ⊥
-isList (right []) = ⊤
-isList (right (y ∷ y₁)) = ⊤
+isList (right v) = isList' v
 
 isError : Value → Set
 isError (left x) = ⊤
