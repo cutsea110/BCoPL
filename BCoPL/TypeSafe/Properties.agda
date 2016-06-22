@@ -135,8 +135,24 @@ type-safety (T-Times Γ⊢e∶τ Γ⊢e∶τ₁ , E-TimesErr2 ε⊢e⇓r ε⊢e�
 ... | i₁ , refl , proj₃ | _ , refl , CONS (() , proj₂)
 
 type-safety (T-Lt Γ⊢e∶τ Γ⊢e∶τ₁ , E-Lt ε⊢e⇓r ε⊢e⇓r₁ (B-Lt refl) , ⊫ε∶Γ) = (right (b _)) , (refl , (BOOL (refl , tt)))
-type-safety (T-Lt Γ⊢e∶τ Γ⊢e∶τ₁ , E-LtErr1 ε⊢e⇓r , ⊫ε∶Γ) = {!!}
-type-safety (T-Lt Γ⊢e∶τ Γ⊢e∶τ₁ , E-LtErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
+type-safety (T-Lt Γ⊢e∶τ Γ⊢e∶τ₁ , E-LtErr1 ε⊢e⇓r {r≢ℤ = r≢ℤ} , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
+... | _ , refl , ERROR (left ())
+... | _ , refl , ERROR (right ())
+... | _ , refl , INT (refl , proj₂) = ⊥-elim (r≢ℤ proj₂)
+... | _ , refl , BOOL (() , proj₂)
+... | _ , refl , CLOSURE (() , proj₂) x₂
+... | _ , refl , RECCLOSURE (() , proj₂)
+... | _ , refl , NIL (() , proj₂)
+... | _ , refl , CONS (() , proj₂)
+type-safety (T-Lt Γ⊢e∶τ Γ⊢e∶τ₁ , E-LtErr2 ε⊢e⇓r ε⊢e⇓r₁ {r≢ℤ = r≢ℤ} , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
+... | i₁ , refl , proj₃ | _ , refl , ERROR (left ())
+... | i₁ , refl , proj₃ | _ , refl , ERROR (right ())
+... | i₁ , refl , proj₃ | _ , refl , INT (refl , proj₂) = ⊥-elim (r≢ℤ proj₂)
+... | i₁ , refl , proj₃ | _ , refl , BOOL (() , proj₂)
+... | i₁ , refl , proj₃ | _ , refl , CLOSURE (() , proj₂) x₂
+... | i₁ , refl , proj₃ | _ , refl , RECCLOSURE (() , proj₂)
+... | i₁ , refl , proj₃ | _ , refl , NIL (() , proj₂)
+... | i₁ , refl , proj₃ | _ , refl , CONS (() , proj₂)
 
 type-safety (T-If Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-IfT ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
 ... | r , refl , proj₃ = r , (refl , proj₃)
