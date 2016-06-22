@@ -283,7 +283,30 @@ type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchErr1 ε�
 ... | _ , refl , CONS (refl , refl , proj₁ , proj₂) = ⊥-elim (r≢List tt)
 type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
 ... | .(right []) , refl , proj₃ | .(left (error "E-MatchErr2")) , refl , proj₆ = (left (error _)) , (refl , proj₆)
-type-safety (Γ⊢e∶τ , E-MatchErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
+type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
+type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) | _ , refl , proj₃ = type-safety (Γ⊢e∶τ₂ , ε⊢e⇓r₁ , NONEMPTY (refl , (refl , ((NONEMPTY (refl , (refl , (⊫ε∶Γ , help₀ proj₃)))) , {!help₁ proj₃!}))))
+  where
+    help₀ : ∀ {v₁ v₂ τ'} →
+        ⊨ right (v₁ ∷ v₂) ∶ τ' list → ⊨ right v₁ ∶ τ'
+    help₀ (ERROR (left ()))
+    help₀ (ERROR (right ()))
+    help₀ (INT (() , proj₂))
+    help₀ (BOOL (() , proj₂))
+    help₀ (CLOSURE (() , proj₂) x₂)
+    help₀ (RECCLOSURE (() , proj₂))
+    help₀ (NIL (refl , ()))
+    help₀ (CONS (refl , refl , proj₂ , proj₄)) = proj₂
+
+    help₁ : ∀ {v₁ v₂ τ'} →
+        ⊨ right (v₁ ∷ v₂) ∶ τ' list → ⊨ right v₂ ∶ τ' list
+    help₁ (ERROR (left ()))
+    help₁ (ERROR (right ()))
+    help₁ (INT (() , proj₂))
+    help₁ (BOOL (() , proj₂))
+    help₁ (CLOSURE (() , proj₂) x₂)
+    help₁ (RECCLOSURE (() , proj₂))
+    help₁ (NIL (proj₁ , ()))
+    help₁ (CONS (refl , refl , proj₁ , proj₂)) = proj₂
 
 {-
 type-safety : ∀ {e τ r v τ₁ τ₂ τ′} →
