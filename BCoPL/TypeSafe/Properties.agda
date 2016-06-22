@@ -76,15 +76,23 @@ type-safety (T-Var refl , E-VarErr , ⊫ε∶Γ) = (left (error _)) , (refl , (E
 
 type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-Plus ε⊢e⇓r ε⊢e⇓r₁ (B-Plus refl) , ⊫ε∶Γ) = (right (i _)) , (refl , (INT (refl , tt)))
 type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr1 ε⊢e⇓r {r≢ℤ = r≢ℤ} , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
-type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr1 ε⊢e⇓r , ⊫ε∶Γ) | _ , refl , ERROR (left ())
-type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr1 ε⊢e⇓r , ⊫ε∶Γ) | _ , refl , ERROR (right ())
-type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr1 ε⊢e⇓r {r≢ℤ = r≢ℤ} , ⊫ε∶Γ) | _ , refl , INT (refl , proj₂) = ⊥-elim (r≢ℤ proj₂)
-type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr1 ε⊢e⇓r , ⊫ε∶Γ) | _ , refl , BOOL (() , proj₂)
-type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr1 ε⊢e⇓r , ⊫ε∶Γ) | _ , refl , CLOSURE (() , proj₂) x₂
-type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr1 ε⊢e⇓r , ⊫ε∶Γ) | _ , refl , RECCLOSURE (() , proj₂)
-type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr1 ε⊢e⇓r , ⊫ε∶Γ) | _ , refl , NIL (() , proj₂)
-type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr1 ε⊢e⇓r , ⊫ε∶Γ) | _ , refl , CONS (() , proj₂)
-type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr2 ε⊢e⇓r ε⊢e⇓r₁ {r≢ℤ = r≢ℤ} , ⊫ε∶Γ) = {!!}
+... | _ , refl , ERROR (left ())
+... | _ , refl , ERROR (right ())
+... | _ , refl , INT (refl , proj₂) = ⊥-elim (r≢ℤ proj₂)
+... | _ , refl , BOOL (() , proj₂)
+... | _ , refl , CLOSURE (() , proj₂) x₂
+... | _ , refl , RECCLOSURE (() , proj₂)
+... | _ , refl , NIL (() , proj₂)
+... | _ , refl , CONS (() , proj₂)
+type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr2 ε⊢e⇓r ε⊢e⇓r₁ {r≢ℤ = r≢ℤ} , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
+... | i₁ , refl , proj₃ | _ , refl , ERROR (left ())
+... | i₁ , refl , proj₃ | _ , refl , ERROR (right ())
+... | i₁ , refl , proj₃ | _ , refl , INT (refl , proj₂) = ⊥-elim (r≢ℤ proj₂)
+... | i₁ , refl , proj₃ | _ , refl , BOOL (() , proj₂)
+... | i₁ , refl , proj₃ | _ , refl , CLOSURE (() , proj₂) x₂
+... | i₁ , refl , proj₃ | _ , refl , RECCLOSURE (() , proj₂)
+... | i₁ , refl , proj₃ | _ , refl , NIL (() , proj₂)
+... | i₁ , refl , proj₃ | _ , refl , CONS (() , proj₂)
 
 type-safety (T-Minus Γ⊢e∶τ Γ⊢e∶τ₁ , E-Minus ε⊢e⇓r ε⊢e⇓r₁ (B-Minus refl) , ⊫ε∶Γ) = (right (i _)) , (refl , (INT (refl , tt)))
 type-safety (T-Minus Γ⊢e∶τ Γ⊢e∶τ₁ , E-MinusErr1 ε⊢e⇓r , ⊫ε∶Γ) = {!!}
