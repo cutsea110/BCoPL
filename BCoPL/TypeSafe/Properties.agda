@@ -281,7 +281,8 @@ type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchErr1 ε�
 ... | _ , refl , RECCLOSURE (() , proj₂)
 ... | .(right []) , refl , NIL (refl , refl) = ⊥-elim (r≢List tt)
 ... | _ , refl , CONS (refl , refl , proj₁ , proj₂) = ⊥-elim (r≢List tt)
-type-safety (Γ⊢e∶τ , E-MatchErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
+type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
+... | .(right []) , refl , proj₃ | .(left (error "E-MatchErr2")) , refl , proj₆ = (left (error _)) , (refl , proj₆)
 type-safety (Γ⊢e∶τ , E-MatchErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 
 {-
