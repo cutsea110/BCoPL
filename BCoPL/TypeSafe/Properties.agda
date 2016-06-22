@@ -130,7 +130,22 @@ type-safety (Γ⊢e∶τ , E-AppErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!
 type-safety (Γ⊢e∶τ , E-AppErr4 ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) = {!!}
 type-safety (Γ⊢e∶τ , E-AppErr5 ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) = {!!}
 
-type-safety (Γ⊢e∶τ , E-AppRec ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) = {!!}
+type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppRec {v = v} ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
+type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppRec {v = v} ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) | _ , refl , proj₃ | v₂ , refl , proj₆ = v , refl , help proj₃ proj₆ ε⊢e⇓r₂
+  where
+    help : ∀ {v₂ ε₂ e₀ x y τ τ₁ v} →
+       ⊨ right ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ] ∶ τ₁ ⇀ τ →
+       ⊨ v₂ ∶ τ₁ →
+       ε₂ ⊱ (x , right ⟨ ε₂ ⟩[rec x ≔fun y ⇒ e₀ ]) ⊱ (y , v₂) ⊢ e₀ ⇓ v →
+       ⊨ v ∶ τ
+    help (ERROR (left ())) p₆ q
+    help (ERROR (right ())) p₆ q
+    help (INT (() , proj₂)) p₆ q
+    help (BOOL (() , proj₂)) p₆ q
+    help (CLOSURE (refl , () , proj₂) x₃) p₆ q
+    help (RECCLOSURE (refl , refl , proj₄ , proj₅)) p₆ q = {!!}
+    help (NIL (() , proj₂)) p₆ q
+    help (CONS (() , proj₂)) p₆ q
 
 type-safety (T-Nil , E-Nil , ⊫ε∶Γ) = (right []) , (refl , (NIL (refl , refl)))
 type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-Cons ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
