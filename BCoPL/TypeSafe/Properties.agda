@@ -167,8 +167,10 @@ type-safety (T-If Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-IfErr1 ε⊢e⇓
 ... | _ , refl , RECCLOSURE (() , proj₂)
 ... | _ , refl , NIL (() , proj₂)
 ... | _ , refl , CONS (() , proj₂)
-type-safety (Γ⊢e∶τ , E-IfErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
-type-safety (Γ⊢e∶τ , E-IfErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
+type-safety (T-If Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-IfErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
+... | .(right (b true)) , refl , proj₃ | .(left (error "E-IfErr2")) , refl , proj₆ = (left (error _)) , (refl , proj₆)
+type-safety (T-If Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-IfErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₂ , ε⊢e⇓r₁ , ⊫ε∶Γ)
+... | .(right (b false)) , refl , proj₃ | .(left (error "E-IfErr3")) , refl , proj₆ = (left (error _)) , (refl , proj₆)
 
 type-safety (T-Let Γ⊢e∶τ Γ⊢e∶τ₁ , E-Let ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
 ... | v₁ , refl , proj₃ with type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , NONEMPTY (refl , (refl , (⊫ε∶Γ , proj₃))))

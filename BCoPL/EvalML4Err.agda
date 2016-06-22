@@ -217,11 +217,11 @@ data _⊢_⇓_ : Env → Exp → Value → Set where
              → ε ⊢ if e₁ then e₂ else e₃ ⇓ left (error "E-IfErr1")
   E-IfErr2 : ∀ {ε e₁ e₂ e₃}
              → ε ⊢ e₁ ⇓ right (b true)
-             → ε ⊢ e₂ ⇓ left (error "e₂ is error")
+             → ε ⊢ e₂ ⇓ left (error "E-IfErr2")
              → ε ⊢ if e₁ then e₂ else e₃ ⇓ left (error "E-IfErr2")
   E-IfErr3 : ∀ {ε e₁ e₂ e₃}
              → ε ⊢ e₁ ⇓ right (b false)
-             → ε ⊢ e₃ ⇓ left (error "e₃ is error")
+             → ε ⊢ e₃ ⇓ left (error "E-IfErr3")
              → ε ⊢ if e₁ then e₂ else e₃ ⇓ left (error "E-IfErr3")
   E-Let : ∀ {ε x e₁ e₂ v v₁}
           → ε ⊢ e₁ ⇓ v₁
