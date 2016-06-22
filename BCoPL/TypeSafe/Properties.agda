@@ -177,7 +177,15 @@ type-safety (T-Let Γ⊢e∶τ Γ⊢e∶τ₁ , E-Let ε⊢e⇓r ε⊢e⇓r₁ ,
 ... | r , refl , proj₄ = r , (refl , proj₄)
 type-safety (T-Let Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetErr1 ε⊢e⇓r , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
 ... | .(left (error "E-LetErr1")) , refl , proj₃ = (left (error _)) , (refl , {!!}) -- !!!!?
-type-safety (Γ⊢e∶τ , E-LetErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
+type-safety (T-Let Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , NONEMPTY (refl , (refl , (⊫ε∶Γ , help (type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ))))))
+  where
+    help : ∀ {τ₁ v₁} →
+       Data.Product.Σ (Error ∨ Val)
+       (λ v → Data.Product.Σ (v₁ ≡ v) (λ x → ⊨ v ∶ τ₁)) →
+       ⊨ v₁ ∶ τ₁
+    help (v₁ , refl , proj₃) = proj₃
+
+type-safety (T-Let Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) | v₁ , refl , proj₃ | .(left (error "E-LetErr2")) , refl , proj₆ = (left (error _)) , (refl , proj₆)
 
 type-safety (T-LetRec Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetRec ε⊢e⇓r , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r , NONEMPTY (refl , (refl , (⊫ε∶Γ , RECCLOSURE (refl , (refl , (⊫ε∶Γ , Γ⊢e∶τ)))))))
 type-safety (T-LetRec Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetRec ε⊢e⇓r , ⊫ε∶Γ) | r , refl , proj₃ = r , (refl , proj₃)
