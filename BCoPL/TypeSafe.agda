@@ -34,7 +34,7 @@ data ⊫_∶_ : Env → TEnv → Set where
   NONEMPTY : ∀ {ε ε′ Γ Γ′ x v τ} → ε ≡ ε′ ⊱ (x , v) × Γ ≡ Γ′ ⊱ (x , τ) × ⊫ ε′ ∶ Γ′ × ⊨ v ∶ τ → ⊫ ε ∶ Γ
 
 data ⊨_∶_ where
-  ERROR : ∀ {τ v} → τ ≡ type-error ∨ isError v → ⊨ v ∶ τ
+  ERROR : ∀ {τ v} → τ ≡ type-error × isError v → ⊨ v ∶ τ
   INT : ∀ {τ v} → τ ≡ int × isℤ v → ⊨ v ∶ τ
   BOOL : ∀ {τ v} → τ ≡ bool × isBool v → ⊨ v ∶ τ
   CLOSURE : ∀ {τ v τ₁ τ₂ ε x e Γ} →
