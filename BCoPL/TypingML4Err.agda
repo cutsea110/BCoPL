@@ -5,8 +5,10 @@ open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
 open import BCoPL.EvalML4Err public
 
 -- Types
+data Type-Error : Set where
+  not-found-ε : Type-Error
+
 data Types : Set where
-  type-error : Types
   bool : Types
   int : Types
   _⇀_ : Types → Types → Types
@@ -16,9 +18,9 @@ data TEnv : Set where
   ● : TEnv
   _⊱_ : TEnv → (Var × Types) → TEnv
 
-_〖_〗 : TEnv → Var → Types
-● 〖 x 〗 = type-error
-Γ ⊱ (y , e) 〖 x 〗 = y == x ¿ e ∶ Γ 〖 x 〗
+_〖_〗 : TEnv → Var → Type-Error ∨ Types
+● 〖 x 〗 = left not-found-ε
+Γ ⊱ (y , e) 〖 x 〗 = y == x ¿ right e ∶ Γ 〖 x 〗
 
 infixl 20 _⊱_
 
@@ -52,7 +54,7 @@ data _⊢_∶_ : TEnv → Exp → Types → Set where
          → Γ ⊢ e₂ ∶ int
          → Γ ⊢ e₁ ≺ e₂ ∶ bool
   T-Var : ∀ {Γ x τ}
-          → Γ 〖 x 〗 ≡ τ
+          → Γ 〖 x 〗 ≡ right τ
           → Γ ⊢ var x ∶ τ
   T-Let : ∀ {Γ e₁ e₂ τ₁ τ₂ x}
           → Γ ⊢ e₁ ∶ τ₁
