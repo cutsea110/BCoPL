@@ -225,15 +225,25 @@ type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppErr3 ε⊢e⇓r ε⊢e⇓r�
 ... | _ , refl , proj₃ | .(left error) , refl , NIL (proj₁ , ())
 ... | _ , refl , proj₃ | .(left error) , refl , CONS (proj₁ , () , proj₄)
 type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppErr4 ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
-... | _ , refl , proj₃ | _ , refl , proj₆ = (left error) , (refl , {!!})
+... | _ , refl , INT (proj₁ , ()) | _ , refl , proj₆
+... | _ , refl , BOOL (proj₁ , ()) | _ , refl , proj₆
+... | _ , refl , CLOSURE (refl , refl , proj₃) x₃ | _ , refl , proj₆ = (left error) , (refl , {!!})
+... | _ , refl , RECCLOSURE (proj₁ , () , proj₃) | _ , refl , proj₆
+... | _ , refl , NIL (() , proj₂) | _ , refl , proj₆
+... | _ , refl , CONS (() , proj₂) | _ , refl , proj₆
 type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppErr5 ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
-... | _ , refl , proj₃ | _ , refl , proj₆ = (left error) , (refl , {!!})
+... | _ , refl , INT (proj₁ , ()) | _ , refl , proj₆
+... | _ , refl , BOOL (proj₁ , ()) | _ , refl , proj₆
+... | _ , refl , CLOSURE (proj₁ , () , proj₃) x₃ | _ , refl , proj₆
+... | _ , refl , RECCLOSURE (refl , refl , proj₃ , proj₄) | _ , refl , proj₆ = (left error) , (refl , {!!})
+... | _ , refl , NIL (() , proj₂) | _ , refl , proj₆
+... | _ , refl , CONS (() , proj₂) | _ , refl , proj₆
 
 type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppRec {v = v} ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
 ... | _ , refl , INT (proj₁ , ()) | _ , refl , proj₆
 ... | _ , refl , BOOL (proj₁ , ()) | _ , refl , proj₆
 ... | _ , refl , CLOSURE (refl , () , proj₂) x₃ | _ , refl , proj₆
-... | _ , refl , RECCLOSURE (refl , refl , proj₁ , proj₂) | _ , refl , proj₆ = {!!}
+... | _ , refl , RECCLOSURE (refl , refl , proj₁ , proj₂) | _ , refl , proj₆ = ?
 ... | _ , refl , NIL (proj₁ , ()) | _ , refl , proj₆
 ... | _ , refl , CONS (() , proj₂) | _ , refl , proj₆
 
