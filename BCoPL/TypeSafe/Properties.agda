@@ -218,16 +218,29 @@ type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppErr2 ε⊢e⇓r ε⊢e⇓r�
 ... | _ , refl , proj₃ | .(left error) , refl , CONS (proj₁ , () , proj₄)
 type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppErr3 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
 ... | _ , refl , proj₃ | .(left error) , refl , proj₆ = (left error) , (refl , {!!})
-type-safety (Γ⊢e∶τ , E-AppErr4 ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) = {!!}
-type-safety (Γ⊢e∶τ , E-AppErr5 ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) = {!!}
+type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppErr4 ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
+... | _ , refl , proj₃ | _ , refl , proj₆ = (left error) , (refl , {!!})
+type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppErr5 ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
+... | _ , refl , proj₃ | _ , refl , proj₆ = (left error) , (refl , {!!})
 
 type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppRec {v = v} ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
-type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppRec {v = v} ε⊢e⇓r ε⊢e⇓r₁ ε⊢e⇓r₂ , ⊫ε∶Γ) | _ , refl , proj₃ | v₂ , proj₅ , proj₆ = {!!}
+... | _ , refl , INT (proj₁ , ()) | _ , refl , proj₆
+... | _ , refl , BOOL (proj₁ , ()) | _ , refl , proj₆
+... | _ , refl , CLOSURE (refl , () , proj₂) x₃ | _ , refl , proj₆
+... | _ , refl , RECCLOSURE (refl , refl , proj₁ , proj₂) | _ , refl , proj₆ = {!!}
+... | _ , refl , NIL (proj₁ , ()) | _ , refl , proj₆
+... | _ , refl , CONS (() , proj₂) | _ , refl , proj₆
 
 type-safety (T-Nil , E-Nil , ⊫ε∶Γ) = (right []) , (refl , (NIL (refl , refl)))
 type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-Cons ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
-... | _ , refl , proj₃ | _ , refl , proj₆ = (right (_ ∷ _)) , (refl , {!!})
-type-safety (Γ⊢e∶τ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) = {!!}
+... | _ , refl , proj₃ | _ , refl , proj₆ = (right (_ ∷ _)) , (refl , CONS (refl , refl , proj₃ , proj₆))
+type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
+type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , INT (proj₁ , ())
+type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , BOOL (proj₁ , ())
+type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , CLOSURE (refl , () , proj₂) x₂
+type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , RECCLOSURE (refl , () , proj₂ , proj₃)
+type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , NIL (proj₁ , ())
+type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , CONS (refl , () , proj₂)
 type-safety (Γ⊢e∶τ , E-ConsErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
 
 type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchNil ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
