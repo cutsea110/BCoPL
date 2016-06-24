@@ -6,7 +6,7 @@ open import BCoPL.EvalML4Err public
 
 -- Types
 data Type-Error : Set where
-  not-found-ε : Type-Error
+  type-error : Type-Error
 
 data Types : Set where
   bool : Types
@@ -19,7 +19,7 @@ data TEnv : Set where
   _⊱_ : TEnv → (Var × Types) → TEnv
 
 _〖_〗 : TEnv → Var → Type-Error ∨ Types
-● 〖 x 〗 = left not-found-ε
+● 〖 x 〗 = left type-error
 Γ ⊱ (y , e) 〖 x 〗 = y == x ¿ right e ∶ Γ 〖 x 〗
 
 infixl 20 _⊱_
