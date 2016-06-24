@@ -235,13 +235,19 @@ type-safety (T-Nil , E-Nil , ⊫ε∶Γ) = (right []) , (refl , (NIL (refl , ref
 type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-Cons ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
 ... | _ , refl , proj₃ | _ , refl , proj₆ = (right (_ ∷ _)) , (refl , CONS (refl , refl , proj₃ , proj₆))
 type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
-type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , INT (proj₁ , ())
-type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , BOOL (proj₁ , ())
-type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , CLOSURE (refl , () , proj₂) x₂
-type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , RECCLOSURE (refl , () , proj₂ , proj₃)
-type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , NIL (proj₁ , ())
-type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr1 ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , CONS (refl , () , proj₂)
-type-safety (Γ⊢e∶τ , E-ConsErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = {!!}
+... | .(left error) , refl , INT (proj₁ , ())
+... | .(left error) , refl , BOOL (proj₁ , ())
+... | .(left error) , refl , CLOSURE (proj₁ , () , proj₂) x₂
+... | .(left error) , refl , RECCLOSURE (proj₁ , () , proj₂ , proj₃)
+... | .(left error) , refl , NIL (proj₁ , ())
+... | .(left error) , refl , CONS (refl , () , proj₂)
+type-safety (T-Cons Γ⊢e∶τ Γ⊢e∶τ₁ , E-ConsErr2 ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ) | type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
+... | _ , refl , proj₃ | .(left error) , refl , INT (proj₁ , ())
+... | _ , refl , proj₃ | .(left error) , refl , BOOL (proj₁ , ())
+... | _ , refl , proj₃ | .(left error) , refl , CLOSURE (() , proj₂) x₂
+... | _ , refl , proj₃ | .(left error) , refl , RECCLOSURE (() , proj₂)
+... | _ , refl , proj₃ | .(left error) , refl , NIL (proj₁ , ())
+... | _ , refl , proj₃ | .(left error) , refl , CONS (proj₁ , () , proj₄)
 
 type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchNil ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) = type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r₁ , ⊫ε∶Γ)
 type-safety (T-Match Γ⊢e∶τ Γ⊢e∶τ₁ Γ⊢e∶τ₂ , E-MatchCons ε⊢e⇓r ε⊢e⇓r₁ , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
