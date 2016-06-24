@@ -192,9 +192,10 @@ type-safety (T-Let Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetErr2 ε⊢e⇓r ε⊢e⇓r�
     help (v₁ , refl , proj₃) = proj₃
 ... | v₁ , proj₂ , proj₃ | .(left error) , refl , proj₆ = (left error) , (refl , proj₆)
 
-type-safety (T-LetRec Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetRec {v = v} ε⊢e⇓r , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r , NONEMPTY (refl , refl , ⊫ε∶Γ , RECCLOSURE (refl , (refl , (⊫ε∶Γ , Γ⊢e∶τ)))))
+type-safety (T-LetRec Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetRec {v = v} ε⊢e⇓r , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r , NONEMPTY (refl , refl , ⊫ε∶Γ , RECCLOSURE (refl , refl , ⊫ε∶Γ , Γ⊢e∶τ)))
 ... | _ , refl , proj₃ = (right v) , (refl , proj₃)
-type-safety (T-LetRec Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetRecErr ε⊢e⇓r , ⊫ε∶Γ) = {!!}
+type-safety (T-LetRec Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetRecErr ε⊢e⇓r , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ₁ , ε⊢e⇓r , NONEMPTY (refl , refl , ⊫ε∶Γ , (RECCLOSURE (refl , refl , ⊫ε∶Γ , Γ⊢e∶τ))))
+type-safety (T-LetRec Γ⊢e∶τ Γ⊢e∶τ₁ , E-LetRecErr ε⊢e⇓r , ⊫ε∶Γ) | .(left error) , refl , proj₃ = (left error) , (refl , proj₃)
 
 type-safety (T-Fun Γ⊢e∶τ , E-Fun , ⊫ε∶Γ) = right ⟨ _ ⟩[fun _ ⇒ _ ] , (refl , CLOSURE (refl , (refl , ⊫ε∶Γ)) Γ⊢e∶τ)
 
