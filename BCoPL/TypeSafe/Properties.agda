@@ -243,7 +243,7 @@ type-safety (T-App Γ⊢e∶τ Γ⊢e∶τ₁ , E-AppRec {v = v} ε⊢e⇓r ε�
 ... | _ , refl , INT (proj₁ , ()) | _ , refl , proj₆
 ... | _ , refl , BOOL (proj₁ , ()) | _ , refl , proj₆
 ... | _ , refl , CLOSURE (refl , () , proj₂) x₃ | _ , refl , proj₆
-... | _ , refl , RECCLOSURE (refl , refl , proj₁ , proj₂) | _ , refl , proj₆ = ?
+... | _ , refl , RECCLOSURE (refl , refl , proj₁ , proj₂) | _ , refl , proj₆ = {!!}
 ... | _ , refl , NIL (proj₁ , ()) | _ , refl , proj₆
 ... | _ , refl , CONS (() , proj₂) | _ , refl , proj₆
 
