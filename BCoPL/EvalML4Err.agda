@@ -137,7 +137,9 @@ data _less-than_is_ : Value → Value → Value → Set where
 
 _⟦_⟧ : Env → Var → Value
 ● ⟦ x ⟧ = left error
-(ε ⊱ (x , v)) ⟦ y ⟧ = x == y ¿ v ∶ ε ⟦ y ⟧
+(ε ⊱ (y , v)) ⟦ x ⟧ with y =?= x
+(ε ⊱ (x , v)) ⟦ .x ⟧ | yes refl = v
+(ε ⊱ (y , v)) ⟦ x ⟧ | no ¬p = ε ⟦ x ⟧
 
 data _⊢_⇓_ : Env → Exp → Value → Set where
   E-Int : ∀ {ε z}

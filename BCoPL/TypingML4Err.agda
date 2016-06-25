@@ -24,7 +24,9 @@ data TEnv : Set where
 
 _〖_〗 : TEnv → Var → Type-Error ∨ Types
 ● 〖 x 〗 = left type-error
-Γ ⊱ (y , e) 〖 x 〗 = y == x ¿ right e ∶ Γ 〖 x 〗
+Γ ⊱ (y , e) 〖 x 〗 with y =?= x
+Γ ⊱ (x , e) 〖 .x 〗 | yes refl = right e
+Γ ⊱ (y , e) 〖 x 〗 | no ¬p = Γ 〖 x 〗
 
 _∈′_ : Var → TEnv → Set
 x ∈′ ● = ⊥

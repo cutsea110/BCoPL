@@ -2,6 +2,7 @@ module BCoPL.TypeSafe.Properties where
 
 open import Data.Empty using (⊥; ⊥-elim)
 open import Data.Product using (∃)
+open import Data.String renaming (_≟_ to _=?=_)
 open import Data.Unit using (⊤; tt)
 open import Relation.Binary.Core
 open import Relation.Nullary using (yes; no; ¬_; Dec)
@@ -45,8 +46,6 @@ int ≟ (τ₂ list) = no (λ ())
   where
     help₃ : ∀ {τ₁ τ₂} → τ₁ list ≡ τ₂ list → τ₁ ≡ τ₂
     help₃ refl = refl
-
-open import Data.String renaming (_≟_ to _=?=_)
 
 _∈′?_ : Decidable {A = String} {B = TEnv} _∈′_
 x ∈′? ● = no (λ z → z)
