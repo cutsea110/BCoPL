@@ -46,6 +46,19 @@ int ≟ (τ₂ list) = no (λ ())
     help₃ : ∀ {τ₁ τ₂} → τ₁ list ≡ τ₂ list → τ₁ ≡ τ₂
     help₃ refl = refl
 
+open import Data.String renaming (_≟_ to _=?=_)
+
+_∈′?_ : Decidable {A = String} {B = TEnv} _∈′_
+x ∈′? ● = no (λ z → z)
+x ∈′? (Γ ⊱ (y , τ)) with x =?= y
+x ∈′? (Γ ⊱ (y , τ)) | yes p = yes tt
+x ∈′? (Γ ⊱ (y , τ)) | no ¬p = x ∈′? Γ
+
+_∈?_ : Decidable {A = String} {B = Env} _∈_
+x ∈? ● = no (λ z → z)
+x ∈? (ε ⊱ (y , τ)) with x =?= y
+x ∈? (ε ⊱ (y , τ)) | yes p = yes tt
+x ∈? (ε ⊱ (y , τ)) | no ¬p = x ∈? ε
 
 help-car : ∀ {v₁ v₂ τ} →
            ⊨ right (v₁ ∷ v₂) ∶ right (τ list) → ⊨ right v₁ ∶ right τ
@@ -64,8 +77,6 @@ help-cdr (CLOSURE (() , proj₂) x₂)
 help-cdr (RECCLOSURE (() , proj₂))
 help-cdr (NIL (refl , ()))
 help-cdr (CONS (refl , refl , proj₁ , proj₂)) = proj₂
-
-open import Data.String renaming (_≟_ to _=?=_)
 
 trivial : ∀ {ε x x′ v} → x ∉ (ε ⊱ (x′ , v)) → x ∉ ε
 trivial {x = x} {x′} prf with x =?= x′
@@ -91,7 +102,7 @@ type-safety (T-Var {x = x} prf , E-Var {x = .x} {v} proj₁ , NONEMPTY {x = y} (
     help {x} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY {x = y} (refl , refl , proj₆ , proj₇)) with y =?= x
     help (refl , refl , NONEMPTY (refl , refl , proj₆ , proj₇)) | yes refl = proj₇
     help {x} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY {x = y} (refl , refl , proj₆ , proj₇)) | no ¬p₁ = {!!}
-type-safety (T-Var prf , E-VarErr {x∉ε = x∉ε} , ⊫ε∶Γ) = {!!}
+type-safety (T-Var prf , E-VarErr {x∉ε = x∉ε} , ⊫ε∶Γ) = (left error) , (refl , {!!})
 
 type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-Plus ε⊢e⇓r ε⊢e⇓r₁ (B-Plus refl) , ⊫ε∶Γ) = (right (i _)) , (refl , (INT (refl , tt)))
 type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr1 ε⊢e⇓r {r≢ℤ = r≢ℤ} , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)

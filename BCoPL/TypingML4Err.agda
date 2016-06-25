@@ -1,6 +1,8 @@
 module BCoPL.TypingML4Err where
 
+open import Data.Empty using (⊥)
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
+open import Data.Unit using (⊤)
 
 open import BCoPL.EvalML4Err public
 
@@ -21,6 +23,10 @@ data TEnv : Set where
 _〖_〗 : TEnv → Var → Type-Error ∨ Types
 ● 〖 x 〗 = left type-error
 Γ ⊱ (y , e) 〖 x 〗 = y == x ¿ right e ∶ Γ 〖 x 〗
+
+_∈′_ : Var → TEnv → Set
+x ∈′ ● = ⊥
+x ∈′ (Γ ⊱ (y , τ)) = x == y ¿ ⊤ ∶ x ∈′ Γ
 
 infixl 20 _⊱_
 
