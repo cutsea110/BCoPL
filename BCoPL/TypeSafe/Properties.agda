@@ -51,13 +51,13 @@ open import Data.String renaming (_≟_ to _=?=_)
 _∈′?_ : Decidable {A = String} {B = TEnv} _∈′_
 x ∈′? ● = no (λ z → z)
 x ∈′? (Γ ⊱ (y , τ)) with x =?= y
-x ∈′? (Γ ⊱ (y , τ)) | yes p = yes tt
+x ∈′? (Γ ⊱ (.x , τ)) | yes refl = yes tt
 x ∈′? (Γ ⊱ (y , τ)) | no ¬p = x ∈′? Γ
 
 _∈?_ : Decidable {A = String} {B = Env} _∈_
 x ∈? ● = no (λ z → z)
 x ∈? (ε ⊱ (y , τ)) with x =?= y
-x ∈? (ε ⊱ (y , τ)) | yes p = yes tt
+x ∈? (ε ⊱ (.x , τ)) | yes refl = yes tt
 x ∈? (ε ⊱ (y , τ)) | no ¬p = x ∈? ε
 
 help-car : ∀ {v₁ v₂ τ} →
@@ -80,8 +80,8 @@ help-cdr (CONS (refl , refl , proj₁ , proj₂)) = proj₂
 
 trivial : ∀ {ε x x′ v} → x ∉ (ε ⊱ (x′ , v)) → x ∉ ε
 trivial {x = x} {x′} prf with x =?= x′
-... | yes p = ⊥-elim (prf tt)
-... | no ¬p = prf
+trivial {x = x} {.x} prf | yes refl = ⊥-elim (prf tt)
+trivial {x = x} {x′} prf | no ¬p = prf
 
 {- Theorem 8.3 -}
 type-safety : ∀ {Γ ε e τ r} →
@@ -94,14 +94,15 @@ type-safety (T-Var {x = x} prf , E-Var {x = .x} proj₁ , NONEMPTY {x = y} (refl
 type-safety (T-Var refl , E-Var {v = v} refl , NONEMPTY {v = right .v} (refl , refl , proj₃ , proj₄)) | yes refl = (right v) , (refl , proj₄)
 type-safety (T-Var {x = x} prf , E-Var {x = .x} {v} proj₁ , NONEMPTY {x = y} (refl , refl , proj₃ , proj₄)) | no ¬p = (right v) , (refl , help (prf , proj₁ , proj₃))
   where
-    help : ∀ {x Γ′ ε′ v τ₁} →
-       Data.Product.Σ (Γ′ 〖 x 〗 ≡ right τ₁)
-       (λ v₁ → Data.Product.Σ ((ε′ ⟦ x ⟧) ≡ right v) (λ v₂ → ⊫ ε′ ∶ Γ′)) →
-       ⊨ right v ∶ right τ₁
+    help : ∀ {x Γ ε v τ} →
+       Data.Product.Σ (Γ 〖 x 〗 ≡ right τ)
+       (λ v₁ → Data.Product.Σ ((ε ⟦ x ⟧) ≡ right v) (λ v₂ → ⊫ ε ∶ Γ)) →
+       ⊨ right v ∶ right τ
     help (() , ε⟦x⟧≡v , EMPTY (refl , refl))
-    help {x} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY {x = y} (refl , refl , proj₆ , proj₇)) with y =?= x
-    help (refl , refl , NONEMPTY (refl , refl , proj₆ , proj₇)) | yes refl = proj₇
-    help {x} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY {x = y} (refl , refl , proj₆ , proj₇)) | no ¬p₁ = {!!}
+    help {x} {Γ} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY {x = y} (proj₁ , proj₂ , proj₆ , proj₇)) with x ∈′? Γ
+    help (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY (proj₂ , proj₅ , proj₆ , proj₇)) | yes p = {!!}
+    help (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY (proj₂ , proj₅ , proj₆ , proj₇)) | no ¬p₁ = {!!}
+
 type-safety (T-Var prf , E-VarErr {x∉ε = x∉ε} , ⊫ε∶Γ) = (left error) , (refl , {!!})
 
 type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-Plus ε⊢e⇓r ε⊢e⇓r₁ (B-Plus refl) , ⊫ε∶Γ) = (right (i _)) , (refl , (INT (refl , tt)))

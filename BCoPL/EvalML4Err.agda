@@ -4,12 +4,12 @@ open import Data.Bool using (Bool; true; false; not) renaming (if_then_else_ to 
 open import Data.Integer public
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
 open import Data.Product using (_×_;_,_) public
-open import Data.String using (String; _==_) public
+open import Data.String using (String; _==_) renaming (_≟_ to _=?=_) public
 open import Data.Sum renaming (_⊎_ to _∨_; inj₁ to left; inj₂ to right) public
 open import Data.Unit using (⊤; tt)
 open import Data.Empty using (⊥)
 
-open import Relation.Nullary using (¬_)
+open import Relation.Nullary using (¬_; yes; no)
 open import Relation.Binary.Core public
 open import Relation.Binary.PropositionalEquality using (refl;_≡_) public
 
@@ -84,7 +84,9 @@ private
 
 _∈_ : Var → Env → Set
 x ∈ ● = ⊥
-x ∈ (ε ⊱ (y , v)) = x == y ¿ ⊤ ∶ x ∈ ε
+x ∈ (ε ⊱ (y , v)) with x =?= y -- ¿ ⊤ ∶ x ∈ ε
+x ∈ (ε ⊱ (.x , v)) | yes refl = ⊤
+x ∈ (ε ⊱ (y , v)) | no ¬p = x ∈ ε
 
 _∉_ : Var → Env → Set
 x ∉ ε = ¬ x ∈ ε

@@ -2,7 +2,9 @@ module BCoPL.TypingML4Err where
 
 open import Data.Empty using (⊥)
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
+open import Data.String renaming (_≟_ to _=?=_)
 open import Data.Unit using (⊤)
+open import Relation.Nullary using (¬_; yes; no)
 
 open import BCoPL.EvalML4Err public
 
@@ -26,7 +28,12 @@ _〖_〗 : TEnv → Var → Type-Error ∨ Types
 
 _∈′_ : Var → TEnv → Set
 x ∈′ ● = ⊥
-x ∈′ (Γ ⊱ (y , τ)) = x == y ¿ ⊤ ∶ x ∈′ Γ
+x ∈′ (Γ ⊱ (y , τ)) with x =?= y -- ¿ ⊤ ∶ x ∈′ Γ
+x ∈′ (Γ ⊱ (.x , τ)) | yes refl = ⊤
+x ∈′ (Γ ⊱ (y , τ)) | no ¬p = x ∈′ Γ
+
+_∉′_ : Var → TEnv → Set
+x ∉′ Γ = ¬ x ∈′ Γ
 
 infixl 20 _⊱_
 
