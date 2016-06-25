@@ -81,8 +81,17 @@ type-safety (T-Bool , E-Bool , ⊫ε∶Γ) = (right (b _)) , (refl , BOOL (refl 
 type-safety (T-Var () , E-Var proj₁ , EMPTY (refl , refl))
 type-safety (T-Var {x = x} prf , E-Var {x = .x} proj₁ , NONEMPTY {x = y} (refl , refl , proj₃ , proj₄)) with y =?= x
 type-safety (T-Var refl , E-Var {v = v} refl , NONEMPTY {v = right .v} (refl , refl , proj₃ , proj₄)) | yes refl = (right v) , (refl , proj₄)
-type-safety (T-Var {x = x} prf , E-Var {x = .x} {v} proj₁ , NONEMPTY {x = y} (refl , refl , proj₃ , proj₄)) | no ¬p = (right v) , (refl , {!!})
-type-safety (T-Var prf , E-VarErr {x∉ε = x∉ε} , ⊫ε∶Γ) = ⊥-elim {!!}
+type-safety (T-Var {x = x} prf , E-Var {x = .x} {v} proj₁ , NONEMPTY {x = y} (refl , refl , proj₃ , proj₄)) | no ¬p = (right v) , (refl , help (prf , proj₁ , proj₃))
+  where
+    help : ∀ {x Γ′ ε′ v τ₁} →
+       Data.Product.Σ (Γ′ 〖 x 〗 ≡ right τ₁)
+       (λ v₁ → Data.Product.Σ ((ε′ ⟦ x ⟧) ≡ right v) (λ v₂ → ⊫ ε′ ∶ Γ′)) →
+       ⊨ right v ∶ right τ₁
+    help (() , ε⟦x⟧≡v , EMPTY (refl , refl))
+    help {x} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY {x = y} (refl , refl , proj₆ , proj₇)) with y =?= x
+    help (refl , refl , NONEMPTY (refl , refl , proj₆ , proj₇)) | yes refl = proj₇
+    help {x} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY {x = y} (refl , refl , proj₆ , proj₇)) | no ¬p₁ = {!!}
+type-safety (T-Var prf , E-VarErr {x∉ε = x∉ε} , ⊫ε∶Γ) = {!!}
 
 type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-Plus ε⊢e⇓r ε⊢e⇓r₁ (B-Plus refl) , ⊫ε∶Γ) = (right (i _)) , (refl , (INT (refl , tt)))
 type-safety (T-Plus Γ⊢e∶τ Γ⊢e∶τ₁ , E-PlusErr1 ε⊢e⇓r {r≢ℤ = r≢ℤ} , ⊫ε∶Γ) with type-safety (Γ⊢e∶τ , ε⊢e⇓r , ⊫ε∶Γ)
