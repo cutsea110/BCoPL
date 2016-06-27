@@ -77,10 +77,16 @@ help-cdr (RECCLOSURE (() , proj₂))
 help-cdr (NIL (refl , ()))
 help-cdr (CONS (refl , refl , proj₁ , proj₂)) = proj₂
 
-trivial : ∀ {ε x x′ v} → x ∉ (ε ⊱ (x′ , v)) → x ∉ ε
-trivial {x = x} {x′} prf with x =?= x′
-trivial {x = x} {.x} prf | yes refl = ⊥-elim (prf tt)
-trivial {x = x} {x′} prf | no ¬p = prf
+trivial₀ : ∀ {ε x x′ v} → x ∉ (ε ⊱ (x′ , v)) → x ∉ ε
+trivial₀ {x = x} {x′} prf with x =?= x′
+trivial₀ {x = x} {.x} prf | yes refl = ⊥-elim (prf tt)
+trivial₀ {x = x} {x′} prf | no ¬p = prf
+
+trivialε : ∀ {x ε} → x ∉ ε → ε ⟦ x ⟧ ≡ left error
+trivialε = {!!}
+
+trivialΓ : ∀ {x Γ} → x ∉′ Γ → Γ 〖 x 〗 ≡ left type-error
+trivialΓ = {!!}
 
 {- Theorem 8.3 -}
 type-safety : ∀ {Γ ε e τ r} →
@@ -99,8 +105,9 @@ type-safety (T-Var {x = x} prf , E-Var {x = .x} {v} proj₁ , NONEMPTY {x = y} (
        ⊨ right v ∶ right τ
     help (() , ε⟦x⟧≡v , EMPTY (refl , refl))
     help {x} {Γ} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY {x = y} (proj₁ , proj₂ , proj₆ , proj₇)) with x ∈′? Γ
-    help (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY (proj₂ , proj₅ , proj₆ , proj₇)) | yes p = {!!}
-    help (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY (proj₂ , proj₅ , proj₆ , proj₇)) | no ¬p₁ = {!!}
+    help {x} {Γ} {ε} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY {ε′ = ε′} {Γ′ = Γ′} {x = y} (proj₂ , proj₅ , proj₆ , proj₇)) | yes p = {!!}
+    help {x} {Γ} {ε} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY (proj₂ , proj₅ , proj₆ , proj₇)) | no ¬p₁ with trans (sym Γ〖x〗≡τ) (trivialΓ {x} {Γ} ¬p₁)
+    ... | ()
 
 type-safety (T-Var prf , E-VarErr {x∉ε = x∉ε} , ⊫ε∶Γ) = (left error) , (refl , {!!})
 
