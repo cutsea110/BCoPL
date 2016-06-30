@@ -81,7 +81,7 @@ trivial₀ : ∀ {ε x x′ v} → x ∉ (ε ⊱ (x′ , v)) → x ∉ ε
 trivial₀ {x = x} {x′} prf with x =?= x′
 trivial₀ {x = x} {.x} prf | yes refl = ⊥-elim (prf tt)
 trivial₀ {x = x} {x′} prf | no ¬p = prf
-
+{--
 trivialε : ∀ {x ε} → x ∉ ε → ε ⟦ x ⟧ ≡ left error
 trivialε = {!!}
 
@@ -90,6 +90,7 @@ trivialΓ x ● x∉′Γ = refl
 trivialΓ x (Γ ⊱ (y , v)) x∉′Γ with x =?= y
 trivialΓ x (Γ ⊱ (.x , v)) x∉′Γ | yes refl = ⊥-elim (x∉′Γ tt)
 trivialΓ x (Γ ⊱ (y , v)) x∉′Γ | no ¬p = {!!}
+--}
 
 {- Theorem 8.3 -}
 type-safety : ∀ {Γ ε e τ r} →
@@ -97,20 +98,13 @@ type-safety : ∀ {Γ ε e τ r} →
                 ∃ λ v → r ≡ v × ⊨ v ∶ right τ
 type-safety (T-Int , E-Int , ⊫ε∶Γ) = (right (i _)) , (refl , INT (refl , tt))
 type-safety (T-Bool , E-Bool , ⊫ε∶Γ) = (right (b _)) , (refl , BOOL (refl , tt))
-type-safety (T-Var () , E-Var proj₁ , EMPTY (refl , refl))
-type-safety (T-Var {x = x} prf , E-Var {x = .x} proj₁ , NONEMPTY {x = y} (refl , refl , proj₃ , proj₄)) with y =?= x
-type-safety (T-Var refl , E-Var {v = v} refl , NONEMPTY {v = right .v} (refl , refl , proj₃ , proj₄)) | yes refl = (right v) , (refl , proj₄)
-type-safety (T-Var {x = x} prf , E-Var {x = .x} {v} proj₁ , NONEMPTY {x = y} (refl , refl , proj₃ , proj₄)) | no ¬p = (right v) , (refl , help (prf , proj₁ , proj₃))
+type-safety (T-Var {x = x} Γ〖x〗≡τ , E-Var {x = .x} ε⟦x⟧≡v , ⊫ε∶Γ) = help (ε⟦x⟧≡v , Γ〖x〗≡τ , ⊫ε∶Γ)
   where
-    help : ∀ {x Γ ε v τ} →
-       Data.Product.Σ (Γ 〖 x 〗 ≡ right τ)
-       (λ v₁ → Data.Product.Σ ((ε ⟦ x ⟧) ≡ right v) (λ v₂ → ⊫ ε ∶ Γ)) →
-       ⊨ right v ∶ right τ
-    help (() , ε⟦x⟧≡v , EMPTY (refl , refl))
-    help {x} {Γ} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY {x = y} (proj₁ , proj₂ , proj₆ , proj₇)) with x ∈′? Γ
-    help {x} {Γ} {ε} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY {ε′ = ε′} {Γ′ = Γ′} {x = y} (proj₂ , proj₅ , proj₆ , proj₇)) | yes p = {!!}
-    help {x} {Γ} {ε} (Γ〖x〗≡τ , ε⟦x⟧≡v , NONEMPTY (proj₂ , proj₅ , proj₆ , proj₇)) | no ¬p₁ with trans (sym Γ〖x〗≡τ) (trivialΓ x Γ ¬p₁)
-    ... | ()
+    help : ∀ {x ε v Γ τ} →
+       ε ⟦ x ⟧ ≡ right v × Γ 〖 x 〗 ≡ right τ × ⊫ ε ∶ Γ →
+       ∃ λ v₁ → right v ≡ v₁ × ⊨ v₁ ∶ right τ
+    help (() , q , EMPTY (refl , refl))
+    help {v = v} (p , q , NONEMPTY (proj₁ , proj₂ , proj₃ , proj₄)) = right v , refl , {!!}
 
 type-safety (T-Var prf , E-VarErr {x∉ε = x∉ε} , ⊫ε∶Γ) = (left error) , (refl , {!!})
 
