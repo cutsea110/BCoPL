@@ -3,6 +3,91 @@ module ex1 where
 open import BCoPL.Show
 open import BCoPL.Nat
 
+q1 : Z plus Z is Z
+q1 = P-Zero
+{-
+Z plus Z is Z by P-Zero {};
+-}
+
+q2 : Z plus S(S(Z)) is S(S(Z))
+q2 = P-Zero
+{-
+Z plus Z is Z by P-Zero {};
+-}
+
+q3 : S(S(Z)) plus Z is S(S(Z))
+q3 = P-Succ (P-Succ P-Zero)
+{-
+S(S(Z)) plus Z is S(S(Z)) by P-Succ {
+  S(Z) plus Z is S(Z) by P-Succ {
+    Z plus Z is Z by P-Zero {};
+  };
+};
+-}
+
+q4 : S(Z) plus S(S(S(Z))) is S(S(S(S(Z))))
+q4 = P-Succ P-Zero
+{-
+S(Z) plus S(S(S(Z))) is S(S(S(S(Z)))) by P-Succ {
+  Z plus S(S(S(Z))) is S(S(S(Z))) by P-Zero {};
+};
+-}
+
+q5 : Z times S(S(Z)) is Z
+q5 = T-Zero
+{-
+Z times S(S(Z)) is Z by T-Zero {};
+-}
+
+q6 : S(S(Z)) times Z is Z
+q6 = T-Succ (T-Succ T-Zero P-Zero) P-Zero
+{-
+S(S(Z)) times Z is Z by T-Succ {
+  S(Z) times Z is Z by T-Succ {
+   Z times Z is Z by T-Zero {};
+   Z plus Z is Z by P-Zero {};
+  };
+  Z plus Z is Z by P-Zero {};
+};
+-}
+
+q7 : S(S(Z)) times S(Z) is S(S(Z))
+q7 = T-Succ (T-Succ T-Zero (P-Succ P-Zero)) (P-Succ P-Zero)
+{-
+S(S(Z)) times S(Z) is S(S(Z)) by T-Succ {
+  S(Z) times S(Z) is S(Z) by T-Succ {
+    Z times S(Z) is Z by T-Zero {};
+    S(Z) plus Z is S(Z) by P-Succ {
+      Z plus Z is Z by P-Zero {};
+    };
+  };
+  S(Z) plus S(Z) is S(S(Z)) by P-Succ {
+    Z plus S(Z) is S(Z) by P-Zero {};
+  };
+};
+-}
+
+q8 : S(S(Z)) times S(S(Z)) is S(S(S(S(Z))))
+q8 = T-Succ (T-Succ T-Zero (P-Succ (P-Succ P-Zero)))
+       (P-Succ (P-Succ P-Zero))
+{-
+S(S(Z)) times S(S(Z)) is S(S(S(S(Z)))) by T-Succ {
+  S(Z) times S(S(Z)) is S(S(Z)) by T-Succ {
+    Z times S(S(Z)) is Z by T-Zero {};
+    S(S(Z)) plus Z is S(S(Z)) by P-Succ {
+      S(Z) plus Z is S(Z) by P-Succ {
+        Z plus Z is Z by P-Zero {};
+      };
+    };
+  };
+  S(S(Z)) plus S(S(Z)) is S(S(S(S(Z)))) by P-Succ {
+    S(Z) plus S(S(Z)) is S(S(S(Z))) by P-Succ {
+      Z plus S(S(Z)) is S(S(Z)) by P-Zero {};
+    };
+  };
+};
+-}
+
 ex-plus-0 : S (S Z) plus S (S (S Z)) is S (S (S (S (S Z))))
 ex-plus-0 = P-Succ (P-Succ P-Zero)
 {-
