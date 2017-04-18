@@ -1,12 +1,18 @@
 module BCoPL.TypingML4Err where
 
+open import Data.Empty using (⊥)
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
+open import Data.String renaming (_≟_ to _=?=_)
+open import Data.Unit using (⊤)
+open import Relation.Nullary using (¬_; yes; no)
 
 open import BCoPL.EvalML4Err public
 
 -- Types
+data Type-Error : Set where
+  type-error : Type-Error
+
 data Types : Set where
-  type-error : Types
   bool : Types
   int : Types
   _⇀_ : Types → Types → Types
@@ -16,9 +22,20 @@ data TEnv : Set where
   ● : TEnv
   _⊱_ : TEnv → (Var × Types) → TEnv
 
-_〖_〗 : TEnv → Var → Types
-● 〖 x 〗 = type-error
-Γ ⊱ (y , e) 〖 x 〗 = y == x ¿ e ∶ Γ 〖 x 〗
+_〖_〗 : TEnv → Var → Type-Error ∨ Types
+● 〖 x 〗 = left type-error
+Γ ⊱ (y , e) 〖 x 〗 with y =?= x
+Γ ⊱ (x , e) 〖 .x 〗 | yes refl = right e
+Γ ⊱ (y , e) 〖 x 〗 | no ¬p = Γ 〖 x 〗
+
+_∈′_ : Var → TEnv → Set
+x ∈′ ● = ⊥
+x ∈′ (Γ ⊱ (y , τ)) with x =?= y -- ¿ ⊤ ∶ x ∈′ Γ
+x ∈′ (Γ ⊱ (.x , τ)) | yes refl = ⊤
+x ∈′ (Γ ⊱ (y , τ)) | no ¬p = x ∈′ Γ
+
+_∉′_ : Var → TEnv → Set
+x ∉′ Γ = ¬ x ∈′ Γ
 
 infixl 20 _⊱_
 
@@ -52,7 +69,7 @@ data _⊢_∶_ : TEnv → Exp → Types → Set where
          → Γ ⊢ e₂ ∶ int
          → Γ ⊢ e₁ ≺ e₂ ∶ bool
   T-Var : ∀ {Γ x τ}
-          → Γ 〖 x 〗 ≡ τ
+          → Γ 〖 x 〗 ≡ right τ
           → Γ ⊢ var x ∶ τ
   T-Let : ∀ {Γ e₁ e₂ τ₁ τ₂ x}
           → Γ ⊢ e₁ ∶ τ₁
