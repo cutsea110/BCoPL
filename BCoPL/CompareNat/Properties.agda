@@ -1,5 +1,6 @@
 module BCoPL.CompareNat.Properties where
 
+
 -- theorem 2.11 (1)
 open import BCoPL.CompareNat1 renaming (_is-less-than_ to _is-less-than1_)
 
@@ -15,6 +16,66 @@ Z-smallest2 n = L-Zero
 
 -- theorem 2.11 (3)
 open import BCoPL.CompareNat3 renaming (_is-less-than_ to _is-less-than3_)
+
+open import BCoPL.Show.CompareNat1 renaming (showDerivationLessThan to showDerivationLessThan1)
+
+q9 : S(S(Z)) is-less-than1 S(S(S(Z)))
+q9 = L-Succ
+{-
+S(S(Z)) is less than S(S(S(Z))) by L-Succ {};
+-}
+
+open import BCoPL.Show.CompareNat2 renaming (showDerivationLessThan to showDerivationLessThan2)
+
+q10 : S(S(Z)) is-less-than2 S(S(S(Z)))
+q10 = L-SuccSucc (L-SuccSucc L-Zero)
+{-
+S(S(Z)) is less than S(S(S(Z))) by L-SuccSucc {
+  S(Z) is less than S(S(Z)) by L-SuccSucc {
+    Z is less than S(Z) by L-Zero {};
+  };
+};
+-}
+
+open import BCoPL.Show.CompareNat3 renaming (showDerivationLessThan to showDerivationLessThan3)
+
+q11 : S(S(Z)) is-less-than3 S(S(S(Z)))
+q11 = L-Succ
+{-
+S(S(Z)) is less than S(S(S(Z))) by L-Succ {};
+-}
+
+q12 : S(S(Z)) is-less-than1 S(S(S(S(S(Z)))))
+q12 = L-Trans (L-Trans L-Succ L-Succ) L-Succ
+{-
+S(S(Z)) is less than S(S(S(S(S(Z))))) by L-Trans {
+  S(S(Z)) is less than S(S(S(S(Z)))) by L-Trans {
+    S(S(Z)) is less than S(S(S(Z))) by L-Succ {};
+    S(S(S(Z))) is less than S(S(S(S(Z)))) by L-Succ {};
+  };
+  S(S(S(S(Z)))) is less than S(S(S(S(S(Z))))) by L-Succ {};
+};
+-}
+
+q13 : S(S(Z)) is-less-than2 S(S(S(S(S(Z)))))
+q13 = L-SuccSucc (L-SuccSucc L-Zero)
+{-
+S(S(Z)) is less than S(S(S(S(S(Z))))) by L-SuccSucc {
+  S(Z) is less than S(S(S(S(Z)))) by L-SuccSucc {
+    Z is less than S(S(S(Z))) by L-Zero {};
+  };
+};
+-}
+
+q14 : S(S(Z)) is-less-than3 S(S(S(S(S(Z)))))
+q14 = L-SuccR (L-SuccR L-Succ)
+{-
+S(S(Z)) is less than S(S(S(S(S(Z))))) by L-SuccR {
+  S(S(Z)) is less than S(S(S(S(Z)))) by L-SuccR {
+    S(S(Z)) is less than S(S(S(Z))) by L-Succ {};
+  };
+};
+-}
 
 Z-smallest3 : (n : ℕ) → Z is-less-than3 S n
 Z-smallest3 Z = L-Succ
