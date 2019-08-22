@@ -187,7 +187,7 @@ weak-normalization (e₁ ⊛ e₂) with weak-normalization e₁ | weak-normaliza
   = (n₁ * n₂) , MR-Multi (both-reduction-⊛ e₁-*->n₁ e₂-*->n₂) (MR-One (R-Times (x-times-y-is-x*y n₁ n₂)))
 
 -- theorem 2.26
-open import Data.Nat.Properties using (_+-mono_)
+open import Data.Nat.Properties using (+-mono-≤)
 
 size : Exp → ℕ
 size (Nat x) = 0
@@ -205,16 +205,16 @@ size-is-more-than-0 e = z≤n
 ⟶-reduce-size {Nat x} {e₂} ()
 ⟶-reduce-size {e₁ ⊕ e₂} {Nat x} prf = s≤s z≤n
 ⟶-reduce-size {e₁ ⊕ e₂} {e₃ ⊕ .e₂} (R-PlusL prf) with ⟶-reduce-size prf
-... | p = s≤s (p +-mono (≡⇒≤ refl))
+... | p = s≤s (+-mono-≤ p (≡⇒≤ refl))
 ⟶-reduce-size {e₁ ⊕ e₂} {.e₁ ⊕ e₄} (R-PlusR prf) with ⟶-reduce-size prf
-... | p = s≤s ((≡⇒≤ refl) +-mono p)
+... | p = s≤s {!!} -- ((≡⇒≤ refl) +-mono-≤ p)
 ⟶-reduce-size {e₁ ⊕ e₂} {e₃ ⊛ e₄} ()
 ⟶-reduce-size {e₁ ⊛ e₂} {Nat x} prf = s≤s z≤n
 ⟶-reduce-size {e₁ ⊛ e₂} {e₃ ⊕ e₄} ()
 ⟶-reduce-size {e₁ ⊛ e₂} {e₃ ⊛ .e₂} (R-TimesL prf) with ⟶-reduce-size prf
-... | p = s≤s (p +-mono (≡⇒≤ refl))
+... | p = s≤s (+-mono-≤ p (≡⇒≤ refl))
 ⟶-reduce-size {e₁ ⊛ e₂} {.e₁ ⊛ e₄} (R-TimesR prf) with ⟶-reduce-size prf
-... | p = s≤s ((≡⇒≤ refl) +-mono p)
+... | p = s≤s {!p!} -- ((≡⇒≤ refl) +-mono-≤ p)
 
 strong-normarization : (e : Exp) → ¬ (∃ λ (e′ : ℕ → Exp) → (e ≡ e′ 1) × (∀ i → ((e′ i ⟶ e′ (S i)) × notPeano (e′ (S i)))))
 strong-normarization e (e′ , p , prf) = {!!}
