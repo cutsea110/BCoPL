@@ -1,7 +1,7 @@
 module BCoPL.EvalML4 where
 
 open import Data.Bool using (Bool; true; false; not) renaming (if_then_else_ to _¿_∶_) public
-open import Data.Integer public
+open import Data.Integer hiding (_<_) public
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
 open import Data.Product using (_×_;_,_) public
 open import Data.String using (String; _==_) public

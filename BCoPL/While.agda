@@ -1,6 +1,6 @@
 module BCoPL.While where
 
-open import Data.Integer public
+open import Data.Integer hiding (_<_) public
 open import Data.Bool using (Bool; true; false) renaming (if_then_else_ to _¿_∶_) public
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
 open import Data.Product using (_×_; _,_) public
@@ -57,7 +57,7 @@ data Com : Set where
   _≔_ : Var → AExp → Com
   _>>_ : Com → Com → Com
   if_then_else_ : BExp → Com → Com → Com
-  while_do_ : BExp → Com → Com
+  while_𝑑𝑜_ : BExp → Com → Com
 
 _⊕_ = aop prim⊕
 _⊝_ = aop prim⊝
@@ -227,8 +227,8 @@ data _changes_to_ : Com → Store → Store → Set where
   C-WhileT : ∀ {σ₁ σ₂ σ₃ b₁ c}
              → σ₁ ⊢ b₁ ↓ b true
              → c changes σ₁ to σ₂
-             → (while b₁ do c) changes σ₂ to σ₃
-             → (while b₁ do c) changes σ₁ to σ₃
+             → (while b₁ 𝑑𝑜 c) changes σ₂ to σ₃
+             → (while b₁ 𝑑𝑜 c) changes σ₁ to σ₃
   C-WhileF : ∀ {σ b₁ c}
              → σ ⊢ b₁ ↓ b false
-             → (while b₁ do c) changes σ to σ
+             → (while b₁ 𝑑𝑜 c) changes σ to σ

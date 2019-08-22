@@ -1,13 +1,13 @@
 module BCoPL.EvalNamelessML3 where
 
 open import Data.Bool using (Bool; true; false) public
-open import Data.Integer public
+open import Data.Integer hiding (_<_) public
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
 open import Data.Product using (_×_;_,_) public
 open import Data.String using (String) public
 
 open import Relation.Binary.Core public
-open import Relation.Binary.PropositionalEquality using (refl;_≡_) public
+open import Relation.Binary.PropositionalEquality using (refl;_≡_; _≢_) public
 
 Var = String
 data Value : Set

@@ -1,9 +1,9 @@
 module BCoPL.EvalContML1 where
 
-open import Data.Integer public
+open import Data.Integer hiding (_<_) public
 open import Data.Bool using (Bool; true; false) public
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
-open import Relation.Binary.PropositionalEquality using (refl;_≡_) public
+open import Relation.Binary.PropositionalEquality using (refl;_≡_; _≢_) public
 
 data Value : Set where
   i : ℤ → Value
