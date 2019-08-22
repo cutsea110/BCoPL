@@ -1,7 +1,7 @@
 module BCoPL.Induction where
 
 open import Data.Fin renaming (zero to fzero; suc to fsuc)
-open import Data.Fin.Properties using (to-from)
+open import Data.Fin.Properties using (toℕ-fromℕ)
 open import Data.Product using (∃; _,_; _×_)
 open import Function using (_∘_)
 open import Relation.Binary.PropositionalEquality
@@ -36,7 +36,7 @@ cov-inductionℕ {P} f n = lemma₁ n (lemma₀ (S n))
         step n s = append {P} s (f n s)
 
     lemma₁ : (n : ℕ) → ((k : Fin (S n)) → P (toℕ k)) → P n
-    lemma₁ n s = subst P (to-from n) (s (fromℕ n))
+    lemma₁ n s = subst P (toℕ-fromℕ n) (s (fromℕ n))
 
 -- principal 2.32
 a×b→ind : {P : ℕ → Set} → P Z × ((n : ℕ) → P n → P (S n)) → ((n : ℕ) → P n)
