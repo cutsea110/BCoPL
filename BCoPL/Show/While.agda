@@ -38,7 +38,7 @@ showCom skip = "skip"
 showCom (x ≔ a) = x ++ ":=" ++ showAExp a
 showCom (c₁ >> c₂) = showCom c₁ ++ ";" ++ showCom c₂
 showCom (if b₁ then c₁ else c₂) = "if " ++ showBExp b₁ ++ " then " ++ showCom c₁ ++ " else " ++ showCom c₂
-showCom (while b₁ do c) = "while (" ++ showBExp b₁ ++ ") do " ++ showCom c
+showCom (while b₁ 𝑑𝑜 c) = "while (" ++ showBExp b₁ ++ ") do " ++ showCom c
 
 showBinding : BindedValue → String
 showBinding (x , v) = x ++ " = " ++ showIValue v

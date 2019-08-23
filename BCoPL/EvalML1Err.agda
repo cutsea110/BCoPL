@@ -1,6 +1,6 @@
 module BCoPL.EvalML1Err where
 
-open import Data.Integer public
+open import Data.Integer hiding (_<_) public
 open import Data.Bool using (Bool; true; false) public
 open import Data.Nat hiding (_<_; _+_; _*_) renaming (suc to S; zero to Z)
 open import Relation.Binary.PropositionalEquality using (refl;_≡_) public

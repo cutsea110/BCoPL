@@ -50,7 +50,7 @@ private
   _∩_ : List TyParam → List TyParam → List TyParam
   xs ∩ ø = ø
   xs ∩ (x ◂ ys) with elem x xs
-  ... | true = x ◂ (filter (_/=_ x) xs ∩ ys)
+  ... | true = x ◂ (boolFilter (_/=_ x) xs ∩ ys)
   ... | false = xs ∩ ys
 
   _∪_ : List TyParam → List TyParam → List TyParam
@@ -62,7 +62,7 @@ private
   _╲_ : List TyParam → List TyParam → List TyParam
   xs ╲ ø = xs
   xs ╲ (y ◂ ys) with elem y xs
-  ... | true = filter (_/=_ y) xs ╲ ys
+  ... | true = boolFilter (_/=_ y) xs ╲ ys
   ... | false = xs ╲ ys
 
 data _≽_ : TyScheme → Types → Set where
