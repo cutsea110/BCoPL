@@ -72,7 +72,7 @@ if (1 < x) then x:=(x + 1) else x:=(x + 2) changes x = 0 to x = 2 by C-IfF {
 };
 -}
 
-q157 : while i (+ 1) ≺ var "x" do ("x" ≔ var "x" ⊝ i (+ 1)) changes ● ⊱ ("x" , i (+ 3)) to ● ⊱ ("x" , i (+ 1))
+q157 : while i (+ 1) ≺ var "x" 𝑑𝑜 ("x" ≔ var "x" ⊝ i (+ 1)) changes ● ⊱ ("x" , i (+ 3)) to ● ⊱ ("x" , i (+ 1))
 q157 = C-WhileT (B-Lt A-Const (A-Var refl) refl) (C-Assign (A-Minus (A-Var refl) A-Const refl) refl) (C-WhileT (B-Lt A-Const (A-Var refl) refl) (C-Assign (A-Minus (A-Var refl) A-Const refl) refl) (C-WhileF (B-Lt A-Const (A-Var refl) refl)))
 {-
 while ((1 < x)) do x:=(x - 1) changes x = 3 to x = 1 by C-WhileT {
@@ -107,7 +107,7 @@ while ((1 < x)) do x:=(x - 1) changes x = 3 to x = 1 by C-WhileT {
 };
 -}
 
-q158 : while i (+ 1) ≺ var "x" do ("x" ≔ var "x" ⊝ i (+ 1)) changes ● ⊱ ("x" , i (+ 0)) to ● ⊱ ("x" , i (+ 0))
+q158 : while i (+ 1) ≺ var "x" 𝑑𝑜 ("x" ≔ var "x" ⊝ i (+ 1)) changes ● ⊱ ("x" , i (+ 0)) to ● ⊱ ("x" , i (+ 0))
 q158 = C-WhileF (B-Lt A-Const (A-Var refl) refl)
 {-
 while ((1 < x)) do x:=(x - 1) changes x = 0 to x = 0 by C-WhileF {
@@ -119,7 +119,7 @@ while ((1 < x)) do x:=(x - 1) changes x = 0 to x = 0 by C-WhileF {
 -}
 
 q159 : while i (+ 0) ≺ var "i"
-       do ("s" ≔ var "s" ⊕ var "i" >>
+       𝑑𝑜 ("s" ≔ var "s" ⊕ var "i" >>
            "i" ≔ var "i" ⊝ i (+ 1))
        changes ● ⊱ ("s" , i (+ 0)) ⊱ ("i" , i (+ 1))
             to ● ⊱ ("s" , i (+ 1)) ⊱ ("i" , i (+ 0))
@@ -154,7 +154,7 @@ while ((0 < i)) do s:=(s + i);i:=(i - 1) changes s = 0,i = 1 to s = 1,i = 0 by C
 -}
 
 q160 : while (i (+ 0) ≺ var "x") && (i (+ 0) ≺ var "y")
-       do (if var "y" ≺ var "x"
+       𝑑𝑜 (if var "y" ≺ var "x"
            then "x" ≔ var "x" ⊝ i (+ 1)
            else "y" ≔ var "y" ⊝ i (+ 1))
        changes ● ⊱ ("x" , i (+ 2)) ⊱ ("y" , i (+ 2))

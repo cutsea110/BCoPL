@@ -1,12 +1,12 @@
 module ex2 where
 
-open import Data.Nat renaming (suc to S; zero to Z)
+open import Data.Nat renaming (suc to S; zero to Z) hiding (_^_)
 open import Data.Product hiding (Σ)
 open import Relation.Binary.PropositionalEquality as PropEq
 
 -- principal 2.29
 open import BCoPL.Induction using (inductionℕ; cov-inductionℕ)
-open import Data.Nat.Properties.Simple
+open import Data.Nat.Properties hiding (≤-trans; ≤-refl)
 
 -- ex-2-2-0
 Σ : ℕ → ℕ
@@ -44,7 +44,7 @@ x+y/2≡[x*2+y]/2 (S x) y rewrite x+y/2≡[x*2+y]/2 x y = S[n/2]≡SSn/2 (x * S 
 Σ≡n*Sn/2 = inductionℕ (refl , help)
   where
     x*y+x*z≡x*[y+z] : (x y z : ℕ) → x * y + x * z ≡ x * (y + z)
-    x*y+x*z≡x*[y+z] x y z rewrite *-comm x y | *-comm x z | *-comm x (y + z) = sym (distribʳ-*-+ x y z)
+    x*y+x*z≡x*[y+z] x y z rewrite *-comm x y | *-comm x z | *-comm x (y + z) = sym (*-distribʳ-+ x y z)
     n*2+n*Sn≡n+n*SSn : (n : ℕ) → n * 2 + n * S n ≡ n + n * S (S n)
     n*2+n*Sn≡n+n*SSn n rewrite sym (+-*-suc n (S (S n))) | x*y+x*z≡x*[y+z] n 2 (S n) = refl
     [Sn+[n*Sn]/2]≡[SSn+n*SSn]/2 : (n : ℕ) → S n + ((n * S n) /2) ≡ S (S (n + n * S (S n))) /2
@@ -118,7 +118,7 @@ plus (Z , y) = y
 plus (S x , y) = S (plus (x , y))
 
 -- definition 2.35
-open import Data.Nat renaming (_⊔_ to max)
+open import Data.Nat renaming (_⊔_ to max) hiding (_^_)
 open import BCoPL.EvalNatExp
 
 size : Exp → ℕ
@@ -144,17 +144,17 @@ closure-plus (S n₁) n₂ = S (plus (n₁ , n₂)) , refl
 -- excercise 2.6
 open import Data.Nat.Properties using (≤-steps; m≤m⊔n)
 open import Relation.Binary
-open DecTotalOrder decTotalOrder using () renaming (trans to ≤-trans; refl to ≤-refl)
+open DecTotalOrder ≤-decTotalOrder using () renaming (trans to ≤-trans; refl to ≤-refl)
 open import Relation.Binary.PreorderReasoning using (begin_; _∎; _≈⟨_⟩_; _∼⟨_⟩_)
 
 open import BCoPL.Induction using (induction-Exp)
-
+{-
 _^_ : ℕ → ℕ → ℕ
 Z ^ Z = 1
 Z ^ n = Z
 x ^ Z = 1
 x ^ S y = x * (x ^ y)
-
+-}
 size≥1 : ∀ e → 1 ≤ size e
 size≥1 = induction-Exp help-nat help-plus help-times
   where
@@ -162,9 +162,9 @@ size≥1 = induction-Exp help-nat help-plus help-times
     help-nat Z = s≤s z≤n
     help-nat (S n) = s≤s z≤n
     help-plus : ∀ e₁ e₂ → (1 ≤ size e₁) × (1 ≤ size e₂) → 1 ≤ size e₁ + size e₂
-    help-plus e₁ e₂ (1≤size₁ , 1≤size₂) = ≤-steps (size e₁) 1≤size₂
+    help-plus e₁ e₂ (1≤size₁ , 1≤size₂) = ≤-stepsˡ (size e₁) 1≤size₂
     help-times : ∀ e₁ e₂ → (1 ≤ size e₁) × (1 ≤ size e₂) → 1 ≤ size e₁ + size e₂
-    help-times e₁ e₂ (1≤size₁ , 1≤size₂) = ≤-steps (size e₁) 1≤size₂
+    help-times e₁ e₂ (1≤size₁ , 1≤size₂) = ≤-stepsˡ (size e₁) 1≤size₂
 
 height≥1 : ∀ e → 1 ≤ height e
 height≥1 = induction-Exp help-nat help-plus help-times
@@ -178,7 +178,7 @@ height≥1 = induction-Exp help-nat help-plus help-times
     help-times e₁ e₂ prf = m≤m+n (S Z) (max (height e₁) (height e₂))
 
 a≤b→c≤d→a+c≤b+d : ∀ {a b c d} → a ≤ b → c ≤ d → a + c ≤ b + d
-a≤b→c≤d→a+c≤b+d {b = b} z≤n c≤d = ≤-steps b c≤d
+a≤b→c≤d→a+c≤b+d {b = b} z≤n c≤d = ≤-stepsˡ b c≤d
 a≤b→c≤d→a+c≤b+d (s≤s a≤b) c≤d = s≤s (a≤b→c≤d→a+c≤b+d a≤b c≤d)
 
 Sx≤x+1 : ∀ x → S x ≤ x + 1
@@ -233,7 +233,7 @@ ex-2-6 = induction-Exp help-nat help help
         [a+b]+c≤a+[b+c] Z b c = ≤-refl
         [a+b]+c≤a+[b+c] (S a) b c = s≤s ([a+b]+c≤a+[b+c] a b c)
         a+b≤a+1+b : ∀ a b → a + b ≤ a + 1 + b
-        a+b≤a+1+b Z b = ≤-steps (S Z) ≤-refl
+        a+b≤a+1+b Z b = ≤-stepsˡ (S Z) ≤-refl
         a+b≤a+1+b (S a) b = s≤s (a+b≤a+1+b a b)
         2^x≤2^x⊔y : ∀ x y → 2 ^ x ≤ 2 ^ (x ⊔ y)
         2^x≤2^x⊔y x y = n≤m→2ⁿ≤2ᵐ x (x ⊔ y) (m≤m⊔n x y)
