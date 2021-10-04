@@ -9,6 +9,14 @@ q1 = P-Zero
 Z plus Z is Z by P-Zero {};
 -}
 
+q1' : S Z plus S Z is S (S Z)
+q1' = P-Succ P-Zero
+{-
+S(Z) plus S(Z) is S(S(Z)) by P-Succ {
+  Z plus S(Z) is S(Z) by P-Zero {};
+};
+-}
+
 q2 : Z plus S(S(Z)) is S(S(Z))
 q2 = P-Zero
 {-
