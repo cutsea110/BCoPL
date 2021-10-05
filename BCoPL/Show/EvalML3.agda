@@ -2,7 +2,7 @@ module BCoPL.Show.EvalML3 where
 
 open import Data.String
 open import Data.Nat.Show renaming (show to showℕ)
-open import Data.Integer renaming (show to showℤ)
+open import Data.Integer.Show renaming (show to showℤ)
 open import Data.Bool.Show renaming (show to show𝔹)
 open import BCoPL.EvalML3
 
